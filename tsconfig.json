@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    // additional settings
+    "noImplicitAny": true, // any型禁止
+    "noImplicitThis": true, // 型なしthis禁止. class内は問題なし
+    "noImplicitReturns": true, //return値の型必須
+    "strictNullChecks": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["./*"],
+      "~/*": ["./*"],
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types",
+    ]
+  },
+  "exclude": ["node_modules"]
+}
