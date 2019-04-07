@@ -13,7 +13,8 @@
       "start:debug": "nodemon --config nodemon-debug.json",
       "prestart:prod": "rimraf dist && npm run build",
       "start:prod": "node dist/main.js",
-      "lint": "tslint -p tsconfig.json -c tslint.json",
+      "lint": "yarn run lint:es",
+      "lint:es": "eslint --ext .js,.ts --ignore-path .gitignore .",
       "test": "jest",
       "test:watch": "jest --watch",
       "test:cov": "jest --coverage",
@@ -50,9 +51,9 @@
       "prettier": "^1.16.4",
       "supertest": "^3.4.1",
       "ts-jest": "^23.10.5",
-      "ts-node": "3.3.0",
+      "ts-node": "^8.0.3",
       "tsconfig-paths": "^3.7.0",
-      "typescript": "2.5.2"
+      "typescript": "~3.3"
    },
    "jest": {
       "moduleFileExtensions": [
