@@ -1,8 +1,13 @@
 {
-   "type": "sqlite",
-   "synchronize": true,
-   "logging": true,
-   "entities": [
-      "src/**/**.entity.ts"
-   ]
+  "[ATTENTION]": "yarn run typeorm schema:xxx時のみ使われる",
+  "type": "sqlite",
+  "database": "tmp/development.sqlite3",
+  "synchronize": false,
+  "logging": true,
+  "entities": ["src/app/**/**.entity.ts"],
+  "cli": {
+    "entitiesDir": "src/db/entity",
+    "migrationsDir": "src/db/migration",
+    "subscribersDir": "src/db/subscriber"
+}
 }

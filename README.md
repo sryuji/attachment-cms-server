@@ -18,6 +18,10 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+### Debug
+nodemonによるdebug modeで起動され、
+chrome devtoolやvscodeでremote接続して、debugging
+
 ```bash
 # debug
 $ yarn run start:debug
@@ -25,6 +29,8 @@ $ yarn run start:debug
 
 * 起動後、vscode debuggerの"Node: attach Nodemon debug"でvscodeからデバッグ可能
     + launch.jsonで定義されている
+
+### REPL
 
 ```bash
 # repl
@@ -44,4 +50,12 @@ $ yarn run test:e2e
 
 # test coverage
 $ yarn run test:cov
+```
+
+## migration
+
+entityとの差分をmigrationファイルとして生成
+
+```bash
+$ yarn run orm migration:generate -n [migration base filename]
 ```

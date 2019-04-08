@@ -3,9 +3,9 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { ConfigService } from './config.service'
 import * as path from 'path'
 
-const ENTITY_PATH = [path.resolve(__dirname, '../**/*.entity.ts')]
-const MIGRATION_PATH = ['./migration/**/*.migration.ts']
-const SUBSCRIBER_PATH = ['./subscriber/**/*.subscriber.ts']
+const ENTITY_PATH = [path.resolve(__dirname, '../db/entity/**/*.entity.ts')]
+const MIGRATION_PATH = [path.resolve(__dirname, '../db/migration/**/*.migration.ts')]
+const SUBSCRIBER_PATH = [path.resolve(__dirname, '../db/subscriber/**/*.subscriber.ts')]
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

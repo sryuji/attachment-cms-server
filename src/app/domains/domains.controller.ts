@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common'
 import { DomainsService } from './domains.service'
-import { Domain } from './domain.entity'
+import { Domain } from '../../db/entity/domain.entity'
 
 @Controller('domains')
 export class DomainsController {
