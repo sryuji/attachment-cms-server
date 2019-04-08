@@ -32,4 +32,8 @@ export class ConfigService {
   get isDev(): boolean {
     return Boolean(this.envConfig.NODE_ENV === 'development')
   }
+
+  get isTest(): boolean {
+    return Boolean(this.envConfig.NODE_ENV === 'test')
+  }
 }

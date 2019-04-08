@@ -6,6 +6,8 @@ import { DomainsModule } from './domains/domains.module'
 import { LoggerMiddleware } from '../middleware/logger.middleware'
 import { ConfigModule } from '../config/config.module'
 import { TypeOrmConfigService } from '../config/typeorm.config.service'
+import { AllExceptionFilter } from '../filter/all-exception.filter'
+import { APP_FILTER } from '@nestjs/core'
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { TypeOrmConfigService } from '../config/typeorm.config.service'
     DomainsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [{ provide: APP_FILTER, useClass: AllExceptionFilter }, AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
