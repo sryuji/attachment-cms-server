@@ -51,7 +51,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param dto
    */
   async create(dto: D): Promise<E> {
-    if (dto.id) throw new BadRequestException('Exist id in body')
+    if (dto.id) throw new BadRequestException('exist id in body')
     const record = new this.type(dto)
     return record.save()
   }
@@ -62,12 +62,12 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param dto
    */
   async update(id: number, dto: D): Promise<E> {
-    if (!id || dto.id !== id)
+    if (!id || (dto.id && dto.id !== id))
       throw new BadRequestException(
         `Not match id and updating data. id: ${id}(${typeof id}), dto.id: ${dto.id}(${typeof dto.id})`,
       )
     const record = await this.findOne(id)
-    Object.assign(record, dto)
+    Object.assign(record, dto, { id })
     return record.save()
   }
 

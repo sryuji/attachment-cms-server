@@ -9,7 +9,7 @@ export class Scope extends ApplicationBaseEntity<Scope> {
   name: string
 
   private _domain: string
-
+  // setterでnoramalize調整したいケースには,下記のようにgetter/setterを定義する
   @Column({ length: 255, name: 'domain' })
   @Expose()
   get domain() {

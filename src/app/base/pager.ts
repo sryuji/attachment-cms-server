@@ -5,9 +5,9 @@ export class Pager {
   per: number
   totalCount: number
 
-  constructor(query: any) {
-    this.page = query.page || 1
-    this.per = query.per || 20
+  constructor(attributes: Partial<Pager>) {
+    this.page = attributes.page || 1
+    this.per = attributes.per || 20
   }
 
   @Expose()
