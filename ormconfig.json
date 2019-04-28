@@ -4,7 +4,9 @@
   "database": "tmp/development.sqlite3",
   "synchronize": false,
   "logging": true,
-  "entities": ["src/app/**/**.entity.ts"],
+  "entities": ["src/db/entity/**/*.entity.ts"],
+  "migrations": ["src/db/migration/*.ts"],
+  "subscribers": ["src/db/subscriber/**/*.subscriber.ts"],
   "cli": {
     "entitiesDir": "src/db/entity",
     "migrationsDir": "src/db/migration",

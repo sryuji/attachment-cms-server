@@ -35,6 +35,16 @@ $ yarn run start:debug
 ```bash
 # repl
 $ yarn run ts-node
+> import { Scope } from './src/db/entity/scope.entity'
+> const record = new Scope()
+> record.[Tab]
+record.__defineGetter__      record.__defineSetter__      record.__lookupGetter__
+record.__lookupSetter__      record.__proto__             record.constructor
+record.hasOwnProperty        record.isPrototypeOf         record.propertyIsEnumerable
+record.toLocaleString        record.toString              record.valueOf
+
+record.hasId                 record.reload                record.remove
+record.save
 ```
 
 * 必要なcodeのimport宣言は必要

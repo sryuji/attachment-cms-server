@@ -22,4 +22,7 @@
   "editor.formatOnSave": false,
   "prettier.eslintIntegration": true,
   "prettier.stylelintIntegration": true,
+  "prettier.printWidth": 120,
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 120,
 }

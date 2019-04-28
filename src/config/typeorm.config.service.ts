@@ -4,7 +4,7 @@ import { ConfigService } from './config.service'
 import * as path from 'path'
 
 const ENTITY_PATH = [path.resolve(__dirname, '../db/entity/**/*.entity.ts')]
-const MIGRATION_PATH = [path.resolve(__dirname, '../db/migration/**/*.migration.ts')]
+const MIGRATION_PATH = [path.resolve(__dirname, '../db/migration/*.ts')]
 const SUBSCRIBER_PATH = [path.resolve(__dirname, '../db/subscriber/**/*.subscriber.ts')]
 
 @Injectable()
@@ -23,7 +23,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       entities: ENTITY_PATH,
       migrations: MIGRATION_PATH,
       subscribers: SUBSCRIBER_PATH,
-      logging: this.config.getBoolean('ORM_LOGGING'),
+      logging: this.config.getBoolean('ORM_LOGGING') ? 'all' : ['schema', 'error', 'warn'],
       synchronize: this.config.getBoolean('ORM_SYNCHRONIZE'),
     }
   }
