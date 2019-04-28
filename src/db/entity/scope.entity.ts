@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, OneToOne, JoinColumn } from 'typeorm'
 import { ApplicationBaseEntity } from './application-base.entity'
 import { Release } from './release.entity'
 import { Expose } from 'class-transformer'
+import { IsNumber, IsOptional, ValidateIf } from 'class-validator'
 
 @Entity()
 export class Scope extends ApplicationBaseEntity<Scope> {
@@ -29,6 +30,8 @@ export class Scope extends ApplicationBaseEntity<Scope> {
   releases: Release[]
 
   @Column({ nullable: true })
+  @IsNumber()
+  @IsOptional()
   defaultReleaseId: number
 
   @OneToOne(type => Release, r => r.scope, { lazy: true }) // eagerで自動join, lazyはpropety access時にquery取得

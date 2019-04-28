@@ -32,7 +32,9 @@ export class ScopesController extends BaseController {
   @Post()
   async create(@Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.create(payload.scope)
-    return new ScopeSerializer(record)
+    return new ScopeSerializer().serialize({
+      scope: record,
+    })
   }
 
   @ApiOperation({ title: 'Scopeの更新' })
@@ -40,7 +42,9 @@ export class ScopesController extends BaseController {
   @Patch(':id')
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.update(id, payload.scope)
-    return new ScopeSerializer(record)
+    return new ScopeSerializer().serialize({
+      scope: record,
+    })
   }
 
   @ApiOperation({ title: 'Scopeの削除' })
@@ -62,13 +66,17 @@ export class ScopesController extends BaseController {
     @Query('per') per?: number,
     @Query('domain') domain?: string,
   ): Promise<ScopesSerializer> {
-    // TODO: eager loadでdefaultReleaseを取得
-    const [scopes, pager] = await this.scopesService.searchWithPager(new Pager({ page, per }), {
-      where: domain && [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }],
-      order: { id: 'DESC' },
-      // relations: ['defaultRelease'],
-    })
-    return new ScopesSerializer({ scopes, pager })
+    const pager = new Pager({ page, per })
+    const [scopes, totalCount] = await this.scopesService
+      .createQueryBuilder('scope')
+      .leftJoinAndSelect('scope.defaultRelease', 'defaultRelease')
+      .where(domain && [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }])
+      .orderBy('defaultRelease.releasedAt', 'DESC')
+      .skip(pager.offset)
+      .take(pager.per)
+      .getManyAndCount()
+    pager.totalCount = totalCount
+    return new ScopesSerializer().serialize({ scopes, pager })
   }
 
   @ApiOperation({ title: 'Scope詳細' })
@@ -76,6 +84,6 @@ export class ScopesController extends BaseController {
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ScopeSerializer> {
     const record = await this.scopesService.fetch(id)
-    return new ScopeSerializer(record)
+    return new ScopeSerializer().serialize({ scope: record })
   }
 }

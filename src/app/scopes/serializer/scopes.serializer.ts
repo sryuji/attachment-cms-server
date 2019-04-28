@@ -2,12 +2,10 @@
 import { Type } from 'class-transformer'
 import { Pager } from '../../base/pager'
 import { Scope } from '@/src/db/entity/scope.entity'
+import { BaseSerializer } from '../../base/base.serializer'
 
-export class ScopesSerializer {
+export class ScopesSerializer extends BaseSerializer {
   @Type(() => Scope)
   readonly scopes: Scope[]
   readonly pager?: Pager
-  constructor(attributes: ScopesSerializer) {
-    Object.assign(this, attributes)
-  }
 }

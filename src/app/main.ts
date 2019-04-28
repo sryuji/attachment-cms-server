@@ -11,6 +11,11 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule)
   app.useGlobalPipes(
     new ValidationPipe({
+      // DTOに定義されてないvalueは除去される
+      whitelist: true,
+      // @Bodyなどvalidation対象がInjectされる時、Dtoにconvertする. falseだとobjectのまま.
+      // propetyは@Typeで個別にconvert指示が必要
+      transform: true,
       exceptionFactory: errors => new ValidationsError(errors),
     }),
   )

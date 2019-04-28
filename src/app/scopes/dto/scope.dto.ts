@@ -1,6 +1,7 @@
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, ValidateNested } from 'class-validator'
 import { BaseDto } from '../../base/base.dto'
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 
 export class ScopeDto extends BaseDto {
   @ApiModelProperty({ description: '識別名', example: 'attachment CMS' })
@@ -19,9 +20,11 @@ export class ScopeDto extends BaseDto {
 }
 
 /**
- * Swagger連携時にこれが無いと、request bodyの設定が巧くいかないため
+ * Swagger連携時はForm定義がないと、request bodyのswagger側の自動表示が巧くいかないため利用している
  */
 export class ScopeForm {
   @ApiModelProperty()
+  @ValidateNested()
+  @Type(() => ScopeDto)
   scope: ScopeDto
 }

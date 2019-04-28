@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
-import { Repository, FindManyOptions } from 'typeorm'
+import { Repository, FindManyOptions, SelectQueryBuilder } from 'typeorm'
 import { ApplicationBaseEntity } from '@/src/db/entity/application-base.entity'
 import { BaseDto } from './base.dto'
 import { Pager } from './pager'
@@ -9,12 +9,22 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * https://typeorm.io/#/repository-api
    */
   protected readonly basicRepository: Repository<E>
-  private readonly type: new (attributes?: D) => E
-  constructor(repository: Repository<E>, type: new (attributes?: D) => E) {
+  private readonly type: new (attributes?: Partial<E>) => E
+  constructor(repository: Repository<E>, type: new (attributes?: Partial<E>) => E) {
     this.basicRepository = repository
     this.type = type
   }
 
+  /**
+   * FindManyOptionの仕様外の事をしたいケースに使う.
+   * TypeScriptのcompileや補完が使えないから可能な限り使わない
+   * https://typeorm.io/#/select-query-builder
+   * orderByでjoin先の指定. groupBy, subqueryなど
+   * @param alias
+   */
+  createQueryBuilder(alias: string): SelectQueryBuilder<E> {
+    return this.basicRepository.createQueryBuilder(alias)
+  }
   /**
    *
    * @param pager
@@ -50,7 +60,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    *
    * @param dto
    */
-  async create(dto: D): Promise<E> {
+  async create(dto: Partial<E>): Promise<E> {
     if (dto.id) throw new BadRequestException('exist id in body')
     const record = new this.type(dto)
     return record.save()
@@ -61,7 +71,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param id
    * @param dto
    */
-  async update(id: number, dto: D): Promise<E> {
+  async update(id: number, dto: Partial<E>): Promise<E> {
     if (!id || (dto.id && dto.id !== id))
       throw new BadRequestException(
         `Not match id and updating data. id: ${id}(${typeof id}), dto.id: ${dto.id}(${typeof dto.id})`,
