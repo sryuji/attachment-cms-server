@@ -67,5 +67,11 @@ $ yarn run test:cov
 entityとの差分をmigrationファイルとして生成
 
 ```bash
-$ yarn run orm migration:generate -n [migration base filename]
+$ yarn run db:generate -n [migration base filename]
+```
+
+migrationの差分実行
+
+```bash
+$ yarn run db:migrate
 ```
