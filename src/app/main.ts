@@ -11,7 +11,8 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule)
   app.useGlobalPipes(
     new ValidationPipe({
-      // DTOに定義されてないvalueは除去される
+      // DTOでvalidation定義されていないvalueは除去される. validation定義不要な場合、@Allowをつける
+      // これがないと許可されてないpropもdto -> entityとbindできてしまう
       whitelist: true,
       // @Bodyなどvalidation対象がInjectされる時、Dtoにconvertする. falseだとobjectのまま.
       // propetyは@Typeで個別にconvert指示が必要
@@ -28,7 +29,7 @@ async function setupSwagger(app: INestApplication) {
     .setTitle('attachment CMS')
     .setDescription('attachment CMS API description')
     .setVersion(packageJson.version)
-    .addTag('API')
+    .addTag('CMS API', 'コンテンツ管理用API')
     .build()
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('api-docs', app, document) // api-docs-jsonでjson schema donwload

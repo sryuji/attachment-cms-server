@@ -1,11 +1,11 @@
 import { Column, Entity, OneToMany, OneToOne, JoinColumn } from 'typeorm'
-import { ApplicationBaseEntity } from './application-base.entity'
+import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Expose } from 'class-transformer'
-import { IsNumber, IsOptional, ValidateIf } from 'class-validator'
+import { IsNumber, IsOptional } from 'class-validator'
 
 @Entity()
-export class Scope extends ApplicationBaseEntity<Scope> {
+export class Scope extends ApplicationEntity<Scope> {
   @Column({ length: 255, nullable: true }) // length未指定は英数100kb, UTF-8日本語なら300kb.
   name: string
 

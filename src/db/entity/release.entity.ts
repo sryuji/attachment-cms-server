@@ -1,14 +1,13 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm'
-import { ApplicationBaseEntity } from './application-base.entity'
+import { ApplicationEntity } from './application.entity'
 import { Scope } from './scope.entity'
 import { ContentHistory } from './content-history.entity'
 import { IsOptional, IsNumber } from 'class-validator'
 
 @Entity()
-export class Release extends ApplicationBaseEntity<Release> {
+export class Release extends ApplicationEntity<Release> {
   @Column()
   @IsNumber()
-  @IsOptional()
   scopeId: number
 
   @ManyToOne(type => Scope, scope => scope.releases, { lazy: true })
@@ -25,6 +24,11 @@ export class Release extends ApplicationBaseEntity<Release> {
 
   @Column({ nullable: true })
   rollbackedAt: Date
+
+  @Column({ nullable: true })
+  @IsNumber()
+  @IsOptional()
+  sourceReleaseId: number
 
   @OneToMany(type => ContentHistory, r => r.release)
   contentHistories: ContentHistory[]

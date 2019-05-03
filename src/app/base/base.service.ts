@@ -1,17 +1,18 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { Repository, FindManyOptions, SelectQueryBuilder } from 'typeorm'
-import { ApplicationBaseEntity } from '@/src/db/entity/application-base.entity'
-import { BaseDto } from './base.dto'
+import { ApplicationEntity } from '@/src/db/entity/application.entity'
 import { Pager } from './pager'
+import { validate } from 'class-validator'
+import { ValidationsError } from '@/src/exception/validations.error'
 
-export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends BaseDto> {
+export abstract class BaseService<E extends ApplicationEntity<E>> {
   /**
    * https://typeorm.io/#/repository-api
    */
-  protected readonly basicRepository: Repository<E>
-  private readonly type: new (attributes?: Partial<E>) => E
-  constructor(repository: Repository<E>, type: new (attributes?: Partial<E>) => E) {
-    this.basicRepository = repository
+  protected readonly repository: Repository<E>
+  private readonly type: new (attributes?: any) => E
+  constructor(repository: Repository<E>, type: new (attributes?: any) => E) {
+    this.repository = repository
     this.type = type
   }
 
@@ -23,7 +24,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param alias
    */
   createQueryBuilder(alias: string): SelectQueryBuilder<E> {
-    return this.basicRepository.createQueryBuilder(alias)
+    return this.repository.createQueryBuilder(alias)
   }
   /**
    *
@@ -32,7 +33,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    */
   async searchWithPager(pager: Pager, options?: FindManyOptions<E>): Promise<[E[], Pager]> {
     options = { ...options, ...pager.toFindManyOptions() }
-    const collectionWithCount = await this.basicRepository.findAndCount(options)
+    const collectionWithCount = await this.repository.findAndCount(options)
     pager.totalCount = collectionWithCount[1]
     return [collectionWithCount[0], pager]
   }
@@ -42,27 +43,28 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param options https://typeorm.io/#/find-options
    */
   async search(options?: FindManyOptions<E>): Promise<E[]> {
-    const collection = await this.basicRepository.find(options)
+    const collection = await this.repository.find(options)
     return collection
   }
 
   /**
-   *
-   * @param id
+   * validate entity
+   * @param record
    */
-  async fetch(id: number): Promise<E> {
-    const record = await this.basicRepository.findOne(id)
-    if (!record) throw new NotFoundException(`No exists. id: ${id}`)
-    return record
+  async validate(record: any): Promise<void> {
+    const errors = await validate(record)
+    if (errors && errors.length > 0) throw new ValidationsError(errors)
   }
 
   /**
    *
    * @param dto
+   * @param options { validate: boolean }
    */
-  async create(dto: Partial<E>): Promise<E> {
+  async create(dto: any, options = { validate: true }): Promise<E> {
     if (dto.id) throw new BadRequestException('exist id in body')
     const record = new this.type(dto)
+    if (options['validate']) await this.validate(record)
     return record.save()
   }
 
@@ -71,13 +73,14 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param id
    * @param dto
    */
-  async update(id: number, dto: Partial<E>): Promise<E> {
+  async update(id: number, dto: any, options = { validate: false, notFoundReject: false }): Promise<E> {
     if (!id || (dto.id && dto.id !== id))
       throw new BadRequestException(
         `Not match id and updating data. id: ${id}(${typeof id}), dto.id: ${dto.id}(${typeof dto.id})`,
       )
-    const record = await this.findOne(id)
+    const record = await this.fetch(id, options)
     Object.assign(record, dto, { id })
+    if (options['validate']) await this.validate(record)
     return record.save()
   }
 
@@ -86,7 +89,7 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    * @param id
    */
   async delete(id: number): Promise<void> {
-    const record = await this.findOne(id)
+    const record = await this.fetch(id)
     await record.remove()
   }
 
@@ -94,9 +97,12 @@ export abstract class BaseService<E extends ApplicationBaseEntity<E>, D extends 
    *
    * @param id
    */
-  private async findOne(id: number): Promise<E> {
-    const record = await this.basicRepository.findOne(id)
-    if (!record) throw new NotFoundException(`No exists. id: ${id}`)
-    return record
+  async fetch(id: number, options = { notFoundReject: false }): Promise<E> {
+    const record = await this.repository.findOne(id)
+    if (record) return record
+
+    const err = new NotFoundException(`No exists. id: ${id}`)
+    if (options['notFoundReject']) return Promise.reject(err)
+    throw err
   }
 }

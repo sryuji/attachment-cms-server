@@ -12,17 +12,21 @@ import {
   API_RESPONSE_201,
   API_QUERY_PAGE,
   API_QUERY_PER,
-} from '@/src/constant/swagger.constant'
+} from '@/src/app/constant/swagger.constant'
 
 @ApiResponse(API_RESPONSE_401)
-@ApiUseTags('releases')
+@ApiUseTags('リリース予定')
 @Controller('releases')
 export class ReleasesController extends BaseController {
   constructor(private readonly releasesService: ReleasesService) {
     super()
   }
 
-  @ApiOperation({ title: 'Releaseの作成' })
+  @ApiOperation({
+    title: 'リリース予定の作成',
+    description:
+      '新たなリリースのためコンテンツ編集作業を開始します。前のリリースのコンテンツデータが新しいリリースのため複製されるため、それらを更新します',
+  })
   @ApiResponse(API_RESPONSE_201)
   @Post()
   async create(@Body() payload: CreateReleaseForm): Promise<ReleaseSerializer> {
@@ -32,9 +36,9 @@ export class ReleasesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'リリース日の設定' })
+  @ApiOperation({ title: 'リリースの実施', description: 'リリース日を設定し、コンテンツを一般公開する' })
   @ApiResponse(API_RESPONSE_200)
-  @Patch(':id')
+  @Patch(':id/publish')
   async publish(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() payload: PublishReleaseForm,
@@ -45,19 +49,25 @@ export class ReleasesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'Release一覧' })
+  @ApiOperation({ title: 'リリース予定一覧' })
   @ApiResponse({ ...API_RESPONSE_200, type: ReleasesSerializer })
+  @ApiImplicitQuery({ name: 'scopeId', required: false })
   @ApiImplicitQuery(API_QUERY_PER)
   @ApiImplicitQuery(API_QUERY_PAGE)
   @Get()
-  async findAll(@Query('page') page?: number, @Query('per') per?: number): Promise<ReleasesSerializer> {
+  async findAll(
+    @Query('scopeId') scopeId?: number,
+    @Query('page') page?: number,
+    @Query('per') per?: number,
+  ): Promise<ReleasesSerializer> {
     const [releases, pager] = await this.releasesService.searchWithPager(new Pager({ page, per }), {
+      where: scopeId && { scopeId: scopeId },
       order: { releasedAt: 'DESC' },
     })
     return new ReleasesSerializer().serialize({ releases, pager })
   }
 
-  @ApiOperation({ title: 'Release詳細' })
+  @ApiOperation({ title: 'リリース予定' })
   @ApiResponse({ ...API_RESPONSE_200, type: ReleaseSerializer })
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {

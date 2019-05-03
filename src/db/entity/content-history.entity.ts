@@ -1,18 +1,23 @@
 import { Column, Entity, ManyToOne } from 'typeorm'
-import { ApplicationBaseEntity } from './application-base.entity'
+import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Scope } from './scope.entity'
+import { IsNumber } from 'class-validator'
 
 @Entity()
-export class ContentHistory extends ApplicationBaseEntity<ContentHistory> {
+export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @Column()
+  @IsNumber()
   scopeId: number
+
   @ManyToOne(type => Scope)
   scope: Scope
 
   @Column()
+  @IsNumber()
   releaseId: number
-  @ManyToOne(type => Release, r => r.contentHistories)
+
+  @ManyToOne(type => Release, r => r.contentHistories, { lazy: true })
   release: Release
 
   @Column()

@@ -1,4 +1,4 @@
-import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { IsNotEmpty, ValidateNested, Allow } from 'class-validator'
 import { BaseDto } from '../../base/base.dto'
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
@@ -13,9 +13,11 @@ export class ScopeDto extends BaseDto {
   readonly domain: string
 
   @ApiModelPropertyOptional({ description: 'テスト環境のドメイン', example: 'https://test.example.com' })
+  @Allow()
   readonly testDomain: string
 
   @ApiModelPropertyOptional({ description: '用途など説明を自由記入', example: '' })
+  @Allow()
   readonly description: string
 }
 

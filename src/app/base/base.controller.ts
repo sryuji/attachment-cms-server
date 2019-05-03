@@ -1,6 +1,6 @@
 import { UseInterceptors, ClassSerializerInterceptor, SerializeOptions } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { API_RESPONSE_422, API_RESPONSE_400, API_RESPONSE_403 } from '@/src/constant/swagger.constant'
+import { API_RESPONSE_422, API_RESPONSE_400, API_RESPONSE_403 } from '@/src/app/constant/swagger.constant'
 
 // @Controller('xxx.:format?') // 左記で.jsonありもOKになる
 @UseInterceptors(ClassSerializerInterceptor)

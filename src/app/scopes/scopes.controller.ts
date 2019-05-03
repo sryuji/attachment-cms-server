@@ -14,10 +14,10 @@ import {
   API_RESPONSE_201,
   API_QUERY_PAGE,
   API_QUERY_PER,
-} from '@/src/constant/swagger.constant'
+} from '@/src/app/constant/swagger.constant'
 
 @ApiResponse(API_RESPONSE_401)
-@ApiUseTags('scopes')
+@ApiUseTags('コンテンツ管理対象')
 @Controller('scopes') // scopes.:format?で.jsonありもOKになる
 export class ScopesController extends BaseController {
   constructor(private readonly scopesService: ScopesService) {
@@ -25,8 +25,9 @@ export class ScopesController extends BaseController {
   }
 
   @ApiOperation({
-    title: 'Scopeの作成',
-    description: 'Scopeはdomainに付き１つ以上作成し、リリースする単位で複数作成できます',
+    title: 'コンテンツ管理対象の登録',
+    description:
+      '管理対象ドメインを設定し、そのドメインのコンテンツ管理を開始します。 同じドメインのScopeを作成する事はでき、その場合はScope毎にリリースと権限は分離されます',
   })
   @ApiResponse(API_RESPONSE_201)
   @Post()
@@ -37,7 +38,7 @@ export class ScopesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'Scopeの更新' })
+  @ApiOperation({ title: 'コンテンツ管理対象の更新' })
   @ApiResponse(API_RESPONSE_200)
   @Patch(':id')
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: ScopeForm): Promise<ScopeSerializer> {
@@ -47,7 +48,7 @@ export class ScopesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'Scopeの削除' })
+  @ApiOperation({ title: 'コンテンツ管理対象の削除', description: 'Deprecated. 退会でもデータは削除しない' })
   @ApiResponse(API_RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
@@ -55,7 +56,7 @@ export class ScopesController extends BaseController {
     await this.scopesService.delete(id)
   }
 
-  @ApiOperation({ title: 'Scope一覧' })
+  @ApiOperation({ title: 'コンテンツ管理対象一覧' })
   @ApiResponse(API_RESPONSE_200)
   @ApiImplicitQuery({ name: 'domain', description: 'ドメイン. 部分一致', required: false, type: String })
   @ApiImplicitQuery(API_QUERY_PER)
@@ -79,7 +80,7 @@ export class ScopesController extends BaseController {
     return new ScopesSerializer().serialize({ scopes, pager })
   }
 
-  @ApiOperation({ title: 'Scope詳細' })
+  @ApiOperation({ title: 'コンテンツ管理対象' })
   @ApiResponse(API_RESPONSE_200)
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ScopeSerializer> {

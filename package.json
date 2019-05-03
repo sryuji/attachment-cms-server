@@ -20,12 +20,12 @@
       "test:cov": "jest --coverage",
       "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
       "test:e2e": "jest --config ./test/jest-e2e.json",
-      "db": "ts-node ./node_modules/.bin/typeorm",
-      "db:generate": "yarn run orm migration:generate",
-      "db:migrate": "yarn run orm migration:run",
-      "db:rollback": "yarn run orm migration:revert",
-      "db:tables": "yarn run orm query \"select name from sqlite_master where type = 'table'\"",
-      "db:drop": "yarn run orm schema:drop"
+      "orm": "ts-node ./node_modules/.bin/typeorm",
+      "orm:generate": "yarn run orm migration:generate",
+      "orm:migrate": "yarn run orm migration:run",
+      "orm:rollback": "yarn run orm migration:revert",
+      "orm:tables": "yarn run orm query \"select name from sqlite_master where type = 'table'\"",
+      "orm:drop": "yarn run orm schema:drop"
    },
    "dependencies": {
       "@nestjs/common": "^6.0.0",

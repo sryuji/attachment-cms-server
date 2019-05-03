@@ -1,6 +1,6 @@
 import { BaseDto } from '../../base/base.dto'
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger'
-import { IsNotEmpty, IsDate, IsInt, ValidateNested } from 'class-validator'
+import { IsNotEmpty, IsDate, IsInt, ValidateNested, IsOptional } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class ReleaseDto extends BaseDto {
@@ -8,6 +8,14 @@ export class ReleaseDto extends BaseDto {
   @IsNotEmpty()
   @IsInt()
   readonly scopeId: number
+
+  @ApiModelPropertyOptional({
+    description: '編集対象にしたいリリースID. 未指定だと最新のものが自動的に選ばれる',
+    example: null,
+  })
+  @IsOptional()
+  @IsInt()
+  readonly sourceReleaseId: number
 }
 
 export class PublishReleaseDto extends BaseDto {

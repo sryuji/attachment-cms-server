@@ -5,11 +5,13 @@ import { ScopesService } from './scopes.service'
 import { Scope } from '../../db/entity/scope.entity'
 import { ReleasesService } from './releases.service'
 import { ReleasesController } from './release.controller'
-import { Release } from '@/src/db/entity/release.entity'
+import { ContentHistoriesModule } from '../content-histories/content-histories.module'
+import { ReleaseRepository } from './repository/release.repository'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Scope, Release])],
+  imports: [TypeOrmModule.forFeature([Scope, ReleaseRepository]), ContentHistoriesModule],
   controllers: [ScopesController, ReleasesController],
   providers: [ScopesService, ReleasesService],
+  exports: [ReleasesService],
 })
 export class ScopesModule {}

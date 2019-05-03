@@ -12,6 +12,7 @@ import { APP_FILTER } from '@nestjs/core'
 import { FindRelationsNotFoundExceptionFilter } from '../filter/find-relations-not-found-exception.filter'
 import { ValidationsErrorFilter } from '../filter/validations-error.filter'
 import { TimeoutErrorFilter } from '../filter/timeout-error.filter'
+import { ContentHistoriesModule } from './content-histories/content-histories.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TimeoutErrorFilter } from '../filter/timeout-error.filter'
       useClass: TypeOrmConfigService,
     }),
     ScopesModule,
+    ContentHistoriesModule,
   ],
   controllers: [AppController],
   providers: [
