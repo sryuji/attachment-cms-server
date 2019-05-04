@@ -6,6 +6,7 @@ import { Scope } from '../../db/entity/scope.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { ContentHistoriesService } from '../content-histories/content-histories.service'
 import { ReleaseRepository } from './repository/release.repository'
+import { generateUUIDv4 } from 'src/util/math'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {
@@ -27,7 +28,7 @@ export class ReleasesService extends BaseService<Release> {
       if (!sourceRelease)
         throw new ValidationsError([`指定のリリース予定が存在しません. sourceReleaseId: ${dto.sourceReleaseId}`])
     }
-    return await this.repository.manager.transaction(async manager => {
+    return this.transaction(async manager => {
       const record = await super.create(dto)
       await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id)
       return record
@@ -35,12 +36,21 @@ export class ReleasesService extends BaseService<Release> {
   }
 
   async publish(id: number, dto: PublishReleaseDto): Promise<Release> {
-    return await this.repository.manager.transaction(async manager => {
+    return await this.transaction(async manager => {
       const record = await this.update(id, dto)
       const scope = await record.scope
       scope.defaultReleaseId = record.id
       await scope.save()
       return record
+    })
+  }
+
+  async publishLimitation(id: number): Promise<Release> {
+    const record = await this.fetch(id)
+    return await this.transaction(async manager => {
+      record.limitedReleaseToken = generateUUIDv4()
+      record.limitedReleaseTokenIssuedAt = new Date()
+      return this.update(id, record)
     })
   }
 }

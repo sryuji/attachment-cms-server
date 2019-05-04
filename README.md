@@ -80,3 +80,21 @@ $ yarn run orm:migrate
 初回リリースを過ぎたら、下記のmigration APIで逐次書いていくのが望ましい
 
 [migration API](https://typeorm.io/#/migrations/using-migration-api-to-write-migrations)
+
+
+## Coding rules
+
+* eslint (for typescript)
+* prettier
+
+### 自動チェックが難しいチェックポイント
+
+* `await` 漏れはないか？
+* `transaction`の範囲の間違いはないか？
+* entityにNull/Unique Constraintの漏れはないか？
+* responseでさらしては駄目な値がさらされてはないか?
+    + controllerのreturn時にobjectにsetされた値は、`class-transformer`で`@Expose`/`@Exclude`される
+    + しかし、`lazy` loadで後から取得される値については、class-transformerの処理がされないので注意
+        + 故に子entityを事前取得し、`BaseSerializer.serializer`時にsetする構成にしている
+* formで受け取っては駄目な値を受け取っていないか？
+    + whitelistの機能でしない限り強制Bindできないようにはされている

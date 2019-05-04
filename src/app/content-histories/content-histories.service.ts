@@ -36,9 +36,9 @@ export class ContentHistoriesService extends BaseService<ContentHistory> impleme
     await this.repository.insert(newHists)
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<ContentHistory> {
     const record = await this.fetch(id)
     if (record.release.releasedAt) throw new ForbiddenException('リリース済のため削除できません。')
-    await record.remove()
+    return await record.remove()
   }
 }

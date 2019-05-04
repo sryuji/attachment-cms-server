@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, OneToOne, JoinColumn, BeforeInsert, Unique } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
-import { Expose } from 'class-transformer'
+import { Expose, Exclude } from 'class-transformer'
 import { IsNumber, IsOptional } from 'class-validator'
 import { generateUUIDv4 } from '../../util/math'
 
@@ -29,6 +29,7 @@ export class Scope extends ApplicationEntity<Scope> {
   description: string
 
   @Column({ length: 255 })
+  @Exclude()
   token: string
 
   @OneToMany(type => Release, r => r.scope)
@@ -48,6 +49,6 @@ export class Scope extends ApplicationEntity<Scope> {
 
   @BeforeInsert()
   generateToken(): void {
-    this.token = 'afbdc716-8cce-4425-9157-d5e899c3379c' || generateUUIDv4()
+    this.token = generateUUIDv4()
   }
 }

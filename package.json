@@ -20,7 +20,7 @@
       "test:cov": "jest --coverage",
       "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
       "test:e2e": "jest --config ./test/jest-e2e.json",
-      "orm": "ts-node ./node_modules/.bin/typeorm",
+      "orm": "yarn run ts-node ./node_modules/.bin/typeorm",
       "orm:generate": "yarn run orm migration:generate",
       "orm:migrate": "yarn run orm migration:run",
       "orm:rollback": "yarn run orm migration:revert",

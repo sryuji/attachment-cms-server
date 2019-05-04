@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "ignore": ["src/**/*.spec.ts"],
+  "ignore": ["src/**/*.spec.ts", "src/db/migration/**/*.ts"],
   "exec": "ts-node -r tsconfig-paths/register src/app/main.ts"
 }

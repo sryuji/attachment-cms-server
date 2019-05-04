@@ -49,6 +49,22 @@ export class ReleasesController extends BaseController {
     })
   }
 
+  @ApiOperation({
+    title: '限定リリースの実施',
+    description: 'コンテンツを限定公開する. QueryStringにtokenの指定したユーザーのみ公開される',
+  })
+  @ApiResponse(API_RESPONSE_200)
+  @Patch(':id/publishLimitation')
+  async publishLimitation(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() payload: PublishReleaseForm,
+  ): Promise<ReleaseSerializer> {
+    const record = await this.releasesService.publishLimitation(id)
+    return new ReleaseSerializer().serialize({
+      release: { ...record, scope: await record.scope },
+    })
+  }
+
   @ApiOperation({ title: 'リリース予定一覧' })
   @ApiResponse({ ...API_RESPONSE_200, type: ReleasesSerializer })
   @ApiImplicitQuery({ name: 'scopeId', required: false })

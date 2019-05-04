@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
-import { Repository, FindManyOptions, SelectQueryBuilder } from 'typeorm'
+import { Repository, FindManyOptions, SelectQueryBuilder, EntityManager } from 'typeorm'
 import { Pager } from './pager'
 import { validate } from 'class-validator'
 import { ApplicationEntity } from 'src/db/entity/application.entity'
@@ -88,9 +88,9 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
    *
    * @param id
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<E> {
     const record = await this.fetch(id)
-    await record.remove()
+    return await record.remove()
   }
 
   /**
@@ -104,5 +104,9 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
     const err = new NotFoundException(`No exists. id: ${id}`)
     if (options['notFoundReject']) return Promise.reject(err)
     throw err
+  }
+
+  async transaction(procedure: (manager: EntityManager) => Promise<E>): Promise<E> {
+    return this.repository.manager.transaction(procedure)
   }
 }
