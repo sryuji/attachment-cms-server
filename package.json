@@ -41,7 +41,8 @@
       "rimraf": "^2.6.2",
       "rxjs": "^6.3.3",
       "sqlite3": "^4.0.6",
-      "typeorm": "0.2.16"
+      "typeorm": "0.2.16",
+      "uuid": "^3.3.2"
    },
    "devDependencies": {
       "@nestjs/swagger": "^3.0.2",
@@ -50,6 +51,7 @@
       "@types/jest": "^23.3.13",
       "@types/node": "^8.0.29",
       "@types/supertest": "^2.0.7",
+      "@types/uuid": "^3.4.4",
       "@typescript-eslint/eslint-plugin": "^1.5.0",
       "@typescript-eslint/parser": "^1.5.0",
       "eslint": "^5.16.0",

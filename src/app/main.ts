@@ -4,7 +4,7 @@ import { ValidationPipe, INestApplication } from '@nestjs/common'
 import { ValidationsError } from '../exception/validations.error'
 import { LoggingInterceptor } from '../interceptor/logging.interceptor'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
-const packageJson = require('@/package.json')
+const packageJson = require('../../package.json')
 const env: string = process.env.NODE_ENV || 'development'
 
 async function bootstrap() {

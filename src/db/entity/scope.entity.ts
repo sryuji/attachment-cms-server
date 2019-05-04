@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany, OneToOne, JoinColumn } from 'typeorm'
+import { Column, Entity, OneToMany, OneToOne, JoinColumn, BeforeInsert, Unique } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Expose } from 'class-transformer'
 import { IsNumber, IsOptional } from 'class-validator'
+import { generateUUIDv4 } from '../../util/math'
 
+@Unique(['token'])
 @Entity()
 export class Scope extends ApplicationEntity<Scope> {
   @Column({ length: 255, nullable: true }) // length未指定は英数100kb, UTF-8日本語なら300kb.
@@ -26,6 +28,9 @@ export class Scope extends ApplicationEntity<Scope> {
   @Column('text', { nullable: true }) // text指定は無制限
   description: string
 
+  @Column({ length: 255 })
+  token: string
+
   @OneToMany(type => Release, r => r.scope)
   releases: Release[]
 
@@ -40,4 +45,9 @@ export class Scope extends ApplicationEntity<Scope> {
 
   // @OneToMany(type => ContentHistory, contentHistory => contentHistory.scope)
   // contentHistories: ContentHistory[]
+
+  @BeforeInsert()
+  generateToken(): void {
+    this.token = 'afbdc716-8cce-4425-9157-d5e899c3379c' || generateUUIDv4()
+  }
 }

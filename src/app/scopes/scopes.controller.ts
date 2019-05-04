@@ -14,7 +14,7 @@ import {
   API_RESPONSE_201,
   API_QUERY_PAGE,
   API_QUERY_PER,
-} from '@/src/app/constant/swagger.constant'
+} from '../constant/swagger.constant'
 
 @ApiResponse(API_RESPONSE_401)
 @ApiUseTags('コンテンツ管理対象')

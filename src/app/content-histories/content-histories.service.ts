@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit, ForbiddenException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { BaseService } from '../base/base.service'
-import { ContentHistory } from '@/src/db/entity/content-history.entity'
+import { ContentHistory } from '../..//db/entity/content-history.entity'
 import { ReleasesService } from '../scopes/releases.service'
 import { ModuleRef } from '@nestjs/core'
 

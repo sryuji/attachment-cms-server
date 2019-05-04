@@ -1,4 +1,4 @@
-import { Release } from '@/src/db/entity/release.entity'
+import { Release } from '../../../db/entity/release.entity'
 import { Repository, EntityRepository, IsNull, Not } from 'typeorm'
 
 @EntityRepository(Release)

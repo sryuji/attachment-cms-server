@@ -67,11 +67,16 @@ $ yarn run test:cov
 entityとの差分をmigrationファイルとして生成
 
 ```bash
-$ yarn run db:generate -n [migration base filename]
+$ yarn run orm:generate -n [migration base filename]
 ```
 
 migrationの差分実行
 
 ```bash
-$ yarn run db:migrate
+$ yarn run orm:migrate
 ```
+
+ただし、`orm:generate`では外部キーなど巧く考慮されてないケースもあるため、
+初回リリースを過ぎたら、下記のmigration APIで逐次書いていくのが望ましい
+
+[migration API](https://typeorm.io/#/migrations/using-migration-api-to-write-migrations)

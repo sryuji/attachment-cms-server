@@ -1,9 +1,9 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { Repository, FindManyOptions, SelectQueryBuilder } from 'typeorm'
-import { ApplicationEntity } from '@/src/db/entity/application.entity'
 import { Pager } from './pager'
 import { validate } from 'class-validator'
-import { ValidationsError } from '@/src/exception/validations.error'
+import { ApplicationEntity } from 'src/db/entity/application.entity'
+import { ValidationsError } from 'src/exception/validations.error'
 
 export abstract class BaseService<E extends ApplicationEntity<E>> {
   /**

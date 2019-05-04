@@ -1,6 +1,6 @@
 // https://github.com/typestack/class-transformer
 import { Type } from 'class-transformer'
-import { Scope } from '@/src/db/entity/scope.entity'
+import { Scope } from '../../../db/entity/scope.entity'
 import { BaseSerializer } from '../../base/base.serializer'
 
 export class ScopeSerializer extends BaseSerializer {

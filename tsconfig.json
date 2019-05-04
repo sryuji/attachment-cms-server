@@ -16,10 +16,6 @@
     "noImplicitReturns": true, //return値の型必須
     "strictNullChecks": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@/*": ["./*"],
-      "~/*": ["./*"]
-    },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
   "exclude": ["node_modules"]
