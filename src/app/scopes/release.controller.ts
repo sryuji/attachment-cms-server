@@ -30,10 +30,8 @@ export class ReleasesController extends BaseController {
   @ApiResponse(API_RESPONSE_201)
   @Post()
   async create(@Body() payload: CreateReleaseForm): Promise<ReleaseSerializer> {
-    const record = await this.releasesService.create(payload.release)
-    return new ReleaseSerializer().serialize({
-      release: { ...record },
-    })
+    const release = await this.releasesService.create(payload.release)
+    return new ReleaseSerializer().serialize({ release })
   }
 
   @ApiOperation({ title: 'リリースの実施', description: 'リリース日を設定し、コンテンツを一般公開する' })
@@ -43,10 +41,8 @@ export class ReleasesController extends BaseController {
     @Param('id', new ParseIntPipe()) id: number,
     @Body() payload: PublishReleaseForm,
   ): Promise<ReleaseSerializer> {
-    const record = await this.releasesService.publish(id, payload.release)
-    return new ReleaseSerializer().serialize({
-      release: { ...record, scope: await record.scope },
-    })
+    const release = await this.releasesService.publish(id, payload.release)
+    return new ReleaseSerializer().serialize({ release })
   }
 
   @ApiOperation({
@@ -54,15 +50,10 @@ export class ReleasesController extends BaseController {
     description: 'コンテンツを限定公開する. QueryStringにtokenの指定したユーザーのみ公開される',
   })
   @ApiResponse(API_RESPONSE_200)
-  @Patch(':id/publishLimitation')
-  async publishLimitation(
-    @Param('id', new ParseIntPipe()) id: number,
-    @Body() payload: PublishReleaseForm,
-  ): Promise<ReleaseSerializer> {
-    const record = await this.releasesService.publishLimitation(id)
-    return new ReleaseSerializer().serialize({
-      release: { ...record, scope: await record.scope },
-    })
+  @Patch(':id/publish-limitation')
+  async publishLimitation(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
+    const release = await this.releasesService.publishLimitation(id)
+    return new ReleaseSerializer().serialize({ release })
   }
 
   @ApiOperation({ title: 'リリース予定一覧' })
@@ -87,9 +78,9 @@ export class ReleasesController extends BaseController {
   @ApiResponse({ ...API_RESPONSE_200, type: ReleaseSerializer })
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
-    const record = await this.releasesService.fetch(id)
-    return new ReleaseSerializer().serialize({
-      release: { ...record, scope: await record.scope },
+    const release = await this.releasesService.fetch(id)
+    return await new ReleaseSerializer().serialize({
+      release,
     })
   }
 }
