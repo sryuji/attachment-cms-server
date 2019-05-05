@@ -28,7 +28,8 @@
       "orm:drop": "yarn run orm schema:drop",
       "ts": "ts-node -r tsconfig-paths/register",
       "repl": "yarn run ts -r ./src/command/repl",
-      "command": "yarn run ts ./src/command/runner.ts"
+      "command": "yarn run ts ./src/command/runner.ts",
+      "seed": "yarn run command seed-runner"
    },
    "dependencies": {
       "@nestjs/common": "^6.0.0",

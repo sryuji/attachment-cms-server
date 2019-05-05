@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common'
 import { ScopesService } from 'src/app/scopes/scopes.service'
 
 export default class SampleCommand extends BaseCommand {
-  async perform(): Promise<any> {
+  async perform(): Promise<void> {
     const scopes = await Scope.find()
     Logger.log(scopes.map(r => r.name))
 

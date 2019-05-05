@@ -20,4 +20,11 @@ export abstract class ApplicationEntity<E> extends BaseEntity {
     // 厳密にやるには、property / setterのcheckが必要
     Object.assign(this, attributes)
   }
+
+  /**
+   * newで作ったばかりのid埋め込み時は、正しい判定できない
+   */
+  isNew() {
+    return !!this.createdAt
+  }
 }
