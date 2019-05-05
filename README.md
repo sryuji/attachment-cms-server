@@ -34,20 +34,29 @@ $ yarn run start:debug
 
 ```bash
 # repl
-$ yarn run ts-node
+$ yarn run repl
 > import { Scope } from './src/db/entity/scope.entity'
 > const record = new Scope()
 > record.[Tab]
-record.__defineGetter__      record.__defineSetter__      record.__lookupGetter__
-record.__lookupSetter__      record.__proto__             record.constructor
-record.hasOwnProperty        record.isPrototypeOf         record.propertyIsEnumerable
-record.toLocaleString        record.toString              record.valueOf
+record.__defineGetter__      record.__defineSetter__      record.__lookupGetter__000
+...
+> let scope
+> Scope.findOne(1).then(r => { scope = r })
+Promise {
+  <pending>,
+...
+> query: SELECT...
 
-record.hasId                 record.reload                record.remove
-record.save
+> scope
+Scope {
+...
 ```
 
 * 必要なcodeのimport宣言は必要
+* top-level awaitには未対応
+    + node v10より上にする必要がある
+    + ts-nodeも未対応 https://github.com/TypeStrong/ts-node/issues/245
+
 
 ## Test
 
@@ -93,8 +102,9 @@ $ yarn run orm:migrate
 * `transaction`の範囲の間違いはないか？
 * entityにNull/Unique Constraintの漏れはないか？
 * responseでさらしては駄目な値がさらされてはないか?
-    + controllerのreturn時にobjectにsetされた値は、`class-transformer`で`@Expose`/`@Exclude`される
-    + しかし、`lazy` loadで後から取得される値については、class-transformerの処理がされないので注意
+    + controllerのreturn時にinstance化されている値は、`class-transformer`で`@Expose`/`@Exclude`される
+    + そのため、`lazy` loadで後から取得される値については、class-transformerの処理がされないので注意
         + 故に子entityを事前取得し、`BaseSerializer.serializer`時にsetする構成にしている
+    + また、instanceでなくobjectとして渡した値も`class-transformer`で処理されない
 * formで受け取っては駄目な値を受け取っていないか？
     + whitelistの機能でしない限り強制Bindできないようにはされている
