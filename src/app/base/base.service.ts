@@ -10,8 +10,8 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
    * https://typeorm.io/#/repository-api
    */
   protected readonly repository: Repository<E>
-  private readonly type: new (attributes?: any) => E
-  constructor(repository: Repository<E>, type: new (attributes?: any) => E) {
+  private readonly type: new (attributes?: Partial<E>) => E
+  constructor(repository: Repository<E>, type: new (attributes?: Partial<E>) => E) {
     this.repository = repository
     this.type = type
   }
@@ -51,7 +51,7 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
    * validate entity
    * @param record
    */
-  async validate(record: any): Promise<void> {
+  async validate(record: Partial<E>): Promise<void> {
     const errors = await validate(record)
     if (errors && errors.length > 0) throw new ValidationsError(errors)
   }
@@ -61,7 +61,7 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
    * @param dto
    * @param options { validate: boolean }
    */
-  async create(dto: any, options = { validate: true }): Promise<E> {
+  async create(dto: Partial<E>, options = { validate: true }): Promise<E> {
     if (dto.id) throw new BadRequestException('exist id in body')
     const record = new this.type(dto)
     if (options['validate']) await this.validate(record)
@@ -73,10 +73,10 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
    * @param id
    * @param dto
    */
-  async update(id: number, dto: any, options = { validate: false, notFoundReject: false }): Promise<E> {
+  async update(id: number, dto: Partial<E>, options = { validate: false, notFoundReject: false }): Promise<E> {
     if (!id || (dto.id && dto.id !== id))
       throw new BadRequestException(
-        `Not match id and updating data. id: ${id}(${typeof id}), dto.id: ${dto.id}(${typeof dto.id})`,
+        `Not match id and updating data. id: ${id}(${typeof id}), dto.id: ${dto.id}(${typeof dto.id})`
       )
     const record = await this.fetch(id, options)
     Object.assign(record, dto, { id })

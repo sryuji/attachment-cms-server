@@ -11,7 +11,7 @@ export class Release extends ApplicationEntity<Release> {
   @IsNumber()
   scopeId: number
 
-  @ManyToOne(type => Scope, scope => scope.releases, { lazy: true })
+  @ManyToOne((type) => Scope, (scope) => scope.releases, { lazy: true })
   scope: Scope
 
   @Exclude()
@@ -32,6 +32,6 @@ export class Release extends ApplicationEntity<Release> {
   @IsOptional()
   sourceReleaseId: number
 
-  @OneToMany(type => ContentHistory, r => r.release)
+  @OneToMany((type) => ContentHistory, (r) => r.release)
   contentHistories: ContentHistory[]
 }

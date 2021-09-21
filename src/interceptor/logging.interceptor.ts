@@ -5,7 +5,7 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ctx = context.switchToHttp()
     const now = Date.now()
 
@@ -13,10 +13,10 @@ export class LoggingInterceptor implements NestInterceptor {
       tap(() => {
         this.logResponse(ctx, now)
       }),
-      catchError(error => {
+      catchError((error) => {
         this.logResponse(ctx, now, 'warn')
         return throwError(error)
-      }),
+      })
     )
   }
 
@@ -27,11 +27,11 @@ export class LoggingInterceptor implements NestInterceptor {
       const delay = Date.now() - res.locals.requestStartTime // LoggerMiddlewareから引き継いでいる
       const message = `Response ${res.statusCode} response. ${delay}ms`
       if (level === 'error') {
-        Logger.error(message, null, null, false)
+        Logger.error(message)
       } else if (level === 'warn') {
-        Logger.warn(message, null, false)
+        Logger.warn(message)
       } else {
-        Logger.log(message, null, false)
+        Logger.log(message)
       }
     }, 0)
   }

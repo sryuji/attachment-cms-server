@@ -7,7 +7,7 @@ export function camelCase(str: string): string {
 
 export function kebabCase(str: string): string {
   const camel = camelCase(str)
-  return camel.replace(/[A-Z]/g, s => {
+  return camel.replace(/[A-Z]/g, (s) => {
     return '-' + s.charAt(0).toLowerCase()
   })
 }

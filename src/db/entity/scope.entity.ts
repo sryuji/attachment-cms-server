@@ -32,7 +32,7 @@ export class Scope extends ApplicationEntity<Scope> {
   @Exclude()
   token: string
 
-  @OneToMany(type => Release, r => r.scope)
+  @OneToMany((type) => Release, (r) => r.scope)
   releases: Release[]
 
   @Column({ nullable: true })
@@ -40,7 +40,7 @@ export class Scope extends ApplicationEntity<Scope> {
   @IsOptional()
   defaultReleaseId: number
 
-  @OneToOne(type => Release, r => r.scope, { lazy: true }) // eagerで自動join, lazyはpropety access時にquery取得
+  @OneToOne((type) => Release, (r) => r.scope, { lazy: true }) // eagerで自動join, lazyはpropety access時にquery取得
   @JoinColumn()
   defaultRelease: Release
 

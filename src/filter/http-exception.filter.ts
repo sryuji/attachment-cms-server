@@ -8,9 +8,10 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
    * @param host
    */
   catch(exception: HttpException, host: ArgumentsHost) {
-    let status: number = exception.getStatus()
+    const status: number = exception.getStatus()
     let message: string | string[] = exception.message
-    let options: object | undefined
+    let options: Record<string, unknown> | undefined
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: string | any = exception.getResponse()
     if (res instanceof Object && res.error) {
       message = `${res.error}: ${res.message}`

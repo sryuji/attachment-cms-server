@@ -10,14 +10,14 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @IsNumber()
   scopeId: number
 
-  @ManyToOne(type => Scope)
+  @ManyToOne((type) => Scope)
   scope: Scope
 
   @Column()
   @IsNumber()
   releaseId: number
 
-  @ManyToOne(type => Release, r => r.contentHistories, { lazy: true })
+  @ManyToOne((type) => Release, (r) => r.contentHistories, { lazy: true })
   release: Release
 
   @Column()
@@ -35,6 +35,6 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @Column({ default: false })
   inactive: boolean
 
-  @ManyToOne(type => ContentHistory)
+  @ManyToOne((type) => ContentHistory)
   sourceContentHistory: ContentHistory
 }

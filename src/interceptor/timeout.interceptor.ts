@@ -12,7 +12,7 @@ export class TimeoutInterceptor implements NestInterceptor {
   constructor(ms: number) {
     this.ms = ms
   }
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(timeout(this.ms))
   }
 }

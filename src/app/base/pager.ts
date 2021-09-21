@@ -1,12 +1,12 @@
 import { Expose } from 'class-transformer'
-import { ApiResponseModelProperty } from '@nestjs/swagger'
+import { ApiResponseProperty } from '@nestjs/swagger'
 
 export class Pager {
-  @ApiResponseModelProperty()
+  @ApiResponseProperty()
   page: number
-  @ApiResponseModelProperty()
+  @ApiResponseProperty()
   per: number
-  @ApiResponseModelProperty()
+  @ApiResponseProperty()
   totalCount: number
 
   constructor(attributes: Partial<Pager>) {
@@ -14,7 +14,7 @@ export class Pager {
     this.per = attributes.per || 20
   }
 
-  @ApiResponseModelProperty()
+  @ApiResponseProperty()
   @Expose()
   get totalPages(): number {
     if (!this.totalCount || !this.per) return null
@@ -25,7 +25,7 @@ export class Pager {
     return (this.page - 1) * this.per
   }
 
-  public toFindManyOptions(): object {
+  public toFindManyOptions(): Record<'take' | 'skip', number> {
     return {
       take: this.per,
       skip: this.offset,

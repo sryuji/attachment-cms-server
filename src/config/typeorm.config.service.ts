@@ -18,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     return this.getSQLiteOptions()
   }
 
-  private getCommonOptions(): object {
+  private getCommonOptions(): Record<string, unknown> {
     return {
       entities: ENTITY_PATH,
       migrations: MIGRATION_PATH,

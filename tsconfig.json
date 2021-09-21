@@ -6,7 +6,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
+    "target": "es2020",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -14,9 +14,10 @@
     "noImplicitAny": true, // any型禁止
     "noImplicitThis": true, // 型なしthis禁止. class内は問題なし
     "noImplicitReturns": true, //return値の型必須
+    "resolveJsonModule": true,
     "strictNullChecks": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", "tmp", ".vscode", "env"]
 }

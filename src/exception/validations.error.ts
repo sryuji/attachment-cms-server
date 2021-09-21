@@ -10,9 +10,9 @@ export class ValidationsError extends Error {
 
   public getMessages(): string[] {
     if (!this.sourceList || this.sourceList.length === 0) return null
-    if (this.sourceList.every((e: ValidationError | string) => typeof e === 'string')) {
-      return this.sourceList as string[]
-    }
+
+    const error = this.sourceList
+    if (typeof error === 'string') return this.sourceList as string[]
     return this.getConstraintsMessages(this.sourceList as ValidationError[])
   }
 

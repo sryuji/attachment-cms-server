@@ -5,19 +5,19 @@ import { UpdateContentHistoryForm } from './dto/update-content-history.dto'
 import { Pager } from '../base/pager'
 import { ContentHistoriesSerializer } from './serializer/content-histories.serializer'
 import { ContentHistorySerializer } from './serializer/content-history.serializer'
-import { ApiUseTags, ApiOperation, ApiResponse, ApiImplicitQuery } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import {
-  API_RESPONSE_401,
-  API_RESPONSE_200,
-  API_RESPONSE_204,
-  API_RESPONSE_201,
-  API_QUERY_PAGE,
-  API_QUERY_PER,
+  RESPONSE_401,
+  RESPONSE_200,
+  RESPONSE_204,
+  RESPONSE_201,
+  QUERY_PAGE,
+  QUERY_PER,
 } from '../constant/swagger.constant'
 
-@ApiResponse(API_RESPONSE_401)
-@ApiUseTags('コンテンツ履歴')
+@ApiResponse(RESPONSE_401)
+@ApiTags('コンテンツ履歴')
 @Controller('content-histories')
 export class ContentHistoriesController extends BaseController {
   constructor(private readonly contentHistoriesService: ContentHistoriesService) {
@@ -25,10 +25,10 @@ export class ContentHistoriesController extends BaseController {
   }
 
   @ApiOperation({
-    title: 'コンテンツの新規作成',
+    summary: 'コンテンツの新規作成',
     description: 'リリース予定毎に異なるデータとして作成します。',
   })
-  @ApiResponse(API_RESPONSE_201)
+  @ApiResponse(RESPONSE_201)
   @Post()
   async create(@Body() payload: CreateContentHistoryForm): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.create(payload.contentHistory)
@@ -37,12 +37,12 @@ export class ContentHistoriesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'コンテンツの更新' })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiOperation({ summary: 'コンテンツの更新' })
+  @ApiResponse(RESPONSE_200)
   @Patch(':id')
   async update(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() payload: UpdateContentHistoryForm,
+    @Body() payload: UpdateContentHistoryForm
   ): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.update(id, payload.contentHistory)
     return new ContentHistorySerializer().serialize({
@@ -50,34 +50,43 @@ export class ContentHistoriesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'コンテンツの削除', description: 'リリース後は削除できません. ' })
-  @ApiResponse(API_RESPONSE_204)
+  @ApiOperation({
+    summary: 'コンテンツの削除',
+    description: 'リリース後は削除できません. ',
+  })
+  @ApiResponse(RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.contentHistoriesService.delete(id)
   }
 
-  @ApiOperation({ title: 'コンテンツ一覧', description: '対象となるリリース予定のコンテンツ一覧. ' })
-  @ApiResponse(API_RESPONSE_200)
-  @ApiImplicitQuery({ name: 'releaseId', description: 'リリースID' })
-  @ApiImplicitQuery(API_QUERY_PER)
-  @ApiImplicitQuery(API_QUERY_PAGE)
+  @ApiOperation({
+    summary: 'コンテンツ一覧',
+    description: '対象となるリリース予定のコンテンツ一覧. ',
+  })
+  @ApiResponse(RESPONSE_200)
+  @ApiQuery({ name: 'releaseId', description: 'リリースID' })
+  @ApiQuery(QUERY_PER)
+  @ApiQuery(QUERY_PAGE)
   @Get()
   async findAll(
     @Query('releaseId') releaseId: number,
     @Query('page') page?: number,
-    @Query('per') per?: number,
+    @Query('per') per?: number
   ): Promise<ContentHistoriesSerializer> {
     const [contentHistories, pager] = await this.contentHistoriesService.searchWithPager(new Pager({ page, per }), {
       where: { releaseId: releaseId },
       order: { path: 'ASC', inactive: 'ASC', id: 'ASC' },
     })
-    return new ContentHistoriesSerializer().serialize({ contentHistories, pager })
+    return new ContentHistoriesSerializer().serialize({
+      contentHistories,
+      pager,
+    })
   }
 
-  @ApiOperation({ title: 'コンテンツ' })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiOperation({ summary: 'コンテンツ' })
+  @ApiResponse(RESPONSE_200)
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.fetch(id)

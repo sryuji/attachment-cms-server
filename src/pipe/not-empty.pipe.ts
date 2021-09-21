@@ -2,7 +2,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 
 @Injectable()
 export class NotEmptyPipe implements PipeTransform {
-  async transform(value: string, metadata: ArgumentMetadata): Promise<any> {
+  async transform(value: string, metadata: ArgumentMetadata): Promise<unknown> {
     if (!value) {
       throw new BadRequestException()
     }

@@ -13,7 +13,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> impleme
   constructor(
     @InjectRepository(ContentHistory)
     protected readonly repository: Repository<ContentHistory>,
-    private readonly moduleRef: ModuleRef,
+    private readonly moduleRef: ModuleRef
   ) {
     super(repository, ContentHistory)
   }
@@ -23,7 +23,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> impleme
     this.releasesService = this.moduleRef.get(ReleasesService, { strict: false })
   }
 
-  async create(dto: any): Promise<ContentHistory> {
+  async create(dto: Partial<ContentHistory>): Promise<ContentHistory> {
     const release = await this.releasesService.fetch(dto.releaseId)
     dto.scopeId = release.scopeId
     return super.create(dto)
@@ -32,7 +32,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> impleme
   async copyContentHistories(sourceReleaseId: number, destReleaseId: number): Promise<void> {
     const hists = await this.repository.find({ where: { sourceReleaseId } })
     if (hists.length === 0) return
-    const newHists = hists.map(h => ({ ...h, id: null, releaseId: destReleaseId }))
+    const newHists = hists.map((h) => ({ ...h, id: null, releaseId: destReleaseId }))
     await this.repository.insert(newHists)
   }
 

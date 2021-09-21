@@ -1,22 +1,25 @@
 import { IsNotEmpty, ValidateNested, Allow } from 'class-validator'
 import { BaseDto } from '../../base/base.dto'
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
 export class ScopeDto extends BaseDto {
-  @ApiModelProperty({ description: '識別名', example: 'attachment CMS' })
+  @ApiProperty({ description: '識別名', example: 'attachment CMS' })
   @IsNotEmpty()
   readonly name: string
 
-  @ApiModelProperty({ description: '対象ドメイン', example: 'https://example.com' })
+  @ApiProperty({ description: '対象ドメイン', example: 'https://example.com' })
   @IsNotEmpty()
   readonly domain: string
 
-  @ApiModelPropertyOptional({ description: 'テスト環境のドメイン', example: 'https://test.example.com' })
+  @ApiPropertyOptional({
+    description: 'テスト環境のドメイン',
+    example: 'https://test.example.com',
+  })
   @Allow()
   readonly testDomain: string
 
-  @ApiModelPropertyOptional({ description: '用途など説明を自由記入', example: '' })
+  @ApiPropertyOptional({ description: '用途など説明を自由記入', example: '' })
   @Allow()
   readonly description: string
 }
@@ -25,7 +28,7 @@ export class ScopeDto extends BaseDto {
  * Swagger連携時はForm定義がないと、request bodyのswagger側の自動表示が巧くいかないため利用している
  */
 export class ScopeForm {
-  @ApiModelProperty()
+  @ApiProperty()
   @ValidateNested()
   @Type(() => ScopeDto)
   scope: ScopeDto

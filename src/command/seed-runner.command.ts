@@ -9,7 +9,7 @@ export default class SeedRunnerCommand extends BaseCommand {
     if (!names || names.length === 0)
       console.error(`引数でentity nameをケバブケース(ex. content-history)で指定してください。`)
 
-    names.forEach(async name => {
+    names.forEach(async (name) => {
       const Seed: new () => BaseSeed = loadClass(`src/db/seed/${env}`, name, 'seed')
       await new Seed().run()
     })

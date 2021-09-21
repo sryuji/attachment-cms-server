@@ -4,18 +4,12 @@ import { CreateReleaseForm, PublishReleaseForm } from './dto/release.dto'
 import { Pager } from '../base/pager'
 import { ReleasesSerializer } from './serializer/releases.serializer'
 import { ReleaseSerializer } from './serializer/release.serializer'
-import { ApiUseTags, ApiOperation, ApiResponse, ApiImplicitQuery } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
-import {
-  API_RESPONSE_401,
-  API_RESPONSE_200,
-  API_RESPONSE_201,
-  API_QUERY_PAGE,
-  API_QUERY_PER,
-} from '../constant/swagger.constant'
+import { RESPONSE_401, RESPONSE_200, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../constant/swagger.constant'
 
-@ApiResponse(API_RESPONSE_401)
-@ApiUseTags('リリース予定')
+@ApiResponse(RESPONSE_401)
+@ApiTags('リリース予定')
 @Controller('releases')
 export class ReleasesController extends BaseController {
   constructor(private readonly releasesService: ReleasesService) {
@@ -23,59 +17,62 @@ export class ReleasesController extends BaseController {
   }
 
   @ApiOperation({
-    title: 'リリース予定の作成',
+    summary: 'リリース予定の作成',
     description:
       '新たなリリースのためコンテンツ編集作業を開始します。前のリリースのコンテンツデータが新しいリリースのため複製されるため、それらを更新します',
   })
-  @ApiResponse(API_RESPONSE_201)
+  @ApiResponse(RESPONSE_201)
   @Post()
   async create(@Body() payload: CreateReleaseForm): Promise<ReleaseSerializer> {
     const release = await this.releasesService.create(payload.release)
     return new ReleaseSerializer().serialize({ release })
   }
 
-  @ApiOperation({ title: 'リリースの実施', description: 'リリース日を設定し、コンテンツを一般公開する' })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiOperation({
+    summary: 'リリースの実施',
+    description: 'リリース日を設定し、コンテンツを一般公開する',
+  })
+  @ApiResponse(RESPONSE_200)
   @Patch(':id/publish')
   async publish(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() payload: PublishReleaseForm,
+    @Body() payload: PublishReleaseForm
   ): Promise<ReleaseSerializer> {
     const release = await this.releasesService.publish(id, payload.release)
     return new ReleaseSerializer().serialize({ release })
   }
 
   @ApiOperation({
-    title: '限定リリースの実施',
+    summary: '限定リリースの実施',
     description: 'コンテンツを限定公開する. QueryStringにtokenの指定したユーザーのみ公開される',
   })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiResponse(RESPONSE_200)
   @Patch(':id/publish-limitation')
   async publishLimitation(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
     const release = await this.releasesService.publishLimitation(id)
     return new ReleaseSerializer().serialize({ release })
   }
 
-  @ApiOperation({ title: 'リリース予定一覧' })
-  @ApiResponse({ ...API_RESPONSE_200, type: ReleasesSerializer })
-  @ApiImplicitQuery({ name: 'scopeId', required: false })
-  @ApiImplicitQuery(API_QUERY_PER)
-  @ApiImplicitQuery(API_QUERY_PAGE)
+  @ApiOperation({ summary: 'リリース予定一覧' })
+  @ApiResponse({ ...RESPONSE_200, type: ReleasesSerializer })
+  @ApiQuery({ name: 'scopeId', required: false })
+  @ApiQuery(QUERY_PER)
+  @ApiQuery(QUERY_PAGE)
   @Get()
   async findAll(
     @Query('scopeId') scopeId?: number,
     @Query('page') page?: number,
-    @Query('per') per?: number,
+    @Query('per') per?: number
   ): Promise<ReleasesSerializer> {
     const [releases, pager] = await this.releasesService.searchWithPager(new Pager({ page, per }), {
-      where: scopeId && { scopeId: scopeId },
+      where: scopeId ? { scopeId: scopeId } : {},
       order: { releasedAt: 'DESC' },
     })
     return new ReleasesSerializer().serialize({ releases, pager })
   }
 
-  @ApiOperation({ title: 'リリース予定' })
-  @ApiResponse({ ...API_RESPONSE_200, type: ReleaseSerializer })
+  @ApiOperation({ summary: 'リリース予定' })
+  @ApiResponse({ ...RESPONSE_200, type: ReleaseSerializer })
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
     const release = await this.releasesService.fetch(id)

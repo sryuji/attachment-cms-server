@@ -5,19 +5,19 @@ import { Pager } from '../base/pager'
 import { ScopesSerializer } from './serializer/scopes.serializer'
 import { ScopeSerializer } from './serializer/scope.serializer'
 import { Like } from 'typeorm'
-import { ApiUseTags, ApiOperation, ApiResponse, ApiImplicitQuery } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import {
-  API_RESPONSE_401,
-  API_RESPONSE_200,
-  API_RESPONSE_204,
-  API_RESPONSE_201,
-  API_QUERY_PAGE,
-  API_QUERY_PER,
+  RESPONSE_401,
+  RESPONSE_200,
+  RESPONSE_204,
+  RESPONSE_201,
+  QUERY_PAGE,
+  QUERY_PER,
 } from '../constant/swagger.constant'
 
-@ApiResponse(API_RESPONSE_401)
-@ApiUseTags('コンテンツ管理対象')
+@ApiResponse(RESPONSE_401)
+@ApiTags('コンテンツ管理対象')
 @Controller('scopes') // scopes.:format?で.jsonありもOKになる
 export class ScopesController extends BaseController {
   constructor(private readonly scopesService: ScopesService) {
@@ -25,11 +25,11 @@ export class ScopesController extends BaseController {
   }
 
   @ApiOperation({
-    title: 'コンテンツ管理対象の登録',
+    summary: 'コンテンツ管理対象の登録',
     description:
       '管理対象ドメインを設定し、そのドメインのコンテンツ管理を開始します。 同じドメインのScopeを作成する事はでき、その場合はScope毎にリリースと権限は分離されます',
   })
-  @ApiResponse(API_RESPONSE_201)
+  @ApiResponse(RESPONSE_201)
   @Post()
   async create(@Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.create(payload.scope)
@@ -38,8 +38,8 @@ export class ScopesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'コンテンツ管理対象の更新' })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiOperation({ summary: 'コンテンツ管理対象の更新' })
+  @ApiResponse(RESPONSE_200)
   @Patch(':id')
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.update(id, payload.scope)
@@ -48,30 +48,38 @@ export class ScopesController extends BaseController {
     })
   }
 
-  @ApiOperation({ title: 'コンテンツ管理対象の削除', description: 'Deprecated. 退会でもデータは削除しない' })
-  @ApiResponse(API_RESPONSE_204)
+  @ApiOperation({
+    summary: 'コンテンツ管理対象の削除',
+    description: 'Deprecated. 退会でもデータは削除しない',
+  })
+  @ApiResponse(RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.scopesService.delete(id)
   }
 
-  @ApiOperation({ title: 'コンテンツ管理対象一覧' })
-  @ApiResponse(API_RESPONSE_200)
-  @ApiImplicitQuery({ name: 'domain', description: 'ドメイン. 部分一致', required: false, type: String })
-  @ApiImplicitQuery(API_QUERY_PER)
-  @ApiImplicitQuery(API_QUERY_PAGE)
+  @ApiOperation({ summary: 'コンテンツ管理対象一覧' })
+  @ApiResponse(RESPONSE_200)
+  @ApiQuery({
+    name: 'domain',
+    description: 'ドメイン. 部分一致',
+    required: false,
+    type: String,
+  })
+  @ApiQuery(QUERY_PER)
+  @ApiQuery(QUERY_PAGE)
   @Get()
   async findAll(
     @Query('page') page?: number,
     @Query('per') per?: number,
-    @Query('domain') domain?: string,
+    @Query('domain') domain?: string
   ): Promise<ScopesSerializer> {
     const pager = new Pager({ page, per })
     const [scopes, totalCount] = await this.scopesService
       .createQueryBuilder('scope')
       .leftJoinAndSelect('scope.defaultRelease', 'defaultRelease')
-      .where(domain && [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }])
+      .where(domain ? [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }] : {})
       .orderBy('defaultRelease.releasedAt', 'DESC')
       .skip(pager.offset)
       .take(pager.per)
@@ -80,8 +88,8 @@ export class ScopesController extends BaseController {
     return new ScopesSerializer().serialize({ scopes, pager })
   }
 
-  @ApiOperation({ title: 'コンテンツ管理対象' })
-  @ApiResponse(API_RESPONSE_200)
+  @ApiOperation({ summary: 'コンテンツ管理対象' })
+  @ApiResponse(RESPONSE_200)
   @Get(':id')
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ScopeSerializer> {
     const record = await this.scopesService.fetch(id)

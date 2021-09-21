@@ -3,40 +3,30 @@ module.exports = {
   env: {
     node: true,
     jest: true,
-    es6: true,
+    es2020: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2017,
+    ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
       modules: true,
     },
   },
-  // 他のextendsされたルールを上書いて無効化するので順番に注意
-  extends: ['eslint:recommended', 'plugin:prettier/recommended', 'typescript/prettier'],
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   // add your custom rules here
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'require-jsdoc': 'off',
-    '@typescript-eslint/member-delimiter-style': 'off',
     // importしたものを型宣言だけに利用してる場合に許可されるように設定
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: false }],
-    'prettier/prettier': [
-      'error',
-      // eslint側にrule反映するため, prittierrcでなくこちらに記載
-      {
-        trailingComma: 'all',
-        semi: false,
-        singleQuote: true,
-        tabWidth: 2,
-        useTabs: false,
-        printWidth: 120,
-      },
-      { usePrettierrc: false },
-    ],
+    // 以降、推奨設定があまりに厳しいため緩和
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    // '@typescript-eslint/no-explicit-any': 'off',
+    // '@typescript-eslint/no-empty-interface': 'off',
+    // '@typescript-eslint/no-empty-function': 'off',
   },
 }

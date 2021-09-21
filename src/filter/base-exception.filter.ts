@@ -22,7 +22,7 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
     host: ArgumentsHost,
     status: number,
     message: string | string[],
-    options: object | undefined,
+    options: Record<string, unknown> | undefined
   ) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
@@ -35,8 +35,8 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 
   protected notify(exception: Error, level = 'error') {
     if (this.config.isDev || this.config.isTest) {
-      Logger.error(exception.message, exception.stack, null, false)
+      Logger.error(exception.message, exception.stack)
     }
-    // Sentryへ通知
+    // TODO: Sentryへ通知
   }
 }

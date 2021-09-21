@@ -1,6 +1,7 @@
 import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, BaseEntity } from 'typeorm'
 import { Exclude } from 'class-transformer'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export abstract class ApplicationEntity<E> extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
@@ -13,7 +14,7 @@ export abstract class ApplicationEntity<E> extends BaseEntity {
   @Exclude({ toPlainOnly: true })
   updatedAt: Date
 
-  constructor(attributes?: any) {
+  constructor(attributes?: unknown) {
     super()
     // [ATTENTION] assignされるpropery、もしくは、setterが存在すること. 無いと、propertyが注入される
     // class-transformer#plainToClassを使うか検討したが、@Exposeされた値がassignされないので見送り

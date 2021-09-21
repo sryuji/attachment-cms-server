@@ -6,7 +6,7 @@ import { ScopesService } from 'src/app/scopes/scopes.service'
 export default class SampleCommand extends BaseCommand {
   async perform(): Promise<void> {
     const scopes = await Scope.find()
-    Logger.log(scopes.map(r => r.name))
+    Logger.log(scopes.map((r) => r.name))
 
     const service: ScopesService = this.app.get(ScopesService)
     const scopes2 = await service.search({ take: 1 })

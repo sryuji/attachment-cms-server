@@ -15,11 +15,13 @@ export abstract class BaseCommand {
     this.terminate()
   }
 
-  public abstract async perform(): Promise<any>
+  public abstract perform(): Promise<void>
 
   protected async bootstrap() {
     if (this.app) return
     this.app = await NestFactory.create(AppModule)
   }
-  protected async terminate() {}
+  protected async terminate() {
+    return
+  }
 }
