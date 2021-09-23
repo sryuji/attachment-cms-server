@@ -13,6 +13,7 @@ import { FindRelationsNotFoundExceptionFilter } from '../filter/find-relations-n
 import { ValidationsErrorFilter } from '../filter/validations-error.filter'
 import { TimeoutErrorFilter } from '../filter/timeout-error.filter'
 import { ContentHistoriesModule } from './content-histories/content-histories.module'
+import { ContentsModule } from './contents/contents.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ContentHistoriesModule } from './content-histories/content-histories.mo
     }),
     ScopesModule,
     ContentHistoriesModule,
+    ContentsModule,
   ],
   controllers: [AppController],
   providers: [

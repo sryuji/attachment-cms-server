@@ -30,7 +30,8 @@ export class ReleasesService extends BaseService<Release> {
     }
     return this.transaction(async (manager) => {
       const record = await super.create(dto)
-      await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id)
+      if (record.sourceReleaseId)
+        await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id)
       return record
     })
   }

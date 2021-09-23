@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, QueryFailedError } from 'typeorm'
+import { Repository } from 'typeorm'
 import { Scope } from '../../db/entity/scope.entity'
 import { BaseService } from '../base/base.service'
 import { ReleaseRepository } from './repository/release.repository'
