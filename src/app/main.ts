@@ -6,12 +6,22 @@ import { LoggingInterceptor } from '../interceptor/logging.interceptor'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import packageJson = require('../../package.json')
 import cookieParser = require('cookie-parser')
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 
 const isProduction = process.env.NODE_ENV === 'production'
+
+// https://github.com/expressjs/cors#configuration-options
+const corsOptions: CorsOptions = {
+  origin: (() => {
+    return isProduction ? [''] : ['http://localhost:3001']
+  })(),
+  credentials: true,
+}
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule)
   app.use(cookieParser())
+  app.enableCors(corsOptions)
   app.useGlobalPipes(
     new ValidationPipe({
       // NOTE: DTOでvalidation定義されていないvalueは除去される. validation定義が不要なfieldには、@Allowをつける事でwhitelistの一員と明示できる
