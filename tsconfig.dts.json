@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.build.json",
+  "include": [
+    "src/db/entity/**/*.entity.ts",
+    "src/app/**/*.dto.ts",
+    "src/app/**/*.form.ts",
+    "src/app/**/*.serializer.ts"
+  ],
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declarationDir": "dist/types/src",
+    "outDir": "dist/types/src"
+  }
+}
