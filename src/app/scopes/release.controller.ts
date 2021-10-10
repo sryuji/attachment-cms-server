@@ -7,8 +7,8 @@ import { ReleaseSerializer } from './serializer/release.serializer'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import { RESPONSE_200, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
-import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
-import { Release } from 'src/db/entity/release.entity'
+import { ScopeGetter } from '../../decorator/scope-getter.decorator'
+import { Release } from '../../db/entity/release.entity'
 
 @ApiTags('リリース予定')
 @Controller('releases')

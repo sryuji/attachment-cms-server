@@ -1,5 +1,5 @@
-import { AccountScope } from 'src/db/entity/account-scope.entity'
-import { Account } from 'src/db/entity/account.entity'
+import { AccountScope } from '../../../db/entity/account-scope.entity'
+import { Account } from '../../../db/entity/account.entity'
 
 export class AuthUserDto {
   // NOTE: accountId. JWTではIDトークンの対象ユーザーIDが格納される

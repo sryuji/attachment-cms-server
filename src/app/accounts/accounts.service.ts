@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { BaseService } from '../base/base.service'
 import { Account } from '../..//db/entity/account.entity'
-import { AccountScope } from 'src/db/entity/account-scope.entity'
+import { AccountScope } from '../../db/entity/account-scope.entity'
 
 @Injectable()
 export class AccountsService extends BaseService<Account> {

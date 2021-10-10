@@ -1,8 +1,8 @@
 import { UseInterceptors, ClassSerializerInterceptor, SerializeOptions, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 import { RESPONSE_422, RESPONSE_400, RESPONSE_403, RESPONSE_401 } from '../../constant/swagger.constant'
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard'
-import { AccountScopeGuard } from 'src/guard/account-scope.guard'
+import { AccountScopeGuard } from '../../guard/account-scope.guard'
+import { JwtAuthGuard } from '../../guard/jwt-auth.guard'
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ excludePrefixes: ['_'] })

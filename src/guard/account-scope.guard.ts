@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { ModuleRef, Reflector } from '@nestjs/core'
 import { Request } from 'express'
-import { AccountScopesService } from 'src/app/account-scopes/account-scopes.service'
-import { AuthUserDto } from 'src/app/auth/dto/auth-user.dto'
-import { SCOPE_GETTER_KEY, ScopeGetterHandler } from 'src/decorator/scope-getter.decorator'
+import { AccountScopesService } from '../app/account-scopes/account-scopes.service'
+import { AuthUserDto } from '../app/auth/dto/auth-user.dto'
+import { ScopeGetterHandler, SCOPE_GETTER_KEY } from '../decorator/scope-getter.decorator'
 
 /**
  * アカウントのScope操作の認可

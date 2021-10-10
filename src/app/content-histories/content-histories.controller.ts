@@ -8,8 +8,8 @@ import { ContentHistorySerializer } from './serializer/content-history.serialize
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
-import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
-import { ContentHistory } from 'src/db/entity/content-history.entity'
+import { ScopeGetter } from '../../decorator/scope-getter.decorator'
+import { ContentHistory } from '../../db/entity/content-history.entity'
 
 @ApiTags('コンテンツ履歴')
 @Controller('content-histories')

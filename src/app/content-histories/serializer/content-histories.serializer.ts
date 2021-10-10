@@ -2,7 +2,7 @@
 import { Type } from 'class-transformer'
 import { Pager } from '../../base/pager'
 import { ContentHistory } from '../../../db/entity/content-history.entity'
-import { CollectionSerializer } from 'src/app/base/collection.serializer'
+import { CollectionSerializer } from '../../base/collection.serializer'
 
 export class ContentHistoriesSerializer extends CollectionSerializer {
   @Type(() => ContentHistory)

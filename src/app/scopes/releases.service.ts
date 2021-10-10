@@ -6,7 +6,7 @@ import { Scope } from '../../db/entity/scope.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { ContentHistoriesService } from '../content-histories/content-histories.service'
 import { ReleaseRepository } from './repository/release.repository'
-import { generateUUIDv4 } from 'src/util/math'
+import { generateUUIDv4 } from '../../util/math'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {

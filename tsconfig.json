@@ -9,7 +9,9 @@
     "target": "es2020",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    // HACK: baseUrlを使うとimportで絶対パス指定ができるが、d.tsの自動生成でパスが正常に生成できない. pathsも没
+    // "baseUrl": "./",
+
     // additional settings
     "noImplicitAny": true, // any型禁止
     "noImplicitThis": true, // 型なしthis禁止. class内は問題なし

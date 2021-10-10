@@ -12,9 +12,9 @@ import {
 import { AuthGuard } from '@nestjs/passport'
 import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
-import { ConfigService } from 'src/config/config.service'
-import { RESPONSE_401 } from 'src/constant/swagger.constant'
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard'
+import { ConfigService } from '../../config/config.service'
+import { RESPONSE_401 } from '../../constant/swagger.constant'
+import { JwtAuthGuard } from '../../guard/jwt-auth.guard'
 import { AuthService, REFRESH_TOKEN_COOKIE_KEY } from './auth.service'
 
 @Controller('auth')

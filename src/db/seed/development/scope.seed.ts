@@ -1,5 +1,5 @@
+import { Scope } from '../../entity/scope.entity'
 import { BaseSeed } from '../base.seed'
-import { Scope } from 'src/db/entity/scope.entity'
 
 export default class ScopeSeed extends BaseSeed {
   async perform(): Promise<void> {

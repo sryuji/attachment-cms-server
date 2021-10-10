@@ -8,9 +8,9 @@ import { Like } from 'typeorm'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
-import { AuthUser } from 'src/decorator/auth-user.decorator'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
-import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
+import { ScopeGetter } from '../../decorator/scope-getter.decorator'
+import { AuthUser } from '../../decorator/auth-user.decorator'
 
 @ApiTags('コンテンツ管理対象')
 @Controller('scopes')

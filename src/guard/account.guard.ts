@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Request } from 'express'
-import { AuthUserDto } from 'src/app/auth/dto/auth-user.dto'
+import { AuthUserDto } from '../app/auth/dto/auth-user.dto'
 
 /**
  * アカウントデータに対する操作の認可

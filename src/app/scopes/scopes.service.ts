@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { AccountScope } from 'src/db/entity/account-scope.entity'
 import { Repository } from 'typeorm'
+import { AccountScope } from '../../db/entity/account-scope.entity'
 import { Scope } from '../../db/entity/scope.entity'
 import { BaseService } from '../base/base.service'
 import { ReleaseRepository } from './repository/release.repository'

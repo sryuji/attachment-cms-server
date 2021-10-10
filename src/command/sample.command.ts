@@ -1,7 +1,7 @@
 import { BaseCommand } from './base.command'
-import { Scope } from 'src/db/entity/scope.entity'
 import { Logger } from '@nestjs/common'
-import { ScopesService } from 'src/app/scopes/scopes.service'
+import { Scope } from '../db/entity/scope.entity'
+import { ScopesService } from '../app/scopes/scopes.service'
 
 export default class SampleCommand extends BaseCommand {
   async perform(): Promise<void> {

@@ -1,6 +1,6 @@
+import { BaseSeed } from '../db/seed/base.seed'
+import { loadClass } from '../util/file'
 import { BaseCommand } from './base.command'
-import { loadClass } from 'src/util/file'
-import { BaseSeed } from 'src/db/seed/base.seed'
 const env: string = process.env.NODE_ENV || 'development'
 
 export default class SeedRunnerCommand extends BaseCommand {

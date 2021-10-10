@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
-import { ConfigService } from 'src/config/config.service'
-import { Account } from 'src/db/entity/account.entity'
-import { generateUUIDv4 } from 'src/util/math'
+import { ConfigService } from '../../config/config.service'
+import { Account } from '../../db/entity/account.entity'
+import { generateUUIDv4 } from '../../util/math'
 import { AuthUserDto } from './dto/auth-user.dto'
 
 export const REFRESH_TOKEN_COOKIE_KEY = 'RefreshToken'

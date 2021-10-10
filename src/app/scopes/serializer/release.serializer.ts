@@ -3,7 +3,7 @@ import { Release } from '../../../db/entity/release.entity'
 import { ApiResponseProperty } from '@nestjs/swagger'
 import { BaseSerializer } from '../../base/base.serializer'
 import { Expose, Type } from 'class-transformer'
-import { Scope } from 'src/db/entity/scope.entity'
+import { Scope } from '../../../db/entity/scope.entity'
 
 class ExposedRelease extends Release {
   @Expose({ name: 'limitedReleaseToken' })

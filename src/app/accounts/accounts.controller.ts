@@ -5,7 +5,7 @@ import { RESPONSE_200, RESPONSE_204 } from '../../constant/swagger.constant'
 import { AccountsService } from './accounts.service'
 import { AccountSerializer } from './serializer/account.serializer'
 import { AccountForm } from './dto/account.form'
-import { AccountGuard } from 'src/guard/account.guard'
+import { AccountGuard } from '../../guard/account.guard'
 
 @ApiTags('アカウント')
 @Controller('accounts')
