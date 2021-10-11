@@ -5,23 +5,25 @@ import { ValidationsError } from '../exception/validations.error'
 import { LoggingInterceptor } from '../interceptor/logging.interceptor'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import packageJson = require('../../package.json')
-const env: string = process.env.NODE_ENV || 'development'
+import cookieParser = require('cookie-parser')
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule)
+  app.use(cookieParser())
   app.useGlobalPipes(
     new ValidationPipe({
-      // DTOでvalidation定義されていないvalueは除去される. validation定義不要な場合、@Allowをつける
-      // これがないと許可されてないpropもdto -> entityとbindできてしまう
+      // NOTE: DTOでvalidation定義されていないvalueは除去される. validation定義が不要なfieldには、@Allowをつける事でwhitelistの一員と明示できる
+      // `whitelist: true``で@Allowで許可する方式でないと、未許可のobject propertyがentityにbindされてしまうのでこの設定が必要
       whitelist: true,
-      // @Bodyなどvalidation対象がInjectされる時、Dtoにconvertする. falseだとobjectのまま.
-      // propetyは@Typeで個別にconvert指示が必要
+      // NOTE: @Bodyなどvalidation対象がInjectされる時、Dtoにconvertする. falseだとobjectのまま. なお、formのfieldには@Typeを指定する事でjson object -> dtoへのconvertが行われる
       transform: true,
       exceptionFactory: (errors) => new ValidationsError(errors),
     })
   )
   app.useGlobalInterceptors(new LoggingInterceptor()) //, new TimeoutInterceptor(5000)
-  if (env !== 'production') setupSwagger(app)
+  if (!isProduction) setupSwagger(app)
   await app.listen(3000)
 }
 async function setupSwagger(app: INestApplication) {
@@ -30,8 +32,13 @@ async function setupSwagger(app: INestApplication) {
     .setDescription('attachment CMS API description')
     .setVersion(packageJson.version)
     .addTag('CMS API', 'コンテンツ管理用API')
+    .addBearerAuth({
+      type: 'apiKey',
+      description: '本番環境以外では、valueに "test" と入力する事でJWT認証をスキップできます',
+    })
+    .addOAuth2()
     .build()
   const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup('api-docs', app, document) // api-docs-jsonでjson schema donwload
+  SwaggerModule.setup('api-docs', app, document)
 }
 bootstrap()

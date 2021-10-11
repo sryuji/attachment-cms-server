@@ -4,6 +4,7 @@ import { Release } from './release.entity'
 import { Expose, Exclude } from 'class-transformer'
 import { IsNumber, IsOptional } from 'class-validator'
 import { generateUUIDv4 } from '../../util/math'
+import { AccountScope } from './account-scope.entity'
 
 @Unique(['token'])
 @Entity()
@@ -51,4 +52,7 @@ export class Scope extends ApplicationEntity<Scope> {
   generateToken(): void {
     this.token = generateUUIDv4()
   }
+
+  @OneToMany((type) => AccountScope, (r) => r.account)
+  accountScopes: AccountScope[]
 }

@@ -7,16 +7,10 @@ import { ContentHistoriesSerializer } from './serializer/content-histories.seria
 import { ContentHistorySerializer } from './serializer/content-history.serializer'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
-import {
-  RESPONSE_401,
-  RESPONSE_200,
-  RESPONSE_204,
-  RESPONSE_201,
-  QUERY_PAGE,
-  QUERY_PER,
-} from '../constant/swagger.constant'
+import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
+import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
+import { ContentHistory } from 'src/db/entity/content-history.entity'
 
-@ApiResponse(RESPONSE_401)
 @ApiTags('コンテンツ履歴')
 @Controller('content-histories')
 export class ContentHistoriesController extends BaseController {
@@ -30,6 +24,7 @@ export class ContentHistoriesController extends BaseController {
   })
   @ApiResponse(RESPONSE_201)
   @Post()
+  @ScopeGetter(({ body }) => body.contentHistory.scopeId)
   async create(@Body() payload: CreateContentHistoryForm): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.create(payload.contentHistory)
     return new ContentHistorySerializer().serialize({
@@ -40,6 +35,7 @@ export class ContentHistoriesController extends BaseController {
   @ApiOperation({ summary: 'コンテンツの更新' })
   @ApiResponse(RESPONSE_200)
   @Patch(':id')
+  @ScopeGetter(({ body }) => body.contentHistory.scopeId)
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() payload: UpdateContentHistoryForm
@@ -57,6 +53,7 @@ export class ContentHistoriesController extends BaseController {
   @ApiResponse(RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
+  @ScopeGetter(({ params }) => ContentHistory.findOne(params.id).then((r: ContentHistory) => r && r.scopeId))
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.contentHistoriesService.delete(id)
   }
@@ -69,6 +66,9 @@ export class ContentHistoriesController extends BaseController {
   @ApiQuery({ name: 'releaseId', description: 'リリースID' })
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
+  @ScopeGetter(({ query }) =>
+    ContentHistory.findOne({ where: { releaseId: query.releaseId } }).then((r) => r && r.scopeId)
+  )
   @Get()
   async findAll(
     @Query('releaseId') releaseId: number,
@@ -88,6 +88,7 @@ export class ContentHistoriesController extends BaseController {
   @ApiOperation({ summary: 'コンテンツ' })
   @ApiResponse(RESPONSE_200)
   @Get(':id')
+  @ScopeGetter(({ params }) => ContentHistory.findOne(params.id).then((r: ContentHistory) => r && r.scopeId))
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.fetch(id)
     return new ContentHistorySerializer().serialize({ contentHistory: record })

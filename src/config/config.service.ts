@@ -15,8 +15,10 @@ export class ConfigService {
     this.numberRegExp = new RegExp(/^[-+]?[0-9]+(\.[0-9]+)?$/)
   }
 
-  getString(key: string): string {
-    return this.envConfig[key]
+  getString(key: string, required?: boolean): string {
+    const v = this.envConfig[key]
+    if (!v && required) throw new Error(`Configuration Error. ${key} is empty.`)
+    return v
   }
 
   getBoolean(key: string): boolean {
@@ -35,5 +37,9 @@ export class ConfigService {
 
   get isTest(): boolean {
     return Boolean(this.envConfig.NODE_ENV === 'test')
+  }
+
+  get isProduction(): boolean {
+    return Boolean(this.envConfig.NODE_ENV === 'production')
   }
 }

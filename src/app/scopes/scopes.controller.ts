@@ -7,18 +7,13 @@ import { ScopeSerializer } from './serializer/scope.serializer'
 import { Like } from 'typeorm'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
-import {
-  RESPONSE_401,
-  RESPONSE_200,
-  RESPONSE_204,
-  RESPONSE_201,
-  QUERY_PAGE,
-  QUERY_PER,
-} from '../constant/swagger.constant'
+import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
+import { AuthUser } from 'src/decorator/auth-user.decorator'
+import { AuthUserDto } from '../auth/dto/auth-user.dto'
+import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
 
-@ApiResponse(RESPONSE_401)
 @ApiTags('コンテンツ管理対象')
-@Controller('scopes') // scopes.:format?で.jsonありもOKになる
+@Controller('scopes')
 export class ScopesController extends BaseController {
   constructor(private readonly scopesService: ScopesService) {
     super()
@@ -31,8 +26,8 @@ export class ScopesController extends BaseController {
   })
   @ApiResponse(RESPONSE_201)
   @Post()
-  async create(@Body() payload: ScopeForm): Promise<ScopeSerializer> {
-    const record = await this.scopesService.create(payload.scope)
+  async create(@Body() payload: ScopeForm, @AuthUser() user: AuthUserDto): Promise<ScopeSerializer> {
+    const record = await this.scopesService.createWithAccountId(payload.scope, user.sub)
     return new ScopeSerializer().serialize({
       scope: record,
     })
@@ -41,6 +36,7 @@ export class ScopesController extends BaseController {
   @ApiOperation({ summary: 'コンテンツ管理対象の更新' })
   @ApiResponse(RESPONSE_200)
   @Patch(':id')
+  @ScopeGetter(({ params }) => params.id)
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.update(id, payload.scope)
     return new ScopeSerializer().serialize({
@@ -55,6 +51,7 @@ export class ScopesController extends BaseController {
   @ApiResponse(RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
+  @ScopeGetter(({ params }) => params.id)
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.scopesService.delete(id)
   }
@@ -71,14 +68,17 @@ export class ScopesController extends BaseController {
   @ApiQuery(QUERY_PAGE)
   @Get()
   async findAll(
+    @AuthUser() user: AuthUserDto,
     @Query('page') page?: number,
     @Query('per') per?: number,
     @Query('domain') domain?: string
   ): Promise<ScopesSerializer> {
     const pager = new Pager({ page, per })
+    const scopeIds = user.accountScopes.map((r) => r.scopeId)
     const [scopes, totalCount] = await this.scopesService
       .createQueryBuilder('scope')
       .leftJoinAndSelect('scope.defaultRelease', 'defaultRelease')
+      .where({ id: scopeIds })
       .where(domain ? [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }] : {})
       .orderBy('defaultRelease.releasedAt', 'DESC')
       .skip(pager.offset)
@@ -91,6 +91,7 @@ export class ScopesController extends BaseController {
   @ApiOperation({ summary: 'コンテンツ管理対象' })
   @ApiResponse(RESPONSE_200)
   @Get(':id')
+  @ScopeGetter(({ params }) => params.id)
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ScopeSerializer> {
     const record = await this.scopesService.fetch(id)
     return new ScopeSerializer().serialize({ scope: record })

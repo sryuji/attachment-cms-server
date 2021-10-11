@@ -14,6 +14,9 @@ import { ValidationsErrorFilter } from '../filter/validations-error.filter'
 import { TimeoutErrorFilter } from '../filter/timeout-error.filter'
 import { ContentHistoriesModule } from './content-histories/content-histories.module'
 import { ContentsModule } from './contents/contents.module'
+import { AuthModule } from './auth/auth.module'
+import { AccountScopesModule } from './account-scopes/account-scopes.module'
+import { AccountModule } from './accounts/accounts.module'
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { ContentsModule } from './contents/contents.module'
     ScopesModule,
     ContentHistoriesModule,
     ContentsModule,
+    AuthModule,
+    AccountModule,
+    AccountScopesModule,
   ],
   controllers: [AppController],
   providers: [

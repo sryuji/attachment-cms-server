@@ -1,9 +1,14 @@
-import { IsNotEmpty, ValidateNested, Allow } from 'class-validator'
+import { IsNotEmpty, ValidateNested, Allow, IsInt } from 'class-validator'
 import { BaseDto } from '../../base/base.dto'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
 export class UpdateContentHistoryDto extends BaseDto {
+  @ApiProperty({ description: 'Scope ID', example: 1 })
+  @IsNotEmpty()
+  @IsInt()
+  readonly scopeId: number
+
   @ApiProperty({
     description: 'コンテンツの存在するパス',
     example: '/api-docs',

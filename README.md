@@ -14,6 +14,8 @@ $ yarn run start:dev
 
 `http://localhost:3000/api-docs/` で API ドキュメントの確認できます。
 
+また、`http://localhost:3000/api-docs-json/`で json schema をダウンロードできます。
+
 ## Run
 
 ```bash
@@ -95,7 +97,7 @@ $ yarn run orm:migrate
 ```
 
 ただし、`orm:generate`では外部キーなど巧く考慮されてないケースもあるため、
-初回リリースを過ぎたら、下記の migration API で逐次書いていくのが望ましい
+初回リリースを過ぎたら、下記の migration API で index など含め不足分の対応は必要となる
 
 [migration API](https://typeorm.io/#/migrations/using-migration-api-to-write-migrations)
 
@@ -104,15 +106,55 @@ $ yarn run orm:migrate
 - eslint
 - prettier
 
-### 自動チェックが難しいチェックポイント
+## Review point
 
-- `await` 漏れはないか？
-- `transaction`の範囲の間違いはないか？
-- entity に Null/Unique Constraint の漏れはないか？
+- entity に Null/Unique Constraint の設定漏れがないか？
 - response でさらしては駄目な値がさらされてはないか?
-  - controller の return 時に instance 化されている値は、`class-transformer`で`@Expose`/`@Exclude`される
-  - そのため、`lazy` load で後から取得される値については、class-transformer の処理がされないので注意
-    - 故に子 entity を事前取得し、`BaseSerializer.serializer`時に set する構成にしている
-  - また、instance でなく object として渡した値も`class-transformer`で処理されない
-- form で受け取っては駄目な値を受け取っていないか？
-  - whitelist の機能でしない限り強制 Bind できないようにはされている
+
+## Case Study
+
+### entity で特定の値を response しない
+
+対象となる Entity に`@Exclude`を指定する事で Serialize 対象外とできる
+
+```ts
+  @Column({ length: 255 })
+  @Exclude()
+  token: string
+```
+
+### `@Exclude` されている値を response する
+
+対象となる Entity を `extends`した class を用意し、この class に値をさらす method を定義し、
+`@Expose`で property name を指定すれば良い
+
+```ts
+export class ExposedScope extends Scope {
+  @Expose({ name: 'token' })
+  getToken(): string {
+    return this.token
+  }
+}
+```
+
+ただし、この class を利用させるために
+下記のように serialize method で個別に この class を利用した instance を再作成し、 field に assign する
+`ApplicationEntity#constructor`の機能で`new`時に値受け渡しを行っている
+
+```ts
+export class ScopeSerializer extends BaseSerializer {
+  @Type(() => ExposedScope)
+  scope: ExposedScope
+
+  public serialize({ scope }: { scope: Scope }): this {
+    this.scope = new ExposedScope(scope)
+    return this
+  }
+}
+```
+
+`class-transformer`による serialize 処理注意点
+
+- controller の return 時で instance 化されている値は`class-transformer`で処理される
+- そのため、`lazy` load で後から取得される値については、class-transformer の処理がされない
+- class が適用されていない object 型の property も処理対象にならない

@@ -1,17 +1,25 @@
-import { Controller, Get, Header, Query } from '@nestjs/common'
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Header,
+  Query,
+  SerializeOptions,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ContentsService } from './contents.service'
 import { ContentsSerializer } from './serializer/contents.serializer'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
-import { BaseController } from '../base/base.controller'
-import { RESPONSE_401, RESPONSE_200 } from '../constant/swagger.constant'
+import { RESPONSE_401, RESPONSE_200, RESPONSE_403 } from '../../constant/swagger.constant'
 
-@ApiResponse(RESPONSE_401)
 @ApiTags('リリース対象コンテンツ')
 @Controller('contents')
-export class ContentsController extends BaseController {
-  constructor(private readonly contentsService: ContentsService) {
-    super()
-  }
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ excludePrefixes: ['_'] })
+@ApiResponse(RESPONSE_401)
+@ApiResponse(RESPONSE_403)
+export class ContentsController {
+  constructor(private readonly contentsService: ContentsService) {}
 
   @ApiOperation({ summary: '限定リリースのコンテンツ' })
   @ApiResponse(RESPONSE_200)

@@ -16,15 +16,9 @@ export abstract class ApplicationEntity<E> extends BaseEntity {
 
   constructor(attributes?: unknown) {
     super()
-    // [ATTENTION] assignされるpropery、もしくは、setterが存在すること. 無いと、propertyが注入される
-    // class-transformer#plainToClassを使うか検討したが、@Exposeされた値がassignされないので見送り
-    // 厳密にやるには、property / setterのcheckが必要
     Object.assign(this, attributes)
   }
 
-  /**
-   * newで作ったばかりのid埋め込み時は、正しい判定できない
-   */
   isNew() {
     return !!this.createdAt
   }

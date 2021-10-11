@@ -6,9 +6,10 @@ import { ReleasesSerializer } from './serializer/releases.serializer'
 import { ReleaseSerializer } from './serializer/release.serializer'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
-import { RESPONSE_401, RESPONSE_200, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../constant/swagger.constant'
+import { RESPONSE_200, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
+import { ScopeGetter } from 'src/decorator/scope-getter.decorator'
+import { Release } from 'src/db/entity/release.entity'
 
-@ApiResponse(RESPONSE_401)
 @ApiTags('リリース予定')
 @Controller('releases')
 export class ReleasesController extends BaseController {
@@ -23,6 +24,7 @@ export class ReleasesController extends BaseController {
   })
   @ApiResponse(RESPONSE_201)
   @Post()
+  @ScopeGetter(({ body }) => body.release.scopeId)
   async create(@Body() payload: CreateReleaseForm): Promise<ReleaseSerializer> {
     const release = await this.releasesService.create(payload.release)
     return new ReleaseSerializer().serialize({ release })
@@ -34,6 +36,11 @@ export class ReleasesController extends BaseController {
   })
   @ApiResponse(RESPONSE_200)
   @Patch(':id/publish')
+  @ScopeGetter(({ params }) => {
+    return Release.findOne(params.id).then((r) => {
+      return r && r.scopeId
+    })
+  })
   async publish(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() payload: PublishReleaseForm
@@ -48,6 +55,11 @@ export class ReleasesController extends BaseController {
   })
   @ApiResponse(RESPONSE_200)
   @Patch(':id/publish-limitation')
+  @ScopeGetter(({ params }) => {
+    return Release.findOne(params.id).then((r) => {
+      return r && r.scopeId
+    })
+  })
   async publishLimitation(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
     const release = await this.releasesService.publishLimitation(id)
     return new ReleaseSerializer().serialize({ release })
@@ -74,6 +86,7 @@ export class ReleasesController extends BaseController {
   @ApiOperation({ summary: 'リリース予定' })
   @ApiResponse({ ...RESPONSE_200, type: ReleaseSerializer })
   @Get(':id')
+  @ScopeGetter(({ params }) => Release.findOne(params.id).then((r) => r && r.scopeId))
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
     const release = await this.releasesService.fetch(id)
     return await new ReleaseSerializer().serialize({

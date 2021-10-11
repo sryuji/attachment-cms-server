@@ -9,6 +9,11 @@ export class CreateContentHistoryDto extends BaseDto {
   @IsInt()
   readonly releaseId: number
 
+  @ApiProperty({ description: 'Scope ID', example: 1 })
+  @IsNotEmpty()
+  @IsInt()
+  readonly scopeId: number
+
   @ApiProperty({
     description: 'コンテンツの存在するパス',
     example: '/api-docs',

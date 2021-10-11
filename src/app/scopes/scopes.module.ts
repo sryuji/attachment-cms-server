@@ -7,9 +7,10 @@ import { ReleasesService } from './releases.service'
 import { ReleasesController } from './release.controller'
 import { ContentHistoriesModule } from '../content-histories/content-histories.module'
 import { ReleaseRepository } from './repository/release.repository'
+import { AccountScope } from 'src/db/entity/account-scope.entity'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Scope, ReleaseRepository]), ContentHistoriesModule],
+  imports: [TypeOrmModule.forFeature([Scope, AccountScope, ReleaseRepository]), ContentHistoriesModule],
   controllers: [ScopesController, ReleasesController],
   providers: [ScopesService, ReleasesService],
   exports: [ReleasesService],
