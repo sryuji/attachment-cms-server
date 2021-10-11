@@ -31,6 +31,21 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
       message: message,
       options: options,
     })
+    this.logResponse(response, message)
+  }
+
+  private logResponse(res: Response, errorMessage: string | string[]) {
+    const delay = Date.now() - res.locals.requestStartTime // NOTE: LoggerMiddlewareから引き継いでいる
+    const code = res.statusCode
+    errorMessage = Array.isArray(errorMessage) ? errorMessage.join('. ') : errorMessage
+    const message = `Response ${code} response. ${delay}ms. ${errorMessage}`
+    if (code && code < 400) {
+      Logger.log(message)
+    } else if (code && code < 500) {
+      Logger.warn(message)
+    } else {
+      Logger.error(message)
+    }
   }
 
   protected notify(exception: Error, level = 'error') {
