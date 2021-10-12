@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
 import { ConfigService } from '../../config/config.service'
+import { AccountScope } from '../../db/entity/account-scope.entity'
 import { Account } from '../../db/entity/account.entity'
 import { generateUUIDv4 } from '../../util/math'
 import { AuthUserDto } from './dto/auth-user.dto'
@@ -23,8 +24,7 @@ export class AuthService {
     if (!account) throw new UnauthorizedException()
 
     const authUser = new AuthUserDto(account)
-    const jwtAccessToken = this.jwtService.sign(authUser.toJSON())
-
+    const jwtAccessToken = await this.generateJwtAccessToken(authUser)
     return { jwtAccessToken }
   }
 
@@ -32,13 +32,18 @@ export class AuthService {
     const account = await Account.findOne(authUser.sub)
     if (!account) throw new UnauthorizedException()
 
-    const jwtAccessToken = this.jwtService.sign(authUser.toJSON())
+    const jwtAccessToken = await this.generateJwtAccessToken(authUser)
     const jwtRefreshToken = generateUUIDv4()
     account.jwtRefreshToken = jwtRefreshToken
     account.jwtRefreshTokenIssuedAt = new Date()
     account.save()
 
     return { jwtAccessToken, jwtRefreshToken }
+  }
+
+  private async generateJwtAccessToken(authUser: AuthUserDto) {
+    authUser.accountScopes = await AccountScope.find({ where: { accountId: authUser.sub } })
+    return this.jwtService.sign(authUser.toJSON())
   }
 
   async signOut(req: Request) {

@@ -10,7 +10,6 @@ import { JwtAuthGuard } from '../../guard/jwt-auth.guard'
 @ApiResponse(RESPONSE_401)
 @ApiResponse(RESPONSE_403)
 @ApiResponse(RESPONSE_422)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AccountScopeGuard)
 @ApiBearerAuth()
-@UseGuards(AccountScopeGuard)
 export abstract class BaseController {}
