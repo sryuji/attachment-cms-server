@@ -101,6 +101,23 @@ $ yarn run orm:migrate
 
 [migration API](https://typeorm.io/#/migrations/using-migration-api-to-write-migrations)
 
+## generate Types
+
+`dist/types/src`配下に web project で参照必要な d.ts ファイルを生成する
+
+```bash
+$ yarn buildDts
+```
+
+対象ファイルは、下記
+
+- serializer
+- entity
+- dto
+- form
+
+生成対象ファイルは、`tsconfig.dts.json`に定義されている
+
 ## Coding rules
 
 - eslint
