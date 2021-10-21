@@ -15,7 +15,7 @@ import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
 import { ConfigService } from '../../config/config.service'
 import { RESPONSE_401 } from '../../constant/swagger.constant'
-import { JwtAuthGuard } from '../../guard/jwt-auth.guard'
+import { JwtResolveGuard } from '../../guard/jwt-resolve.guard'
 import { AuthService, REFRESH_TOKEN_COOKIE_KEY } from './auth.service'
 
 @Controller('auth')
@@ -42,7 +42,7 @@ export class AuthController {
 
     const maxAge = this.configService.getNumber('JWT_SECRET_TOKEN_EXPIRATION_TIME') * 1000
     const secure = this.configService.isProduction
-    res.cookie(REFRESH_TOKEN_COOKIE_KEY, jwtRefreshToken, { maxAge, httpOnly: true, secure, path: '/auth/refresh' })
+    res.cookie(REFRESH_TOKEN_COOKIE_KEY, jwtRefreshToken, { maxAge, httpOnly: true, secure, path: '/auth' })
 
     const baseUrl = this.configService.getString('WEB_BASE_URL')
     res.redirect(`${baseUrl}/auth/callback`)
@@ -57,7 +57,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'ログアウト' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtResolveGuard)
   @Delete()
   async signOut(@Req() req: Request, @Res() res: Response) {
     await this.authService.signOut(req)
