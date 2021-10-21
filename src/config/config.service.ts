@@ -25,9 +25,12 @@ export class ConfigService {
     return this.envConfig[key] === 'true'
   }
 
-  getNumber(key: string): number {
+  getNumber(key: string, required?: boolean): number {
     const v = this.envConfig[key]
-    if (v === null || v === '') return null
+    if (v === null || v === '') {
+      if (required) throw new Error(`Configuration Error. ${key} is empty.`)
+      return null
+    }
     return Number(v)
   }
 

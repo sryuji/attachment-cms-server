@@ -51,8 +51,8 @@ export class AuthController {
   @Get('refresh')
   async refreshAccessToken(@Req() req: Request) {
     const jwtRefreshToken = req.cookies[REFRESH_TOKEN_COOKIE_KEY]
-    const { jwtAccessToken } = await this.authService.refreshAccessToken(jwtRefreshToken)
-    return { accessToken: jwtAccessToken }
+    const { jwtAccessToken, jwtAccessTokenMaxAge } = await this.authService.refreshAccessToken(jwtRefreshToken)
+    return { accessToken: jwtAccessToken, accessTokenMaxAge: jwtAccessTokenMaxAge }
   }
 
   @ApiOperation({ summary: 'ログアウト' })

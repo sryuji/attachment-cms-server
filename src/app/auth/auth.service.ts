@@ -25,7 +25,8 @@ export class AuthService {
 
     const authUser = new AuthUserDto(account)
     const jwtAccessToken = await this.generateJwtAccessToken(authUser)
-    return { jwtAccessToken }
+    const jwtAccessTokenMaxAge = this.configService.getNumber('JWT_ACCESS_TOKEN_EXPIRATION_TIME')
+    return { jwtAccessToken, jwtAccessTokenMaxAge }
   }
 
   async generateJwtToken(authUser: AuthUserDto) {
