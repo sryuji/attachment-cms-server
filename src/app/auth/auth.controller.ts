@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Req,
   Res,
   SerializeOptions,
@@ -61,6 +62,6 @@ export class AuthController {
   async signOut(@Req() req: Request, @Res() res: Response) {
     await this.authService.signOut(req)
     res.clearCookie(REFRESH_TOKEN_COOKIE_KEY)
-    return { accessToken: '' }
+    res.status(HttpStatus.OK).json({ accessToken: '' })
   }
 }

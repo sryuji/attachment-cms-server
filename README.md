@@ -175,3 +175,13 @@ export class ScopeSerializer extends BaseSerializer {
 - controller の return 時で instance 化されている値は`class-transformer`で処理される
 - そのため、`lazy` load で後から取得される値については、class-transformer の処理がされない
 - class が適用されていない object 型の property も処理対象にならない
+
+### Controller で`@Res() res`で response 取得している場合
+
+下記のように明示的に Response しないと、処理後に response されない
+
+```js
+res.status(HttpStatus.OK).json({})
+```
+
+https://docs.nestjs.com/controllers#library-specific-approach

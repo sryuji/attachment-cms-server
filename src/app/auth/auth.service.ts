@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   async signOut(req: Request) {
-    if (!req.user) throw new UnauthorizedException()
+    if (!req.user) return
     const payload = req.user as AuthUserDto
     const account = await Account.findOne(payload.sub)
     account.jwtRefreshToken = null
