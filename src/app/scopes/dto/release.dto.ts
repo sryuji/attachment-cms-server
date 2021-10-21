@@ -3,7 +3,16 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsNotEmpty, IsDate, IsInt, ValidateNested, IsOptional } from 'class-validator'
 import { Type } from 'class-transformer'
 
-export class ReleaseDto extends BaseDto {
+export class UpdateReleaseDto extends BaseDto {
+  @ApiPropertyOptional({
+    description: 'リリース名を自由記入',
+    example: null,
+  })
+  @IsOptional()
+  readonly name: string
+}
+
+export class CreateReleaseDto extends UpdateReleaseDto {
   @ApiProperty({ description: 'scope ID', example: 1 })
   @IsNotEmpty()
   @IsInt()
@@ -19,7 +28,7 @@ export class ReleaseDto extends BaseDto {
 }
 
 export class PublishReleaseDto extends BaseDto {
-  @ApiPropertyOptional({
+  @ApiProperty({
     default: null,
     description: 'リリース日',
     example: new Date(),
@@ -36,8 +45,15 @@ export class PublishReleaseDto extends BaseDto {
 export class CreateReleaseForm {
   @ApiProperty()
   @ValidateNested()
-  @Type(() => ReleaseDto)
-  release: ReleaseDto
+  @Type(() => CreateReleaseDto)
+  release: CreateReleaseDto
+}
+
+export class UpdateReleaseForm {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UpdateReleaseDto)
+  release: UpdateReleaseDto
 }
 
 export class PublishReleaseForm {

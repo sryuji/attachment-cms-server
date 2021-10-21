@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Query } from '@nestjs/common'
 import { ReleasesService } from './releases.service'
-import { CreateReleaseForm, PublishReleaseForm } from './dto/release.dto'
+import { CreateReleaseForm, PublishReleaseForm, UpdateReleaseForm } from './dto/release.dto'
 import { Pager } from '../base/pager'
 import { ReleasesSerializer } from './serializer/releases.serializer'
 import { ReleaseSerializer } from './serializer/release.serializer'
@@ -50,18 +50,17 @@ export class ReleasesController extends BaseController {
   }
 
   @ApiOperation({
-    summary: '限定リリースの実施',
-    description: 'コンテンツを限定公開する. QueryStringにtokenの指定したユーザーのみ公開される',
+    summary: 'リリース予定の更新',
+    description: 'リリース名を更新します',
   })
   @ApiResponse(RESPONSE_200)
-  @Patch(':id/publish-limitation')
-  @ScopeGetter(({ params }) => {
-    return Release.findOne(params.id).then((r) => {
-      return r && r.scopeId
-    })
-  })
-  async publishLimitation(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
-    const release = await this.releasesService.publishLimitation(id)
+  @Patch(':id')
+  @ScopeGetter(({ params }) => Release.findOne(params.id).then((r) => r && r.scopeId))
+  async update(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() payload: UpdateReleaseForm
+  ): Promise<ReleaseSerializer> {
+    const release = await this.releasesService.update(id, payload.release)
     return new ReleaseSerializer().serialize({ release })
   }
 

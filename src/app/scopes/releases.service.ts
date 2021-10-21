@@ -7,6 +7,7 @@ import { ValidationsError } from '../../exception/validations.error'
 import { ContentHistoriesService } from '../content-histories/content-histories.service'
 import { ReleaseRepository } from './repository/release.repository'
 import { generateUUIDv4 } from '../../util/math'
+import { IsNull, Not } from 'typeorm'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {
@@ -20,20 +21,35 @@ export class ReleasesService extends BaseService<Release> {
   async create(dto: Partial<Release>): Promise<Release> {
     const scope = await Scope.findOne(dto.scopeId)
     if (!scope) throw new ValidationsError([`Scopeが存在しません. scopeID: ${dto.scopeId}`])
-    if (!dto.sourceReleaseId) {
-      const sourceRelease = await this.repository.findLatestRelease(scope.id)
-      dto.sourceReleaseId = sourceRelease && sourceRelease.id
-    } else {
-      const sourceRelease = await this.repository.findOne(dto.sourceReleaseId)
-      if (!sourceRelease)
-        throw new ValidationsError([`指定のリリース予定が存在しません. sourceReleaseId: ${dto.sourceReleaseId}`])
-    }
+    this.checkUnreleased(scope.id)
+
+    dto = await this.resolveSourceRelease(scope.id, dto)
+    dto.limitedReleaseToken = generateUUIDv4()
+    dto.limitedReleaseTokenIssuedAt = new Date()
+
     return this.transaction(async (manager) => {
       const record = await super.create(dto)
       if (record.sourceReleaseId)
         await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id)
       return record
     })
+  }
+
+  private async checkUnreleased(scopeId: number) {
+    const unrelease = Release.findOne({ where: { scopeId, releasedAt: Not(IsNull()) } })
+    if (unrelease) throw new ValidationsError(['既に未公開のリリースが存在します'])
+  }
+
+  private async resolveSourceRelease(scopeId: number, dto: Partial<Release>) {
+    if (!dto.sourceReleaseId) {
+      const sourceRelease = await this.repository.findLatestRelease(scopeId)
+      dto.sourceReleaseId = sourceRelease && sourceRelease.id
+    } else {
+      const sourceRelease = await this.repository.findOne(dto.sourceReleaseId)
+      if (!sourceRelease)
+        throw new ValidationsError([`指定のリリース予定が存在しません. sourceReleaseId: ${dto.sourceReleaseId}`])
+    }
+    return dto
   }
 
   async publish(id: number, dto: PublishReleaseDto): Promise<Release> {
@@ -43,15 +59,6 @@ export class ReleasesService extends BaseService<Release> {
       scope.defaultReleaseId = record.id
       await scope.save()
       return record
-    })
-  }
-
-  async publishLimitation(id: number): Promise<Release> {
-    const record = await this.fetch(id)
-    return await this.transaction(async (manager) => {
-      record.limitedReleaseToken = generateUUIDv4()
-      record.limitedReleaseTokenIssuedAt = new Date()
-      return this.update(id, record)
     })
   }
 }

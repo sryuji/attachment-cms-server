@@ -3,7 +3,6 @@ import { ApplicationEntity } from './application.entity'
 import { Scope } from './scope.entity'
 import { ContentHistory } from './content-history.entity'
 import { IsOptional, IsNumber } from 'class-validator'
-import { Exclude } from 'class-transformer'
 
 @Entity()
 export class Release extends ApplicationEntity<Release> {
@@ -14,7 +13,9 @@ export class Release extends ApplicationEntity<Release> {
   @ManyToOne((type) => Scope, (scope) => scope.releases, { lazy: true })
   scope: Scope
 
-  @Exclude()
+  @Column()
+  name: string
+
   @Column({ length: 255, nullable: true })
   limitedReleaseToken: string
 
