@@ -35,6 +35,7 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @Column({ default: false })
   inactive: boolean
 
-  @ManyToOne((type) => ContentHistory)
-  sourceContentHistory: ContentHistory
+  @Column()
+  @IsNumber()
+  sourceContentHistoryId: number
 }
