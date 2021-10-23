@@ -23,9 +23,6 @@ export class Scope extends ApplicationEntity<Scope> {
     this._domain = v
   }
 
-  @Column({ length: 255, nullable: true })
-  testDomain: string
-
   @Column('text', { nullable: true }) // text指定は無制限
   description: string
 

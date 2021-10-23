@@ -79,7 +79,7 @@ export class ScopesController extends BaseController {
       .createQueryBuilder('scope')
       .leftJoinAndSelect('scope.defaultRelease', 'defaultRelease')
       .where({ id: scopeIds })
-      .where(domain ? [{ domain: Like(`%${domain}%`) }, { testDomain: Like(`%${domain}%`) }] : {})
+      .where(domain ? [{ domain: Like(`%${domain}%`) }] : {})
       .orderBy('defaultRelease.releasedAt', 'DESC')
       .skip(pager.offset)
       .take(pager.per)

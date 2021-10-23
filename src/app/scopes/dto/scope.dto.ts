@@ -12,13 +12,6 @@ export class ScopeDto extends BaseDto {
   @IsNotEmpty()
   readonly domain: string
 
-  @ApiPropertyOptional({
-    description: 'テスト環境のドメイン',
-    example: 'https://test.example.com',
-  })
-  @Allow()
-  readonly testDomain: string
-
   @ApiPropertyOptional({ description: '用途など説明を自由記入', example: '' })
   @Allow()
   readonly description: string
