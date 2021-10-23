@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { Release } from '../../db/entity/release.entity'
 import { PublishReleaseDto } from './dto/release.dto'
 import { BaseService } from '../base/base.service'
@@ -60,5 +60,11 @@ export class ReleasesService extends BaseService<Release> {
       await scope.save()
       return record
     })
+  }
+
+  async delete(id: number): Promise<Release> {
+    const release = await Release.findOne(id)
+    if (!release || release.releasedAt) throw new ForbiddenException()
+    return await this.delete(id)
   }
 }
