@@ -2,28 +2,10 @@
 import { Release } from '../../../db/entity/release.entity'
 import { ApiResponseProperty } from '@nestjs/swagger'
 import { BaseSerializer } from '../../base/base.serializer'
-import { Expose, Type } from 'class-transformer'
-import { Scope } from '../../../db/entity/scope.entity'
-
-class ExposedRelease extends Release {
-  @Expose({ name: 'limitedReleaseToken' })
-  getLimitedReleaseToken(): string {
-    return this.limitedReleaseToken
-  }
-
-  // lazy JSON propertyは __scope__となるため、別propertyを定義し、serialize前に入れ直してやる
-  @Expose({ name: 'scope' })
-  exposedScope: Scope
-}
+import { Type } from 'class-transformer'
 
 export class ReleaseSerializer extends BaseSerializer {
-  @Type(() => ExposedRelease)
-  @ApiResponseProperty({ type: ExposedRelease })
-  release: ExposedRelease
-
-  public async serialize({ release }: { release: Release }): Promise<this> {
-    this.release = new ExposedRelease(release)
-    this.release.exposedScope = await this.release.scope
-    return this
-  }
+  @Type(() => Release)
+  @ApiResponseProperty({ type: Release })
+  release: Release
 }

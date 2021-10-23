@@ -54,7 +54,7 @@ export class ReleasesService extends BaseService<Release> {
 
   async publish(id: number, dto: PublishReleaseDto): Promise<Release> {
     return await this.transaction(async (manager) => {
-      const record = await this.update(id, dto)
+      const record = await this.update(id, { ...dto, limitedReleaseToken: null, limitedReleaseTokenIssuedAt: null })
       const scope = await record.scope
       scope.defaultReleaseId = record.id
       await scope.save()
