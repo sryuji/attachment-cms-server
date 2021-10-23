@@ -21,7 +21,6 @@ export class ScopesService extends BaseService<Scope> {
   async createWithAccountId(dto: Partial<Scope>, accountId: number): Promise<Scope> {
     return this.transaction(async (manager) => {
       const record = await super.create(dto)
-      await this.releaseRepository.insert({ scopeId: record.id })
       await this.accountScopeRepository.insert({ accountId, scopeId: record.id })
       return record
     })
