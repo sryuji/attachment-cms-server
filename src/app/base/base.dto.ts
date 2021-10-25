@@ -12,5 +12,5 @@ export class BaseDto {
     example: null,
     description: '更新時は必須. 新規データ作成時は指定不要',
   })
-  readonly id?: number
+  id?: number
 }

@@ -7,40 +7,40 @@ export class CreateContentHistoryDto extends BaseDto {
   @ApiProperty({ description: 'Release ID', example: 1 })
   @IsNotEmpty()
   @IsInt()
-  readonly releaseId: number
+  releaseId: number
 
   @ApiProperty({ description: 'Scope ID', example: 1 })
   @IsNotEmpty()
   @IsInt()
-  readonly scopeId: number
+  scopeId: number
 
   @ApiProperty({
     description: 'コンテンツの存在するパス',
     example: '/api-docs',
   })
   @IsNotEmpty()
-  readonly path: string
+  path: string
 
   @ApiPropertyOptional({
     description: 'コンテンツのselector',
     example: '#operations-tag-コンテンツ管理対象 > a',
   })
   @Allow()
-  readonly selector: string
+  selector: string
 
   @ApiPropertyOptional({
     description: '置換/挿入するコンテンツ',
     example: '<span>コンテンツ</span>',
   })
   @Allow()
-  readonly content: string
+  content: string
 
   @ApiPropertyOptional({
     description: 'selectorに対する操作',
     example: 'append',
   })
   @Allow()
-  readonly action: string
+  action: string
 }
 
 /**

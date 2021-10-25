@@ -4,5 +4,5 @@ import { BaseSerializer } from './base.serializer'
 
 export abstract class CollectionSerializer extends BaseSerializer {
   @ApiResponseProperty({ type: Pager })
-  readonly pager?: Pager
+  pager?: Pager
 }

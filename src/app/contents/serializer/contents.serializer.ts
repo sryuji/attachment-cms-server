@@ -5,5 +5,5 @@ import { ContentDto } from '../dto/content.dto'
 
 export class ContentsSerializer extends BaseSerializer {
   @Type(() => ContentDto)
-  readonly contents: ContentDto[]
+  contents: ContentDto[]
 }

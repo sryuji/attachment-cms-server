@@ -5,5 +5,5 @@ import { BaseSerializer } from '../../base/base.serializer'
 
 export class AccountSerializer extends BaseSerializer {
   @Type(() => Account)
-  readonly account: Account
+  account: Account
 }

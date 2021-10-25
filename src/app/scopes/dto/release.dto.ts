@@ -9,14 +9,14 @@ export class UpdateReleaseDto extends BaseDto {
     example: null,
   })
   @IsOptional()
-  readonly name: string
+  name: string
 }
 
 export class CreateReleaseDto extends UpdateReleaseDto {
   @ApiProperty({ description: 'scope ID', example: 1 })
   @IsNotEmpty()
   @IsInt()
-  readonly scopeId: number
+  scopeId: number
 
   @ApiPropertyOptional({
     description: '編集対象にしたいリリースID. 未指定だと最新のものが自動的に選ばれる',
@@ -24,7 +24,7 @@ export class CreateReleaseDto extends UpdateReleaseDto {
   })
   @IsOptional()
   @IsInt()
-  readonly sourceReleaseId: number
+  sourceReleaseId: number
 }
 
 export class PublishReleaseDto extends BaseDto {
@@ -35,7 +35,7 @@ export class PublishReleaseDto extends BaseDto {
   })
   @IsDate()
   @Type(() => Date)
-  readonly releasedAt: Date
+  releasedAt: Date
 }
 
 /**

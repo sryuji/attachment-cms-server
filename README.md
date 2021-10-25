@@ -130,6 +130,11 @@ $ yarn buildDts
 
 ## Case Study
 
+### Serializer, Dto に readonly は付けない
+
+d.ts ファイルを生成した時に readonly も受け継がれるため、
+web プロジェクト側で Request Object の生成時に困るため
+
 ### entity で特定の値を response しない
 
 対象となる Entity に`@Exclude`を指定する事で Serialize 対象外とできる

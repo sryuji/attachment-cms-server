@@ -5,12 +5,12 @@ export class AccountScopeDto {
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ required: true })
-  readonly email: string
+  email: string
 
   accountId: number
 
   @IsInt({ message: 'アカウントIDは、整数です。' })
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  readonly scopeId: number
+  scopeId: number
 }

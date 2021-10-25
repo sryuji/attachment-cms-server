@@ -6,15 +6,15 @@ import { Type } from 'class-transformer'
 export class ScopeDto extends BaseDto {
   @ApiProperty({ description: '識別名', example: 'attachment CMS' })
   @IsNotEmpty()
-  readonly name: string
+  name: string
 
   @ApiProperty({ description: '対象ドメイン', example: 'https://example.com' })
   @IsNotEmpty()
-  readonly domain: string
+  domain: string
 
   @ApiPropertyOptional({ description: '用途など説明を自由記入', example: '' })
   @Allow()
-  readonly description: string
+  description: string
 }
 
 /**

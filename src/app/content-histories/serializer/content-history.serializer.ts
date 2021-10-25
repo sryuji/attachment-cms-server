@@ -5,5 +5,5 @@ import { BaseSerializer } from '../../base/base.serializer'
 
 export class ContentHistorySerializer extends BaseSerializer {
   @Type(() => ContentHistory)
-  readonly scope: ContentHistory
+  scope: ContentHistory
 }

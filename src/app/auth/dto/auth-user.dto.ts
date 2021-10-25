@@ -5,7 +5,7 @@ export class AuthUserDto {
   /**
    * account.idが格納される
    */
-  readonly sub: number
+  sub: number
   email: string
   accountScopes: AccountScope[]
 
