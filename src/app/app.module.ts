@@ -17,6 +17,9 @@ import { ContentsModule } from './contents/contents.module'
 import { AuthModule } from './auth/auth.module'
 import { AccountScopesModule } from './account-scopes/account-scopes.module'
 import { AccountModule } from './accounts/accounts.module'
+import { TestMiddleware } from '../middleware/test.middleware'
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 @Module({
   imports: [
@@ -44,6 +47,8 @@ import { AccountModule } from './accounts/accounts.module'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*')
+    const middlewares = [LoggerMiddleware]
+    if (!isProduction) middlewares.push(TestMiddleware)
+    consumer.apply(...middlewares).forRoutes('*')
   }
 }

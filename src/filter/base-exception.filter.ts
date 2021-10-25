@@ -3,7 +3,7 @@ import { ConfigService } from '../config/config.service'
 import { Response } from 'express'
 
 export abstract class BaseExceptionFilter implements ExceptionFilter {
-  private config: ConfigService
+  protected config: ConfigService
   constructor(@Inject(ConfigService) config: ConfigService) {
     this.config = config
   }

@@ -4,5 +4,5 @@ export const AuthUser = createParamDecorator((data: unknown, ctx: ExecutionConte
   const req = ctx.switchToHttp().getRequest()
   const user = req.user
   if (!user || !user.sub) throw new UnauthorizedException()
-  return req.user
+  return user
 })

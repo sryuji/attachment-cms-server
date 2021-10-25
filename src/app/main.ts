@@ -43,7 +43,9 @@ async function setupSwagger(app: INestApplication) {
     .setVersion(packageJson.version)
     .addTag('CMS API', 'コンテンツ管理用API')
     .addBearerAuth({
-      type: 'apiKey',
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
       description: '本番環境以外では、valueに "test" と入力する事でJWT認証をスキップできます',
     })
     .addOAuth2()
