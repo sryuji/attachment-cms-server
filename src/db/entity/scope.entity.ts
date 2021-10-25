@@ -1,8 +1,7 @@
 import { Column, Entity, OneToMany, OneToOne, JoinColumn, BeforeInsert, Unique } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
-import { Expose, Exclude } from 'class-transformer'
-import { IsNumber, IsOptional } from 'class-validator'
+import { Expose } from 'class-transformer'
 import { generateUUIDv4 } from '../../util/math'
 import { AccountScope } from './account-scope.entity'
 
@@ -27,15 +26,12 @@ export class Scope extends ApplicationEntity<Scope> {
   description: string
 
   @Column({ length: 255 })
-  @Exclude()
   token: string
 
   @OneToMany((type) => Release, (r) => r.scope)
   releases: Release[]
 
   @Column({ nullable: true })
-  @IsNumber()
-  @IsOptional()
   defaultReleaseId: number
 
   @OneToOne((type) => Release, (r) => r.scope, { lazy: true }) // eagerで自動join, lazyはpropety access時にquery取得

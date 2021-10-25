@@ -9,7 +9,7 @@ export class ScopeDto extends BaseDto {
   name: string
 
   @ApiProperty({ description: '対象ドメイン', example: 'https://example.com' })
-  @IsNotEmpty()
+  @Allow()
   domain: string
 
   @ApiPropertyOptional({ description: '用途など説明を自由記入', example: '' })
