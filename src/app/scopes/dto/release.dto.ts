@@ -1,9 +1,9 @@
-import { BaseDto } from '../../base/base.dto'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsNotEmpty, IsDate, IsInt, ValidateNested, IsOptional } from 'class-validator'
 import { Type } from 'class-transformer'
+import { UpdatableDto } from '../../base/updatable.dto'
 
-export class UpdateReleaseDto extends BaseDto {
+export class UpdateReleaseDto extends UpdatableDto {
   @ApiPropertyOptional({
     description: 'リリース名を自由記入',
     example: null,
@@ -12,7 +12,14 @@ export class UpdateReleaseDto extends BaseDto {
   name: string
 }
 
-export class CreateReleaseDto extends UpdateReleaseDto {
+export class CreateReleaseDto {
+  @ApiPropertyOptional({
+    description: 'リリース名を自由記入',
+    example: null,
+  })
+  @IsOptional()
+  name: string
+
   @ApiProperty({ description: 'scope ID', example: 1 })
   @IsNotEmpty()
   @IsInt()
@@ -27,7 +34,7 @@ export class CreateReleaseDto extends UpdateReleaseDto {
   sourceReleaseId: number
 }
 
-export class PublishReleaseDto extends BaseDto {
+export class PublishReleaseDto extends UpdatableDto {
   @ApiProperty({
     default: null,
     description: 'リリース日',

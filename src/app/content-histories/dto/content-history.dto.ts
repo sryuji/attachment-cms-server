@@ -1,9 +1,8 @@
 import { IsNotEmpty, Allow, IsIn } from 'class-validator'
-import { BaseDto } from '../../base/base.dto'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ContentHistoryAction } from '../../../enum/content-history-action.enum'
 
-export class ContentHistoryDto extends BaseDto {
+export class ContentHistoryDto {
   @ApiProperty({
     description: 'コンテンツの存在するパス',
     example: '/api-docs',

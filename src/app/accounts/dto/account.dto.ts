@@ -1,8 +1,8 @@
 import { Allow } from 'class-validator'
-import { BaseDto } from '../../base/base.dto'
+import { UpdatableDto } from '../../base/updatable.dto'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-export class AccountDto extends BaseDto {
+export class AccountDto extends UpdatableDto {
   @ApiPropertyOptional({ description: '姓' })
   @Allow()
   lastName: string

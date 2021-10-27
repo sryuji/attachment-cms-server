@@ -1,9 +1,16 @@
-import { IsNotEmpty, ValidateNested, Allow } from 'class-validator'
-import { BaseDto } from '../../base/base.dto'
+import { IsNotEmpty, ValidateNested, Allow, IsInt, IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
-export class ScopeDto extends BaseDto {
+export class ScopeDto {
+  @IsInt({ message: 'IDは、整数です。' })
+  @ApiProperty({
+    example: null,
+    description: '更新時は必須. 新規データ作成時は指定不要',
+  })
+  @IsOptional()
+  id: number
+
   @ApiProperty({ description: '識別名', example: 'attachment CMS' })
   @IsNotEmpty()
   name: string
