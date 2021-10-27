@@ -9,7 +9,7 @@ export class UpdateContentHistoryDto extends ContentHistoryDto {
     required: true,
     example: null,
   })
-  id?: number
+  id: number
 
   @ApiProperty({
     description: '利用停止フラグ',
