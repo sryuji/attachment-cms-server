@@ -10,11 +10,18 @@ import { BaseController } from '../base/base.controller'
 import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
 import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { ContentHistory } from '../../db/entity/content-history.entity'
+import { Release } from '../../db/entity/release.entity'
+import { AuthUser } from '../../decorator/auth-user.decorator'
+import { AuthUserDto } from '../auth/dto/auth-user.dto'
+import { AccountScopesService } from '../account-scopes/account-scopes.service'
 
 @ApiTags('コンテンツ履歴')
 @Controller('content-histories')
 export class ContentHistoriesController extends BaseController {
-  constructor(private readonly contentHistoriesService: ContentHistoriesService) {
+  constructor(
+    private readonly contentHistoriesService: ContentHistoriesService,
+    private readonly accountScopesService: AccountScopesService
+  ) {
     super()
   }
 
@@ -66,9 +73,7 @@ export class ContentHistoriesController extends BaseController {
   @ApiQuery({ name: 'releaseId', description: 'リリースID' })
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
-  @ScopeGetter(({ query }) =>
-    ContentHistory.findOne({ where: { releaseId: query.releaseId } }).then((r) => r && r.scopeId)
-  )
+  @ScopeGetter(({ query }) => Release.findOne({ where: { id: query.releaseId } }).then((r) => r && r.scopeId))
   @Get()
   async findAll(
     @Query('releaseId') releaseId: number,
@@ -89,8 +94,12 @@ export class ContentHistoriesController extends BaseController {
   @ApiResponse(RESPONSE_200)
   @Get(':id')
   @ScopeGetter(({ params }) => ContentHistory.findOne(params.id).then((r: ContentHistory) => r && r.scopeId))
-  async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ContentHistorySerializer> {
+  async findOne(
+    @Param('id', new ParseIntPipe()) id: number,
+    @AuthUser() user: AuthUserDto
+  ): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.fetch(id)
+    await this.accountScopesService.authorize(user, record.scopeId)
     return new ContentHistorySerializer().serialize({ contentHistory: record })
   }
 }
