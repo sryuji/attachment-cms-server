@@ -1,41 +1,15 @@
-import { IsNotEmpty, ValidateNested, Allow, IsInt } from 'class-validator'
-import { BaseDto } from '../../base/base.dto'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsNotEmpty, ValidateNested, IsInt } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
+import { ContentHistoryDto } from './content-history.dto'
 
-export class UpdateContentHistoryDto extends BaseDto {
-  @ApiProperty({ description: 'Scope ID', example: 1 })
-  @IsNotEmpty()
-  @IsInt()
-  scopeId: number
-
+export class UpdateContentHistoryDto extends ContentHistoryDto {
+  @IsInt({ message: 'IDは、整数です。' })
   @ApiProperty({
-    description: 'コンテンツの存在するパス',
-    example: '/api-docs',
+    required: true,
+    example: null,
   })
-  @IsNotEmpty()
-  path: string
-
-  @ApiPropertyOptional({
-    description: 'コンテンツのselector',
-    example: '#operations-tag-コンテンツ管理対象 > a',
-  })
-  @Allow()
-  selector: string
-
-  @ApiPropertyOptional({
-    description: '置換/挿入するコンテンツ',
-    example: '<span>コンテンツ</span>',
-  })
-  @Allow()
-  content: string
-
-  @ApiPropertyOptional({
-    description: 'selectorに対する操作',
-    example: 'append',
-  })
-  @Allow()
-  action: string
+  id?: number
 
   @ApiProperty({
     description: '利用停止フラグ',
