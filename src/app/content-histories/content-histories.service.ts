@@ -30,22 +30,15 @@ export class ContentHistoriesService extends BaseService<ContentHistory> impleme
   }
 
   async copyContentHistories(sourceReleaseId: number, destReleaseId: number): Promise<void> {
-    const hists = await this.repository.find({ where: { sourceReleaseId } })
+    const hists = await this.repository.find({ where: { releaseId: sourceReleaseId } })
     if (hists.length === 0) return
-    const newHists = hists
-      .filter((r) => !r.sourceContentHistoryId || !r.inactive)
-      .map((h) => ({ ...h, id: null, releaseId: destReleaseId }))
+    const newHists = hists.map((h) => ({ ...h, id: null, releaseId: destReleaseId }))
     await this.repository.insert(newHists)
   }
 
   async delete(id: number): Promise<ContentHistory> {
     const record = await this.fetch(id)
     if (record.release.releasedAt) throw new ForbiddenException('リリース済のため削除できません。')
-    if (record.sourceContentHistoryId) {
-      record.inactive = true
-      return record.save()
-    } else {
-      return await record.remove()
-    }
+    return await record.remove()
   }
 }
