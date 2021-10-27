@@ -65,6 +65,9 @@ export class ReleasesService extends BaseService<Release> {
   async delete(id: number): Promise<Release> {
     const release = await Release.findOne(id)
     if (!release || release.releasedAt) throw new ForbiddenException()
-    return await this.delete(id)
+    return this.transaction(async (manager) => {
+      this.contentHistoriesService.deleteBy({ releaseId: id })
+      return await this.delete(id)
+    })
   }
 }

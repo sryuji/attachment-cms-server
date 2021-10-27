@@ -11,7 +11,7 @@ export class AccountsService extends BaseService<Account> {
     @InjectRepository(Account)
     protected readonly repository: Repository<Account>,
     @InjectRepository(AccountScope)
-    protected readonly accountScopeRpository: Repository<AccountScope>
+    protected readonly accountScopeRepository: Repository<AccountScope>
   ) {
     super(repository, Account)
   }
@@ -19,7 +19,7 @@ export class AccountsService extends BaseService<Account> {
   async delete(id: number): Promise<Account> {
     const record = await this.fetch(id)
     return this.transaction(async (manager) => {
-      this.accountScopeRpository.delete({ accountId: record.id })
+      this.accountScopeRepository.delete({ accountId: record.id })
       return await record.remove()
     })
   }

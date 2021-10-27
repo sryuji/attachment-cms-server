@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
-import { Repository, FindManyOptions, SelectQueryBuilder, EntityManager } from 'typeorm'
+import { Repository, FindManyOptions, SelectQueryBuilder, EntityManager, FindConditions } from 'typeorm'
 import { Pager } from './pager'
 import { validate } from 'class-validator'
 import { ApplicationEntity } from '../../db/entity/application.entity'
@@ -91,6 +91,16 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
   async delete(id: number): Promise<E> {
     const record = await this.fetch(id)
     return await record.remove()
+  }
+
+  /**
+   *
+   * @param condition https://typeorm.io/#/find-options
+   * @returns
+   */
+  async deleteBy(condition: FindConditions<E>): Promise<number | null> {
+    const result = await this.repository.delete(condition)
+    return result.affected
   }
 
   /**
