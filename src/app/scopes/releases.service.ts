@@ -66,8 +66,8 @@ export class ReleasesService extends BaseService<Release> {
     const release = await Release.findOne(id)
     if (!release || release.releasedAt) throw new ForbiddenException()
     return this.transaction(async (manager) => {
-      this.contentHistoriesService.deleteBy({ releaseId: id })
-      return await this.delete(id)
+      await this.contentHistoriesService.deleteBy({ releaseId: id })
+      return await release.remove()
     })
   }
 }
