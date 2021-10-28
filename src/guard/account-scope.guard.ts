@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { ModuleRef, Reflector } from '@nestjs/core'
 import { Request } from 'express'
 import { AccountScopesService } from '../app/account-scopes/account-scopes.service'
@@ -25,7 +25,8 @@ export class AccountScopeGuard implements CanActivate {
     const req: Request = ctx.getRequest()
     const user: AuthUserDto = req.user as AuthUserDto
     const scopeId = await getter(req)
-    if (!scopeId || !user) return false
+    if (!scopeId || !user)
+      throw new ForbiddenException(`No scopeId or user. scopeId: ${scopeId}, user.sub: ${user && user.sub}`)
     await this.accountScopesService.authorize(user, Number(scopeId))
     return true
   }

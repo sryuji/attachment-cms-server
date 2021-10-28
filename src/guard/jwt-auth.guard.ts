@@ -20,7 +20,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const req = ctx.getRequest<Request>()
     if (judgeSkipAuth(req)) {
       // NOTE: TestMiddlewareでreq.userに既にデータが入ってる
-      console.log('handleRequest', req.user)
       return req.user as U
     }
 

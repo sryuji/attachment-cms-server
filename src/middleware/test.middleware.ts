@@ -19,7 +19,6 @@ export class TestMiddleware implements NestMiddleware {
       const authUser = new AuthUserDto(account)
       authUser.accountScopes = await AccountScope.find({ where: { accountId: authUser.sub } })
       req.user = authUser.toJSON()
-      console.log('TestMiddleware', account, req.user)
     }
     next()
   }

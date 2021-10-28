@@ -29,7 +29,7 @@ export class AccountScopesService extends BaseService<AccountScope> {
     const scopeIds = user.accountScopes && user.accountScopes.map((accountScope) => accountScope.scopeId)
     if (scopeIds && scopeIds.includes(scopeId)) return
     const accountScope = await this.repository.findOne({ where: { accountId: user.sub, scopeId } })
-    if (!accountScope) throw new ForbiddenException()
+    if (!accountScope) throw new ForbiddenException(`No Permission this scope. scopeId: ${scopeId}`)
     return
   }
 }
