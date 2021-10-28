@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Scope } from './scope.entity'
-import { IsNumber } from 'class-validator'
+import { IsNumber, IsOptional } from 'class-validator'
 
 @Entity()
 export class ContentHistory extends ApplicationEntity<ContentHistory> {
@@ -35,7 +35,8 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @Column({ default: false })
   inactive: boolean
 
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
+  @IsOptional()
   sourceContentHistoryId: number
 }
