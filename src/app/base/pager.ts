@@ -12,6 +12,7 @@ export class Pager {
   constructor(attributes: Partial<Pager>) {
     this.page = attributes.page || 1
     this.per = attributes.per || 20
+    this.totalCount = attributes.totalCount
   }
 
   @ApiResponseProperty()
