@@ -7,7 +7,7 @@ import { ValidationsError } from '../../exception/validations.error'
 import { ContentHistoriesService } from '../content-histories/content-histories.service'
 import { ReleaseRepository } from './repository/release.repository'
 import { generateUUIDv4 } from '../../util/math'
-import { IsNull, Not } from 'typeorm'
+import { IsNull } from 'typeorm'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {
@@ -21,7 +21,7 @@ export class ReleasesService extends BaseService<Release> {
   async create(dto: Partial<Release>): Promise<Release> {
     const scope = await Scope.findOne(dto.scopeId)
     if (!scope) throw new ValidationsError([`Scopeが存在しません. scopeID: ${dto.scopeId}`])
-    this.checkUnreleased(scope.id)
+    await this.checkUnreleased(scope.id)
 
     dto = await this.resolveSourceRelease(scope.id, dto)
     dto.limitedReleaseToken = generateUUIDv4()
@@ -36,8 +36,8 @@ export class ReleasesService extends BaseService<Release> {
   }
 
   private async checkUnreleased(scopeId: number) {
-    const unrelease = Release.findOne({ where: { scopeId, releasedAt: Not(IsNull()) } })
-    if (unrelease) throw new ValidationsError(['既に未公開のリリースが存在します'])
+    const unrelease = await Release.findOne({ where: { scopeId, releasedAt: IsNull() } })
+    if (unrelease) throw new ValidationsError(['既に新しいリリースが存在します'])
   }
 
   private async resolveSourceRelease(scopeId: number, dto: Partial<Release>) {
