@@ -65,9 +65,6 @@ Scope {
 ```
 
 - 必要な code の import 宣言は必要
-- top-level await には未対応
-  - node v10 より上にする必要がある
-  - ts-node も未対応 https://github.com/TypeStrong/ts-node/issues/245
 
 ## Test
 
