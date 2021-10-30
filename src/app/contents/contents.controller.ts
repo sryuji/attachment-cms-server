@@ -28,16 +28,16 @@ export class ContentsController {
   @Get('limited')
   async findLimitedReleaseContents(@Query('token') limitedReleaseToken: string): Promise<ContentsSerializer> {
     const contents = await this.contentsService.searchLimitedReleaseTarget(limitedReleaseToken)
-    return new ContentsSerializer().serialize({ contents })
+    return new ContentsSerializer().serialize(contents)
   }
 
   @ApiOperation({ summary: 'リリース対象のコンテンツ' })
   @ApiResponse(RESPONSE_200)
   @ApiQuery({ name: 'token', required: true, description: 'コンテンツ管理対象のトークン' })
-  @Header('Cache-Control', '900')
+  @Header('Cache-Control', '1800')
   @Get()
   async findReleaseContents(@Query('token') token: string): Promise<ContentsSerializer> {
     const contents = await this.contentsService.searchReleaseTarget(token)
-    return new ContentsSerializer().serialize({ contents })
+    return new ContentsSerializer().serialize(contents)
   }
 }
