@@ -25,6 +25,8 @@ export class ContentsController {
   @ApiResponse(RESPONSE_200)
   @ApiQuery({ name: 'token', required: true, description: '限定リリース用のトークン' })
   @Header('Cache-Control', 'none')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET, OPTIONS')
   @Get('limited')
   async findLimitedReleaseContents(@Query('token') limitedReleaseToken: string): Promise<ContentsSerializer> {
     const contents = await this.contentsService.searchLimitedReleaseTarget(limitedReleaseToken)
@@ -35,6 +37,8 @@ export class ContentsController {
   @ApiResponse(RESPONSE_200)
   @ApiQuery({ name: 'token', required: true, description: 'コンテンツ管理対象のトークン' })
   @Header('Cache-Control', '1800')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET, OPTIONS')
   @Get()
   async findReleaseContents(@Query('token') token: string): Promise<ContentsSerializer> {
     const contents = await this.contentsService.searchReleaseTarget(token)
