@@ -1,4 +1,3 @@
-// https://dev.to/kdinnypaul/you-don-t-need-jquery-1a18
 export const ContentHistoryAction = {
   innerHTML: 'innerHTML',
   remove: 'remove', // el.parentNode.removeChild(el)
