@@ -1,21 +1,20 @@
 import { Controller, Get, Body, Post, Patch, Param, Delete, HttpCode, ParseIntPipe, Query } from '@nestjs/common'
 import { ScopesService } from './scopes.service'
 import { ScopeForm } from './dto/scope.dto'
-import { Pager } from '../base/pager'
 import { ScopesSerializer } from './serializer/scopes.serializer'
 import { ScopeSerializer } from './serializer/scope.serializer'
-import { Like } from 'typeorm'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { BaseController } from '../base/base.controller'
 import { RESPONSE_200, RESPONSE_204, RESPONSE_201, QUERY_PAGE, QUERY_PER } from '../../constant/swagger.constant'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { AuthUser } from '../../decorator/auth-user.decorator'
+import { ScopeRepository } from './repository/scope.repository'
 
 @ApiTags('コンテンツ管理対象')
 @Controller('scopes')
 export class ScopesController extends BaseController {
-  constructor(private readonly scopesService: ScopesService) {
+  constructor(private readonly scopesService: ScopesService, private readonly scopeRepository: ScopeRepository) {
     super()
   }
 
@@ -73,18 +72,8 @@ export class ScopesController extends BaseController {
     @Query('per') per?: number,
     @Query('domain') domain?: string
   ): Promise<ScopesSerializer> {
-    const pager = new Pager({ page, per })
     const scopeIds = user.accountScopes.map((r) => r.scopeId)
-    const [scopes, totalCount] = await this.scopesService
-      .createQueryBuilder('scope')
-      .leftJoinAndSelect('scope.defaultRelease', 'defaultRelease')
-      .where({ id: scopeIds })
-      .where(domain ? [{ domain: Like(`%${domain}%`) }] : {})
-      .orderBy('defaultRelease.releasedAt', 'DESC')
-      .skip(pager.offset)
-      .take(pager.per)
-      .getManyAndCount()
-    pager.totalCount = totalCount
+    const [scopes, pager] = await this.scopeRepository.findAll(scopeIds, domain, page, per)
     return new ScopesSerializer().serialize({ scopes, pager })
   }
 
