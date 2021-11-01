@@ -8,12 +8,12 @@ import { AccountScope } from './account-scope.entity'
 @Unique(['token'])
 @Entity()
 export class Scope extends ApplicationEntity<Scope> {
-  @Column({ length: 255, nullable: true }) // length未指定は英数100kb, UTF-8日本語なら300kb.
+  @Column({ length: 255, nullable: false }) // length未指定は英数100kb, UTF-8日本語なら300kb.
   name: string
 
   private _domain: string
   // setterでnoramalize調整したいケースには,下記のようにgetter/setterを定義する
-  @Column({ length: 255, name: 'domain' })
+  @Column({ length: 255, name: 'domain', nullable: true })
   @Expose()
   get domain() {
     return this._domain
