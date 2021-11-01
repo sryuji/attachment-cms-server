@@ -9,7 +9,7 @@ export class ScopeDto {
     description: '更新時は必須. 新規データ作成時は指定不要',
   })
   @IsOptional()
-  id: number
+  id?: number
 
   @ApiProperty({ description: '識別名', example: 'attachment CMS' })
   @IsNotEmpty()
