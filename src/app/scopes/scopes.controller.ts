@@ -57,23 +57,16 @@ export class ScopesController extends BaseController {
 
   @ApiOperation({ summary: 'コンテンツ管理対象一覧' })
   @ApiResponse(RESPONSE_200)
-  @ApiQuery({
-    name: 'domain',
-    description: 'ドメイン. 部分一致',
-    required: false,
-    type: String,
-  })
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
   @Get()
   async findAll(
     @AuthUser() user: AuthUserDto,
     @Query('page') page?: number,
-    @Query('per') per?: number,
-    @Query('domain') domain?: string
+    @Query('per') per?: number
   ): Promise<ScopesSerializer> {
     const scopeIds = user.accountScopes.map((r) => r.scopeId)
-    const [scopes, pager] = await this.scopeRepository.findAll(scopeIds, domain, page, per)
+    const [scopes, pager] = await this.scopeRepository.findAll(scopeIds, page, per)
     return new ScopesSerializer().serialize({ scopes, pager })
   }
 
