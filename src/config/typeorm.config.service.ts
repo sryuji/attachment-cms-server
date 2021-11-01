@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { ConfigService } from './config.service'
-import * as path from 'path'
-
-const ENTITY_PATH = [path.resolve(__dirname, '../db/entity/**/*.entity.ts')]
-const MIGRATION_PATH = [path.resolve(__dirname, '../db/migration/*.ts')]
-const SUBSCRIBER_PATH = [path.resolve(__dirname, '../db/subscriber/**/*.subscriber.ts')]
+import ormconfig from '../../ormconfig'
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -20,19 +16,18 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   private getCommonOptions(): Record<string, unknown> {
     return {
-      entities: ENTITY_PATH,
-      migrations: MIGRATION_PATH,
-      subscribers: SUBSCRIBER_PATH,
-      logging: this.config.getBoolean('ORM_LOGGING') ? 'all' : ['schema', 'error', 'warn'],
-      synchronize: this.config.getBoolean('ORM_SYNCHRONIZE'),
+      entities: ormconfig.entities,
+      migrations: ormconfig.migrations,
+      subscribers: ormconfig.subscribers,
+      logging: ormconfig.logging ? 'all' : ['schema', 'error', 'warn'],
+      synchronize: ormconfig.synchronize,
     }
   }
 
   private getSQLiteOptions(): TypeOrmModuleOptions {
     return {
-      type: 'sqlite',
-      database: this.config.getString('DATABASE') || 'tmp/development.sqlite3',
+      ...ormconfig,
       ...this.getCommonOptions(),
-    }
+    } as TypeOrmModuleOptions
   }
 }
