@@ -12,7 +12,7 @@ export abstract class BaseCommand {
   public async run(): Promise<void> {
     await this.bootstrap()
     await this.perform()
-    this.terminate()
+    await this.terminate()
   }
 
   public abstract perform(): Promise<void>

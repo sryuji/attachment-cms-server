@@ -16,6 +16,14 @@ $ yarn run start:dev
 
 また、`http://localhost:3000/api-docs-json/`で json schema をダウンロードできます。
 
+打鍵用の seed データは下記で導入できます
+
+```bash
+$ TEST_USER_EMAIL=[お持ちのGoogleアカウント] yarn run seed:development
+```
+
+TEST_USER_EMAIL に設定した Email アドレスでログインすれば、seed で入れたデータが閲覧できます。
+
 ## Run
 
 ```bash
@@ -68,12 +76,18 @@ Scope {
 
 ## Test
 
+まず Test 用の SQLite の整備をします
+migration と seed データの導入が行われます。
+
+```bash
+$ yarn test:prepare
+```
+
+実行は下記でします。
+
 ```bash
 # unit tests
 $ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
 
 # test coverage
 $ yarn run test:cov
@@ -119,11 +133,6 @@ $ yarn buildDts
 
 - eslint
 - prettier
-
-## Review point
-
-- entity に Null/Unique Constraint の設定漏れがないか？
-- response でさらしては駄目な値がさらされてはないか?
 
 ## Case Study
 

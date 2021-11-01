@@ -3,7 +3,7 @@ import { getManager, getRepository } from 'typeorm'
 
 export abstract class BaseSeed {
   async run(): Promise<void> {
-    getManager().transaction(async (manager) => {
+    await getManager().transaction(async (manager) => {
       await this.perform()
     })
   }
@@ -11,7 +11,7 @@ export abstract class BaseSeed {
 
   async createOrUpdate(seedList: any[], type: new (attributes?: any) => any, uniqueKeys: string[]) {
     const promiseList = seedList.map(async (r: any) => {
-      const query = await uniqueKeys.reduce((result, key) => {
+      const query = uniqueKeys.reduce((result, key) => {
         result[key] = r[key]
         return result
       }, {} as any)

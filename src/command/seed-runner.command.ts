@@ -9,9 +9,11 @@ export default class SeedRunnerCommand extends BaseCommand {
     if (!names || names.length === 0)
       console.error(`引数でentity nameをケバブケース(ex. content-history)で指定してください。`)
 
-    names.forEach(async (name) => {
+    // NOTE: `names.forEach(async (name) => {` 記述だと、それぞれのPromiseが同時実行されてしまうため、forを利用
+    for (const name of names) {
       const Seed: new () => BaseSeed = loadClass(`src/db/seed/${env}`, name, 'seed')
+      console.log(`run ${name} Seed`)
       await new Seed().run()
-    })
+    }
   }
 }

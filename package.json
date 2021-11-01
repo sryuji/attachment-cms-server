@@ -20,6 +20,7 @@
     "lint": "yarn run lint:es",
     "lint:es": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "test": "jest",
+    "test:prepare": "NODE_ENV=test yarn run orm:drop && NODE_ENV=test yarn run orm:migrate && yarn run seed:test",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -30,10 +31,12 @@
     "orm:rollback": "yarn run orm migration:revert",
     "orm:tables": "yarn run orm query \"select name from sqlite_master where type = 'table'\"",
     "orm:drop": "yarn run orm schema:drop",
-    "ts": "ts-node -r tsconfig-paths/register",
+    "ts": "node --trace-warnings --unhandled-rejections=strict ./node_modules/.bin/ts-node -r tsconfig-paths/register",
     "repl": "yarn run ts -r ./src/command/repl",
     "command": "yarn run ts ./src/command/runner.ts",
-    "seed": "yarn run command seed-runner"
+    "seed": "yarn run command seed-runner",
+    "seed:development": "NODE_ENV=development yarn run seed account scope account-scope release content-history",
+    "seed:test": "NODE_ENV=test yarn run seed account scope account-scope release content-history"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.6",
