@@ -3,9 +3,7 @@ import { getManager, getRepository } from 'typeorm'
 
 export abstract class BaseSeed {
   async run(): Promise<void> {
-    await getManager().transaction(async (manager) => {
-      await this.perform()
-    })
+    await this.perform()
   }
   abstract perform(): Promise<void>
 

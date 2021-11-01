@@ -20,8 +20,10 @@ const developmentConfig = {
 }
 const testConfig = {
   type: 'sqlite',
-  database: 'tmp/test.sqlite3',
-  logging: true,
+  database: ':memory:',
+  dropSchema: true,
+  synchronize: true,
+  logging: false,
 }
 const productionConfig = {
   type: 'mysql',

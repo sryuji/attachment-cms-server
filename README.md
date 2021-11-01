@@ -76,14 +76,7 @@ Scope {
 
 ## Test
 
-まず Test 用の SQLite の整備をします
-migration と seed データの導入が行われます。
-
-```bash
-$ yarn test:prepare
-```
-
-実行は下記でします。
+下記で全てのテストが実行されます。
 
 ```bash
 # unit tests
@@ -92,6 +85,16 @@ $ yarn run test
 # test coverage
 $ yarn run test:cov
 ```
+
+各テストの実行は、vscode 拡張機能の Jest で `Start All Runner`を実行した後、
+各テストケースの左横に現れるマーカーから実行できます。
+
+その他、補足
+
+- database を必要とするテストは、in-memory sqlite を用いて実行される
+- jest ではデフォルトでファイル単位に並列処理され、ファイル内は上から逐次処理される
+  - database 利用時、並列処理されても Connection 単位に in-memory sqlite が作成される
+  - ファイル内は上から逐次処理され、その間は database の処理結果は保持され続けるため、個別実行を配慮し必要に応じて`afterEach`で`remove` `rollback`でデータは消し込む
 
 ## migration
 
