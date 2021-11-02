@@ -3,7 +3,7 @@ import { BaseConnectionOptions } from 'typeorm/connection/BaseConnectionOptions'
 
 const defaultConfig: Partial<BaseConnectionOptions> = {
   synchronize: false,
-  logging: false,
+  logging: ['schema', 'error', 'warn'],
   entities: [path.resolve(__dirname, 'src/db/entity/**/*.entity.ts')],
   migrations: [path.resolve(__dirname, 'src/db/migration/*.ts')],
   subscribers: [path.resolve(__dirname, 'src/db/subscriber/**/*.subscriber.ts')],
@@ -16,14 +16,14 @@ const defaultConfig: Partial<BaseConnectionOptions> = {
 const developmentConfig = {
   type: 'sqlite',
   database: 'tmp/development.sqlite3',
-  logging: true,
+  logging: 'all',
 }
 const testConfig = {
   type: 'sqlite',
   database: ':memory:',
   dropSchema: true,
   synchronize: true,
-  logging: false,
+  logging: ['error', 'warn'],
 }
 const productionConfig = {
   type: 'mysql',
@@ -33,7 +33,7 @@ const productionConfig = {
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   synchronize: false,
-  logging: false,
+  logging: ['schema', 'error', 'warn'],
 }
 
 function pickEnvironmentConfig() {

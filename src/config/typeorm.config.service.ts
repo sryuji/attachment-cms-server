@@ -19,7 +19,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       entities: ormconfig.entities,
       migrations: ormconfig.migrations,
       subscribers: ormconfig.subscribers,
-      logging: ormconfig.logging ? 'all' : ['schema', 'error', 'warn'],
+      logging: ormconfig.logging,
       synchronize: ormconfig.synchronize,
     }
   }
