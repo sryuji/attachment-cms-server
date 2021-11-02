@@ -118,6 +118,7 @@ $ yarn run orm:migrate
 ## generate Types
 
 `dist/types/src`配下に web project で参照必要な d.ts ファイルを生成する
+生成後、web プロジェクトの`types/attachment-cms-server`配下に commit する
 
 ```bash
 $ yarn buildDts
@@ -134,68 +135,24 @@ $ yarn buildDts
 
 ## Coding rules
 
+### Linter
+
+- tsconfig
 - eslint
 - prettier
 
-## Case Study
+### Other Rules
 
-### Serializer, Dto に readonly は付けない
+宣言
 
-d.ts ファイルを生成した時に readonly も受け継がれるため、
-web プロジェクト側で Request Object の生成時に困るため
+- Serializer, Dto に readonly は付けない
+  - d.ts ファイルを生成した時に readonly も受け継がれ web プロジェクト側で Request Object の生成時に困るため
 
-### entity で特定の値を response しない
+テストケース関連
 
-対象となる Entity に`@Exclude`を指定する事で Serialize 対象外とできる
-
-```ts
-  @Column({ length: 255 })
-  @Exclude()
-  token: string
-```
-
-### `@Exclude` されている値を response する
-
-対象となる Entity を `extends`した class を用意し、この class に値をさらす method を定義し、
-`@Expose`で property name を指定すれば良い
-
-```ts
-export class ExposedScope extends Scope {
-  @Expose({ name: 'token' })
-  getToken(): string {
-    return this.token
-  }
-}
-```
-
-ただし、この class を利用させるために
-下記のように serialize method で個別に この class を利用した instance を再作成し、 field に assign する
-`ApplicationEntity#constructor`の機能で`new`時に値受け渡しを行っている
-
-```ts
-export class ScopeSerializer extends BaseSerializer {
-  @Type(() => ExposedScope)
-  scope: ExposedScope
-
-  public serialize({ scope }: { scope: Scope }): this {
-    this.scope = new ExposedScope(scope)
-    return this
-  }
-}
-```
-
-`class-transformer`による serialize 処理注意点
-
-- controller の return 時で instance 化されている値は`class-transformer`で処理される
-- そのため、`lazy` load で後から取得される値については、class-transformer の処理がされない
-- class が適用されていない object 型の property も処理対象にならない
-
-### Controller で`@Res() res`で response 取得している場合
-
-下記のように明示的に Response しないと、処理後に response されない
-
-```js
-res.status(HttpStatus.OK).json({})
-```
-
-https://docs.nestjs.com/controllers#library-specific-approach
+- service, repository のテストケースは必須
+- controller は基本的にテストケース不要
+- dto, serializer, entity は基本的にテストケース不要
+- ただし、controller はできるだけ簡素に
+  - if 分岐がある場合、decorator/service/repository に処理を移譲すること. そして、そちらでテストケースを書くこと
+- ただし、controller, dto, serializer 向けに個別の class-validator, class-transformer を実装した場合、その単体テストを書くこと
