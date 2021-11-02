@@ -1,7 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { ScopesModule } from './scopes/scopes.module'
 import { LoggerMiddleware } from '../middleware/logger.middleware'
 import { ConfigModule } from '../config/config.module'
@@ -42,7 +41,6 @@ const isProduction = process.env.NODE_ENV === 'production'
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_FILTER, useClass: FindRelationsNotFoundExceptionFilter },
     { provide: APP_FILTER, useClass: ValidationsErrorFilter },
-    AppService,
   ],
 })
 export class AppModule implements NestModule {
