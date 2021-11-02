@@ -49,7 +49,7 @@ describe('ContentHistoriesService', () => {
 
     it('can not create. because released', async () => {
       const releaseId = 1
-      expect(service.create({ releaseId })).rejects.toThrow(ValidationsError)
+      await expect(service.create({ releaseId })).rejects.toThrow(ValidationsError)
     })
   })
 
@@ -66,7 +66,6 @@ describe('ContentHistoriesService', () => {
       }
     })
     it('copies ContentHistory', async () => {
-      console.log(release)
       await service.copyContentHistories(release.sourceReleaseId, release.id)
       record = await ContentHistory.findOne({ where: { releaseId: release.id } })
       expect(record).toBeDefined()
@@ -90,7 +89,7 @@ describe('ContentHistoriesService', () => {
 
     it('can not delete. because released', async () => {
       const contentHistoryId = 1
-      expect(service.delete(contentHistoryId)).rejects.toThrow(ForbiddenException)
+      await expect(service.delete(contentHistoryId)).rejects.toThrow(ForbiddenException)
     })
   })
 })
