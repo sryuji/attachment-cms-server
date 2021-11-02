@@ -5,6 +5,7 @@ export default class ContentHistorySeed extends BaseSeed {
   async perform(): Promise<void> {
     const seedList = [
       {
+        id: 1,
         scopeId: 1,
         releaseId: 1,
         path: '/',
@@ -13,6 +14,7 @@ export default class ContentHistorySeed extends BaseSeed {
         action: 'innerHTML',
       },
       {
+        id: 2,
         scopeId: 1,
         releaseId: 2,
         path: '/',
@@ -21,6 +23,7 @@ export default class ContentHistorySeed extends BaseSeed {
         action: 'insertBefore',
       },
       {
+        id: 3,
         scopeId: 2,
         releaseId: 3,
         path: '/',
@@ -29,6 +32,7 @@ export default class ContentHistorySeed extends BaseSeed {
         action: 'innerHTML',
       },
       {
+        id: 4,
         scopeId: 3,
         releaseId: 4,
         path: '/',

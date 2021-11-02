@@ -15,11 +15,18 @@ describe('ReleaseRepository', () => {
   })
 
   describe('#findLatestRelease', () => {
-    it('return latest release', async () => {
+    it('return latest release included unreleased', async () => {
       const [scopeId] = [1]
       const release = await repository.findLatestRelease(scopeId)
       expect(release.id).toEqual(2)
       expect(release.name).toEqual('2度目のリリースの作業中')
+    })
+
+    it('return latest release excluded unreleased', async () => {
+      const [scopeId] = [1]
+      const release = await repository.findLatestRelease(scopeId, true)
+      expect(release.id).toEqual(1)
+      expect(release.name).toEqual('リリース済')
     })
   })
 

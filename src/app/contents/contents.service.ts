@@ -22,16 +22,23 @@ export class ContentsService extends BaseService<ContentHistory> {
     const release = await this.releaseRepository.findOne({ where: { limitedReleaseToken } })
     if (!release) throw new ForbiddenException('対象となるリリースが存在しません。')
 
-    return this.repository.find({ where: { releaseId: release.id, inactive: false } })
+    return this.findByRelease(release.id)
   }
 
   async searchReleaseTarget(token: string): Promise<ContentHistory[]> {
     const scope = await this.scopeRepository.findOne({ where: { token } })
     if (!scope) throw new UnauthorizedException()
 
-    const release = await this.releaseRepository.findLatestRelease(scope.id)
+    const release = await this.releaseRepository.findLatestRelease(scope.id, true)
     if (!release) throw new ForbiddenException('対象となるリリースが存在しません。')
 
-    return this.repository.find({ where: { releaseId: release.id, inactive: false } })
+    return this.findByRelease(release.id)
+  }
+
+  private findByRelease(releaseId: number) {
+    return this.repository.find({
+      where: { releaseId, inactive: false },
+      order: { path: 'ASC', id: 'ASC' },
+    })
   }
 }

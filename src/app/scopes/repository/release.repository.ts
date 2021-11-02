@@ -1,11 +1,15 @@
 import { Release } from '../../../db/entity/release.entity'
-import { Repository, EntityRepository } from 'typeorm'
+import { Repository, EntityRepository, IsNull, Not } from 'typeorm'
 import { Pager } from '../../base/pager'
 
 @EntityRepository(Release)
 export class ReleaseRepository extends Repository<Release> {
-  async findLatestRelease(scopeId: number): Promise<Release> {
-    return this.createQueryBuilder('release').where({ scopeId }).orderBy('releasedAt', 'DESC', 'NULLS FIRST').getOne()
+  async findLatestRelease(scopeId: number, onlyReleased = false): Promise<Release> {
+    const releasedCond = onlyReleased ? { releasedAt: Not(IsNull()) } : {}
+    return this.createQueryBuilder('release')
+      .where({ scopeId, ...releasedCond })
+      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
+      .getOne()
   }
 
   async findAll(scopeId: number, page: number, per: number): Promise<[Release[], Pager]> {
