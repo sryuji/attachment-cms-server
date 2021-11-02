@@ -148,6 +148,12 @@ $ yarn buildDts
 - Serializer, Dto に readonly は付けない
   - d.ts ファイルを生成した時に readonly も受け継がれ web プロジェクト側で Request Object の生成時に困るため
 
+Controller
+
+- 検索など query 発行は Controller に直接書かず、repository に切り出すこと
+- 分岐処理が在る場合、service に処理を切り出し、そちらでテストケースを用意すること
+- request / response (serializer, cookie, redirect 含む)のための処理は Controller に直接記載で良い.
+
 テストケース関連
 
 - service, repository のテストケースは必須
