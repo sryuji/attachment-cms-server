@@ -1,22 +1,15 @@
-import { Test } from '@nestjs/testing'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '../../../config/config.module'
-import { TypeOrmConfigService } from '../../../config/typeorm.config.service'
-
+import { compileModule, runSeeds } from '../../../../test/helper/orm.helper'
+import AccountScopeSeed from '../../../db/seed/development/account-scope.seed'
+import ScopeSeed from '../../../db/seed/development/scope.seed'
+import AccountSeed from '../../../db/seed/test/account.seed'
 import { ScopeRepository } from './scope.repository'
 
 describe('ScopeRepository', () => {
   let repository: ScopeRepository
 
   beforeAll(async () => {
-    const app = await Test.createTestingModule({
-      imports: [
-        ConfigModule,
-        TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-        TypeOrmModule.forFeature([ScopeRepository]),
-      ],
-    }).compile()
-
+    const app = await compileModule([ScopeRepository])
+    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed)
     repository = app.get<ScopeRepository>(ScopeRepository)
   })
 

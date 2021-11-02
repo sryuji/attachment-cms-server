@@ -1,4 +1,4 @@
-import { DynamicModule, ForwardReference, Provider, Type } from '@nestjs/common'
+import { Provider } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type'
@@ -7,19 +7,20 @@ import { ConfigModule } from '../../src/config/config.module'
 import { TypeOrmConfigService } from '../../src/config/typeorm.config.service'
 import { BaseSeed } from '../../src/db/seed/base.seed'
 
-type ImportType = Type | DynamicModule | Promise<DynamicModule> | ForwardReference
-
-export function compileModule(
-  entityClassOrSchema: EntityClassOrSchema[],
-  providers: Provider[],
-  ...modules: ImportType[]
-) {
+/**
+ * TestModuleの生成をするHelper.
+ * 他Moduleをimportしているケースは、Testでは個別にRepositoryをentityClassOrSchemaに、Serviceをproviderに指定すること
+ *
+ * @param entityClassOrSchema
+ * @param providers
+ * @returns
+ */
+export function compileModule(entityClassOrSchema: EntityClassOrSchema[], providers: Provider[] = []) {
   return Test.createTestingModule({
     imports: [
       ConfigModule,
       TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
       TypeOrmModule.forFeature(entityClassOrSchema),
-      ...modules,
     ],
     providers: providers,
   }).compile()

@@ -1,7 +1,6 @@
 import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Query, Delete } from '@nestjs/common'
 import { ReleasesService } from './releases.service'
 import { CreateReleaseForm, PublishReleaseForm, UpdateReleaseForm } from './dto/release.dto'
-import { Pager } from '../base/pager'
 import { ReleasesSerializer } from './serializer/releases.serializer'
 import { ReleaseSerializer } from './serializer/release.serializer'
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'
@@ -10,11 +9,15 @@ import { RESPONSE_200, RESPONSE_201, QUERY_PAGE, QUERY_PER, RESPONSE_204 } from 
 import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { Release } from '../../db/entity/release.entity'
 import { ReleaseWithPagerSerializer } from './serializer/release-with-pager.serializer'
+import { ReleaseRepository } from './repository/release.repository'
 
 @ApiTags('リリース')
 @Controller('releases')
 export class ReleasesController extends BaseController {
-  constructor(private readonly releasesService: ReleasesService) {
+  constructor(
+    private readonly releasesService: ReleasesService,
+    private readonly releaseRepository: ReleaseRepository
+  ) {
     super()
   }
 
@@ -87,14 +90,7 @@ export class ReleasesController extends BaseController {
     @Query('page') page?: number,
     @Query('per') per?: number
   ): Promise<ReleasesSerializer> {
-    const pager = new Pager({ page, per })
-    const [releases, count] = await Release.createQueryBuilder()
-      .where({ scopeId })
-      .take(pager.per)
-      .skip(pager.offset)
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
-      .getManyAndCount()
-    pager.totalCount = count
+    const [releases, pager] = await this.releaseRepository.findAll(scopeId, page, per)
     return new ReleasesSerializer().serialize({ releases, pager })
   }
 
@@ -104,33 +100,16 @@ export class ReleasesController extends BaseController {
   @Get('latest')
   @ScopeGetter(({ query }) => query.scopeId as string)
   async findLatest(@Query('scopeId') scopeId: number): Promise<ReleaseSerializer> {
-    const release = await Release.createQueryBuilder()
-      .where({ scopeId })
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
-      .getOne()
-    return await new ReleaseSerializer().serialize({
-      release,
-    })
+    const release = await this.releaseRepository.findLatestRelease(scopeId)
+    return await new ReleaseSerializer().serialize({ release })
   }
 
   @ApiOperation({ summary: '指定のリリース' })
   @ApiResponse({ ...RESPONSE_200, type: ReleaseWithPagerSerializer })
   @Get(':id')
   @ScopeGetter(({ params }) => Release.findOne(params.id).then((r) => r && r.scopeId))
-  async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseWithPagerSerializer> {
-    const release = await this.releasesService.fetch(id)
-    const dataList = await Release.createQueryBuilder()
-      .select('id')
-      .where({ scopeId: release.scopeId })
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
-      .getRawMany()
-    const ids = dataList.map((v) => v['id'])
-    const offset = ids.findIndex((id) => id === release.id)
-    const totalCount = ids.length
-    const pager = new Pager({ page: offset + 1, per: 1, totalCount })
-    return await new ReleaseWithPagerSerializer().serialize({
-      release,
-      pager,
-    })
+  async findOneWithPager(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseWithPagerSerializer> {
+    const [release, pager] = await this.releaseRepository.findOneWithPager(id)
+    return await new ReleaseWithPagerSerializer().serialize({ release, pager })
   }
 }
