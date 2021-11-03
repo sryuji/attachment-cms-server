@@ -18,7 +18,7 @@
     "prestart:prod": "rimraf dist && npm run build",
     "start:prod": "node dist/main.js",
     "lint": "yarn run lint:es",
-    "lint:es": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    "lint:es": "eslint --ext .js,.ts .",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -38,8 +38,8 @@
     "seed:test": "NODE_ENV=test yarn run seed account scope account-scope release content-history"
   },
   "dependencies": {
-    "@nestjs/common": "^8.0.6",
-    "@nestjs/core": "^8.0.6",
+    "@nestjs/common": "^8.1.2",
+    "@nestjs/core": "^8.1.2",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.6",
@@ -58,15 +58,15 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.3.0",
     "sqlite3": "^5.0.2",
-    "typeorm": "0.2.37",
+    "typeorm": "0.2.38",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@nestjs/swagger": "^5.0.9",
-    "@nestjs/testing": "^8.0.6",
+    "@nestjs/swagger": "^5.1.4",
+    "@nestjs/testing": "^8.1.2",
     "@types/express": "^4.16.0",
     "@types/jest": "^27.0.1",
-    "@types/node": "^16.9.4",
+    "@types/node": "^16.11.6",
     "@types/passport-google-oauth20": "^2.0.9",
     "@types/passport-jwt": "^3.0.6",
     "@types/supertest": "^2.0.7",
@@ -82,7 +82,7 @@
     "supertest": "^6.1.6",
     "swagger-ui-express": "^4.0.2",
     "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
+    "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.7.0",
     "typescript": "~4.4.3"
   },
