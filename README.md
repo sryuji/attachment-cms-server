@@ -121,7 +121,7 @@ $ yarn run orm:migrate
 生成後、web プロジェクトの`types/attachment-cms-server`配下に commit する
 
 ```bash
-$ yarn buildDts
+$ yarn build:types
 ```
 
 対象ファイルは、下記
