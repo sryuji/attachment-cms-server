@@ -23,6 +23,9 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @Column()
   path: string
 
+  @Column({ nullable: true })
+  description: string
+
   @Column('text', { nullable: true })
   selector: string
 

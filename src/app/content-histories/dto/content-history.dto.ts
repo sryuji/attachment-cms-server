@@ -10,6 +10,12 @@ export class ContentHistoryDto {
   @IsNotEmpty()
   path: string
 
+  @ApiPropertyOptional({
+    description: 'コンテンツの説明欄. ユーザーが覚え書きに利用する用途',
+  })
+  @Allow()
+  description: string
+
   @ApiProperty({
     description: '処理対象のselector',
     example: '#operations-tag-コンテンツ管理対象 > a',
