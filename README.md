@@ -19,7 +19,7 @@ $ yarn run start:dev
 打鍵用の seed データは下記で導入できます
 
 ```bash
-$ TEST_USER_EMAIL=[お持ちのGoogleアカウント] yarn run seed:development
+$ TEST_USER_EMAIL=[お持ちのGoogleアカウント] yarn run seed:dev
 ```
 
 TEST_USER_EMAIL に設定した Email アドレスでログインすれば、seed で入れたデータが閲覧できます。

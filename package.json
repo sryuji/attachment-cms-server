@@ -12,7 +12,6 @@
     "build": "tsc -p tsconfig.build.json",
     "buildDts": "tsc -p tsconfig.dts.json",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "yarn run ts src/app/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
     "prestart:prod": "rimraf dist && npm run build",
@@ -34,7 +33,7 @@
     "repl": "yarn run ts -r ./src/command/repl",
     "command": "yarn run ts ./src/command/runner.ts",
     "seed": "yarn run command seed-runner",
-    "seed:development": "NODE_ENV=development yarn run seed account scope account-scope release content-history",
+    "seed:dev": "NODE_ENV=development yarn run seed account scope account-scope release content-history",
     "seed:test": "NODE_ENV=test yarn run seed account scope account-scope release content-history"
   },
   "dependencies": {
