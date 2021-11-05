@@ -43,6 +43,7 @@ export class Scope extends ApplicationEntity<Scope> {
 
   @BeforeInsert()
   generateToken(): void {
+    if (this.token) return
     this.token = generateUUIDv4()
   }
 

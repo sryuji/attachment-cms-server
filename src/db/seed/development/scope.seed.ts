@@ -9,6 +9,7 @@ export default class ScopeSeed extends BaseSeed {
         name: 'サービス利用中',
         domain: 'http://localhost:3001',
         description: 'リリースを１度したことがあり、次のリリース策定中',
+        token: '0601c7e9-af0b-4e1d-a0e7-fde28278e9c2',
       },
       {
         id: 2,
