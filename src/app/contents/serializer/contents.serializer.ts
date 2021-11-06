@@ -9,7 +9,8 @@ export class ContentsSerializer extends BaseSerializer {
     collection.forEach((r) => {
       const path = r.path.replace(/:word/g, 'w+').trim()
       if (!this.contents[path]) this.contents[path] = []
-      this.contents[path].push({ selector: r.selector, content: r.content, action: r.action })
+      const content = r.content && r.content.trim()
+      this.contents[path].push({ selector: r.selector, content, action: r.action })
     })
     return this
   }
