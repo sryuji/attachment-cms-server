@@ -1,9 +1,9 @@
 {
   "name": "attachment-cms-server",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "author": "sryuji",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "private": true,
   "engines": {
     "node": "14.x"
