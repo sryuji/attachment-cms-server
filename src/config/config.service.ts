@@ -12,6 +12,10 @@ export class ConfigService {
       ...def,
       ...dotenv.parse(fs.readFileSync(`env/${env}.env`)),
     }
+    Object.keys(this.envConfig).forEach((key) => {
+      const v = process.env[key]
+      if (v) this.envConfig[key] = v
+    })
     this.numberRegExp = new RegExp(/^[-+]?[0-9]+(\.[0-9]+)?$/)
   }
 
