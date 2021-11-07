@@ -19,7 +19,9 @@
     "resolveJsonModule": true,
     "strictNullChecks": false,
     "noFallthroughCasesInSwitch": false,
-    "typeRoots": ["node_modules/@types", "src/types"]
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "typeRoots": ["node_modules/@types", "src/types", "node_modules/@sentry"]
   },
   "exclude": ["node_modules", "dist", "tmp", ".vscode", "env"]
 }

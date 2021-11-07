@@ -9,7 +9,7 @@ export class FindRelationsNotFoundExceptionFilter extends BaseExceptionFilter {
    * @param host
    */
   catch(exception: Error, host: ArgumentsHost) {
-    this.notify(exception)
+    this.notify(exception, host.switchToHttp())
     this.responseError(host, 400, exception.message, null)
   }
 }

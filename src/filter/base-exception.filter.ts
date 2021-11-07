@@ -1,6 +1,9 @@
 import { ArgumentsHost, Logger, Inject, ExceptionFilter } from '@nestjs/common'
 import { ConfigService } from '../config/config.service'
 import { Response } from 'express'
+import { Sentry } from '../sentry'
+import { Handlers } from '@sentry/node'
+import { HttpArgumentsHost } from '@nestjs/common/interfaces'
 
 export abstract class BaseExceptionFilter implements ExceptionFilter {
   protected config: ConfigService
@@ -48,10 +51,16 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
     }
   }
 
-  protected notify(exception: Error, level = 'error') {
+  protected notify(exception: Error, http: HttpArgumentsHost, level = 'error') {
     if (this.config.isDev || this.config.isTest) {
       Logger.error(exception.message, exception.stack)
     }
-    // TODO: Sentryへ通知
+    Sentry.withScope((scope) => {
+      const data = Handlers.parseRequest({}, http.getRequest())
+      scope.setExtra('req', data.request)
+      data.extra && scope.setExtras(data.extra)
+      if (data.user) scope.setUser(data.user)
+      Sentry.captureException(exception)
+    })
   }
 }

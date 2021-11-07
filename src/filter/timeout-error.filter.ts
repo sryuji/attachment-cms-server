@@ -9,7 +9,7 @@ export class TimeoutErrorFilter extends BaseExceptionFilter {
    * @param host
    */
   catch(exception: Error, host: ArgumentsHost) {
-    this.notify(exception, 'warn')
+    this.notify(exception, host.switchToHttp(), 'warn')
     this.responseError(host, 503, 'Timeout Error', null)
   }
 }

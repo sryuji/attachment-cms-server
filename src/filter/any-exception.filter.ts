@@ -11,7 +11,7 @@ export class AnyExceptionFilter extends BaseExceptionFilter {
    * @param host
    */
   catch(exception: Error, host: ArgumentsHost) {
-    this.notify(exception)
+    this.notify(exception, host.switchToHttp())
     this.responseError(host, 500, exception.message, null)
   }
 }

@@ -7,6 +7,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import packageJson = require('../../package.json')
 import cookieParser = require('cookie-parser')
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
+import { Sentry } from '../sentry'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -22,6 +23,8 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule)
   app.use(cookieParser())
   app.enableCors(corsOptions)
+  app.use(Sentry.Handlers.requestHandler({ user: ['sub', 'email'] }))
+  app.use(Sentry.Handlers.tracingHandler())
   app.useGlobalPipes(
     new ValidationPipe({
       // NOTE: DTOでvalidation定義されていないvalueは除去される. validation定義が不要なfieldには、@Allowをつける事でwhitelistの一員と明示できる

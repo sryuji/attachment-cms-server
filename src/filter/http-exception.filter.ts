@@ -16,7 +16,9 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     if (res instanceof Object && res.error) {
       message = `${res.error}: ${res.message}`
     }
-    if (this.config.isDev || ![400, 401, 403, 404, 409, 422].includes(status)) this.notify(exception)
+    if (this.config.isDev || ![400, 401, 403, 404, 409, 422].includes(status)) {
+      this.notify(exception, host.switchToHttp())
+    }
     this.responseError(host, status, message, options)
   }
 }
