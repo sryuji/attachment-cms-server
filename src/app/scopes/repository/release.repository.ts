@@ -8,7 +8,7 @@ export class ReleaseRepository extends Repository<Release> {
     const releasedCond = onlyReleased ? { releasedAt: Not(IsNull()) } : {}
     return this.createQueryBuilder('release')
       .where({ scopeId, ...releasedCond })
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
+      .orderBy('release.releasedAt', 'DESC', 'NULLS FIRST')
       .getOne()
   }
 
@@ -18,7 +18,7 @@ export class ReleaseRepository extends Repository<Release> {
       .where({ scopeId })
       .take(pager.per)
       .skip(pager.offset)
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
+      .orderBy('Release.releasedAt', 'DESC', 'NULLS FIRST')
       .getManyAndCount()
     pager.totalCount = count
     return [releases, pager]
@@ -29,7 +29,7 @@ export class ReleaseRepository extends Repository<Release> {
     const dataList = await Release.createQueryBuilder()
       .select('id')
       .where({ scopeId: release.scopeId })
-      .orderBy('releasedAt', 'DESC', 'NULLS FIRST')
+      .orderBy('Release.releasedAt', 'DESC', 'NULLS FIRST')
       .getRawMany()
     const ids = dataList.map((v) => v['id'])
     const offset = ids.findIndex((id) => id === release.id)
