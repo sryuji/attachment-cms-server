@@ -14,8 +14,12 @@ const defaultConfig: Partial<BaseConnectionOptions> = {
   },
 }
 const developmentConfig = {
-  type: 'sqlite',
-  database: 'tmp/development.sqlite3',
+  type: 'postgres',
+  host: 'acms_db',
+  port: 5432,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
   logging: 'all',
 }
 const testConfig = {
@@ -26,12 +30,12 @@ const testConfig = {
   logging: ['error', 'warn'],
 }
 const productionConfig = {
-  type: 'mysql',
-  host: process.env.DATABASE_HOST,
-  port: process.env.DATABASE_PORT ? parseInt(process.env.DATABASE_PORT) : 3306,
-  username: process.env.DATABASE_USERNAME || 'acmsadmin',
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
+  type: 'postgres',
+  host: process.env.POSTGRES_HOST,
+  port: process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT) : 5432,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
   synchronize: false,
   logging: ['schema', 'error', 'warn'],
 }

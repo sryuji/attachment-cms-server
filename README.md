@@ -1,12 +1,6 @@
 ## Getting Started
 
 ```bash
-$ nvm use
-```
-
-- nvm で node バージョンを管理していない場合、手動にて`/.nvmrc`ファイルの node バージョンに切り替えてください
-
-```bash
 $ yarn install
 $ yarn run orm:migrate
 $ yarn run start:dev
@@ -27,9 +21,6 @@ TEST_USER_EMAIL に設定した Email アドレスでログインすれば、see
 ## Run
 
 ```bash
-# development mode
-$ yarn run start
-
 # watch mode for development
 $ yarn run start:dev
 
