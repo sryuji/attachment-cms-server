@@ -1,13 +1,15 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm'
+import { Column, Entity, Index, ManyToOne, OneToMany, Unique } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Scope } from './scope.entity'
 import { ContentHistory } from './content-history.entity'
 import { IsOptional, IsNumber } from 'class-validator'
 
 @Entity()
+@Unique(['limitedReleaseToken'])
 export class Release extends ApplicationEntity<Release> {
   @Column()
   @IsNumber()
+  @Index()
   scopeId: number
 
   @ManyToOne((type) => Scope, (scope) => scope.releases, { lazy: true })
@@ -31,6 +33,7 @@ export class Release extends ApplicationEntity<Release> {
   @Column({ nullable: true })
   @IsNumber()
   @IsOptional()
+  @Index()
   sourceReleaseId: number
 
   @OneToMany((type) => ContentHistory, (r) => r.release)
