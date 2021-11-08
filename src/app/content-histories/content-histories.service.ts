@@ -5,6 +5,7 @@ import { BaseService } from '../base/base.service'
 import { ContentHistory } from '../..//db/entity/content-history.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
+import { isUndefined } from '../../util/object'
 
 @Injectable()
 export class ContentHistoriesService extends BaseService<ContentHistory> {
@@ -17,7 +18,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
 
   async create(dto: Partial<ContentHistory>): Promise<ContentHistory> {
     const release = await Release.findOne(dto.releaseId)
-    if (release.releasedAt) throw new ValidationsError(['リリース済のため登録できません。'])
+    if (release.releasedAt) throw new ValidationsError(['リリース済のため追加できません。'])
     dto.scopeId = release.scopeId
     return super.create(dto)
   }
@@ -31,10 +32,32 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     await this.repository.insert(newHists)
   }
 
+  async update(id: number, dto: Partial<ContentHistory>): Promise<ContentHistory> {
+    const release = await Release.findOneOrFail(dto.releaseId)
+    const contentHistory = await ContentHistory.findOneOrFail(id)
+    if (
+      (dto.scopeId && contentHistory.scopeId !== dto.scopeId) ||
+      (dto.releaseId && contentHistory.releaseId !== dto.releaseId)
+    ) {
+      throw new ForbiddenException([`scopeIdとreleaseIdの更新要求は行えません。`])
+    }
+    if (this.canUpdate(release, contentHistory, dto)) return super.update(id, dto)
+    throw new ForbiddenException(['リリース済のためは、更新できない項目があります。'])
+  }
+
   async delete(id: number): Promise<ContentHistory> {
     const record = await this.fetch(id)
     const release = await record.release
     if (release.releasedAt) throw new ForbiddenException('リリース済のため削除できません。')
     return await record.remove()
+  }
+
+  private canUpdate(release: Release, contentHistory: ContentHistory, dto: Partial<ContentHistory>): boolean {
+    if (!release.releasedAt) return true
+    return (
+      (isUndefined(dto.path) || contentHistory.path === dto.path) &&
+      (isUndefined(dto.selector) || contentHistory.selector === dto.selector) &&
+      (isUndefined(dto.action) || contentHistory.action === dto.action)
+    )
   }
 }
