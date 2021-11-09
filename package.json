@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "build:types": "tsc -p tsconfig.build.types.json && cp -Rf ./dist/types/src/* ../web/types/attachment-cms-server/",
+    "build:types": "tsc -p tsconfig.build.types.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
