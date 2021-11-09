@@ -13,7 +13,7 @@ import { AccountScopesService } from '../account-scopes/account-scopes.service'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { AuthUser } from '../../decorator/auth-user.decorator'
 
-@ApiTags('コンテンツ管理枠への招待')
+@ApiTags('プロジェクトへの招待を管理')
 @Controller('scope-invitations')
 export class ScopeInvitationsController extends BaseController {
   constructor(
@@ -24,7 +24,7 @@ export class ScopeInvitationsController extends BaseController {
   }
 
   @ApiOperation({
-    summary: 'コンテンツ管理枠への招待',
+    summary: 'プロジェクトへ招待する',
   })
   @ApiResponse(RESPONSE_201)
   @Post()
@@ -35,7 +35,7 @@ export class ScopeInvitationsController extends BaseController {
   }
 
   @ApiOperation({
-    summary: 'コンテンツ管理枠への招待の削除',
+    summary: 'プロジェクトへの招待の削除',
   })
   @ApiResponse(RESPONSE_204)
   @Delete(':id')
@@ -45,7 +45,7 @@ export class ScopeInvitationsController extends BaseController {
     await this.scopeInvitationsService.delete(id)
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理枠への招待一覧' })
+  @ApiOperation({ summary: 'プロジェクトへの招待一覧' })
   @ApiResponse(RESPONSE_200)
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
@@ -62,7 +62,7 @@ export class ScopeInvitationsController extends BaseController {
     return new ScopeInvitationsSerializer().serialize({ scopeInvitations, pager })
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理枠への招待を受ける' })
+  @ApiOperation({ summary: 'プロジェクトへの招待を受ける' })
   @ApiResponse(RESPONSE_200)
   @Post(':token/join')
   @ScopeGetter(({ params }) => ScopeInvitation.findOne(params.id).then((r) => r && r.scopeId))
@@ -71,7 +71,7 @@ export class ScopeInvitationsController extends BaseController {
     return new ScopeInvitationSerializer().serialize({ scopeInvitation: record })
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理枠への招待' })
+  @ApiOperation({ summary: 'プロジェクトへの招待の詳細' })
   @ApiResponse(RESPONSE_200)
   @Get(':token')
   async findOne(@Param('token') token: string, @AuthUser() user: AuthUserDto): Promise<ScopeInvitationSerializer> {

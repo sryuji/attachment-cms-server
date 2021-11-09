@@ -27,7 +27,7 @@ export class AccountsController extends BaseController {
 
   @ApiOperation({
     summary: 'アカウントの削除',
-    description: '退会してもコンテンツは削除しない',
+    description: '退会してもプロジェクトは削除されない',
   })
   @ApiResponse(RESPONSE_204)
   @Delete()
