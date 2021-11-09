@@ -11,13 +11,13 @@ export class AccountScope extends ApplicationEntity<AccountScope> {
   @IsNumber()
   accountId: number
 
-  @ManyToOne((type) => Account, (r) => r.accountScopes, { lazy: true })
+  @ManyToOne((type) => Account, (r) => r.accountScopes)
   account: Account
 
   @Column({ nullable: false })
   @IsNumber()
   scopeId: number
 
-  @ManyToOne((type) => Scope, (r) => r.accountScopes, { lazy: true })
+  @ManyToOne((type) => Scope, (r) => r.accountScopes)
   scope: Scope
 }

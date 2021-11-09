@@ -17,10 +17,9 @@ export class AccountScopesService extends BaseService<AccountScope> {
     super(repository, AccountScope)
   }
 
-  async create(dto: AccountScopeDto): Promise<AccountScope> {
+  async create(dto: Partial<AccountScopeDto>): Promise<AccountScope> {
     const account = await Account.findOne({ where: { email: dto.email } })
     if (!account) throw new ValidationsError(['指定のEメールのアカウントは存在しません。'])
-    // TODO: アカウントが存在しない場合、将来メールを送信する仕様に変更
     dto.accountId = account.id
     return super.create(dto)
   }

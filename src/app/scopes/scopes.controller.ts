@@ -11,7 +11,7 @@ import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { AuthUser } from '../../decorator/auth-user.decorator'
 import { ScopeRepository } from './repository/scope.repository'
 
-@ApiTags('コンテンツ管理対象')
+@ApiTags('コンテンツ管理枠')
 @Controller('scopes')
 export class ScopesController extends BaseController {
   constructor(private readonly scopesService: ScopesService, private readonly scopeRepository: ScopeRepository) {
@@ -19,7 +19,7 @@ export class ScopesController extends BaseController {
   }
 
   @ApiOperation({
-    summary: 'コンテンツ管理対象の登録',
+    summary: 'コンテンツ管理枠の登録',
     description:
       '管理対象ドメインを設定し、そのドメインのコンテンツ管理を開始します。 同じドメインのScopeを作成する事はでき、その場合はScope毎にリリースと権限は分離されます',
   })
@@ -32,7 +32,7 @@ export class ScopesController extends BaseController {
     })
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理対象の更新' })
+  @ApiOperation({ summary: 'コンテンツ管理枠の更新' })
   @ApiResponse(RESPONSE_200)
   @Patch(':id')
   @ScopeGetter(({ params }) => params.id)
@@ -44,7 +44,7 @@ export class ScopesController extends BaseController {
   }
 
   @ApiOperation({
-    summary: 'コンテンツ管理対象の削除',
+    summary: 'コンテンツ管理枠の削除',
     description: 'Deprecated. 退会でもデータは削除しない',
   })
   @ApiResponse(RESPONSE_204)
@@ -55,7 +55,7 @@ export class ScopesController extends BaseController {
     await this.scopesService.delete(id)
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理対象一覧' })
+  @ApiOperation({ summary: 'コンテンツ管理枠一覧' })
   @ApiResponse(RESPONSE_200)
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
@@ -70,7 +70,7 @@ export class ScopesController extends BaseController {
     return new ScopesSerializer().serialize({ scopes, pager })
   }
 
-  @ApiOperation({ summary: 'コンテンツ管理対象' })
+  @ApiOperation({ summary: 'コンテンツ管理枠' })
   @ApiResponse(RESPONSE_200)
   @Get(':id')
   @ScopeGetter(({ params }) => params.id)
