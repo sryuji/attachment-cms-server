@@ -21,6 +21,7 @@
     "noFallthroughCasesInSwitch": false,
     "noEmitHelpers": true,
     "importHelpers": true,
+    "esModuleInterop": true,
     "typeRoots": ["node_modules/@types", "src/types", "node_modules/@sentry"]
   },
   "exclude": ["node_modules", "dist", "tmp", ".vscode", "env"]
