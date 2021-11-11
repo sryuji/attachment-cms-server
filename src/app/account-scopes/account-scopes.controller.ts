@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common'
@@ -21,6 +22,8 @@ import { BaseController } from '../base/base.controller'
 import { AccountScopesService } from './account-scopes.service'
 import { AccountScopeForm } from './dto/account-scope.form'
 import { AccountScopesSerializer } from './serializer/account-scopes.serializer'
+import { UpdateAccountScopeForm } from './dto/update-account-scope.form'
+import { Roles } from '../../decorator/roles.decorator'
 
 @ApiTags('アカウント別プロジェクト')
 @Controller('account-scopes')
@@ -29,13 +32,26 @@ export class AccountScopesController extends BaseController {
     super()
   }
 
-  @ApiOperation({ summary: '対象アカウントから指定のプロジェクトへの権限を追加' })
+  @ApiOperation({ summary: 'Deprecated. 対象アカウントから指定のプロジェクトへの権限を追加' })
   @ApiResponse(RESPONSE_201)
   @Post()
   @ScopeGetter(({ body }) => body.accountScope.accountId)
   async create(@Body() payload: AccountScopeForm): Promise<void> {
-    await this.accountScopesService.create(payload.accountScope)
-    return
+    // await this.accountScopesService.create(payload.accountScope)
+    // return
+  }
+
+  @ApiOperation({
+    summary:
+      '対象アカウントから指定のプロジェクトへの権限を削除. そのアカウントに反映されるまで30分未満の時間がかかります。もしくは、再ログインしてください。',
+  })
+  @ApiResponse(RESPONSE_204)
+  @Patch(':id')
+  @HttpCode(204)
+  @ScopeGetter(({ params }) => params.id)
+  @Roles('owner')
+  async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: UpdateAccountScopeForm): Promise<void> {
+    await this.accountScopesService.update(id, payload.accountScope)
   }
 
   @ApiOperation({
@@ -46,6 +62,7 @@ export class AccountScopesController extends BaseController {
   @Delete(':id')
   @HttpCode(204)
   @ScopeGetter(({ params }) => params.id)
+  @Roles('owner')
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.accountScopesService.delete(id)
   }
@@ -70,6 +87,7 @@ export class AccountScopesController extends BaseController {
   @ApiQuery({ name: 'scopeId', description: 'プロジェクトID', required: true })
   @ScopeGetter(({ query }) => query.scopeId as string)
   @Get()
+  @Roles('owner')
   async findAll(@Query('scopeId') scopeId: number): Promise<AccountScopesSerializer> {
     const accountScopes = await this.accountScopesService.search({
       where: { scopeId },

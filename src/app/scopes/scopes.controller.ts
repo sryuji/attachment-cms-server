@@ -10,6 +10,7 @@ import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { AuthUser } from '../../decorator/auth-user.decorator'
 import { ScopeRepository } from './repository/scope.repository'
+import { Roles } from '../../decorator/roles.decorator'
 
 @ApiTags('プロジェクト')
 @Controller('scopes')
@@ -36,6 +37,7 @@ export class ScopesController extends BaseController {
   @ApiResponse(RESPONSE_200)
   @Patch(':id')
   @ScopeGetter(({ params }) => params.id)
+  @Roles('owner')
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: ScopeForm): Promise<ScopeSerializer> {
     const record = await this.scopesService.update(id, payload.scope)
     return new ScopeSerializer().serialize({
@@ -51,6 +53,7 @@ export class ScopesController extends BaseController {
   @Delete(':id')
   @HttpCode(204)
   @ScopeGetter(({ params }) => params.id)
+  @Roles('owner')
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.scopesService.delete(id)
   }

@@ -93,13 +93,12 @@ export class ContentHistoriesController extends BaseController {
   @ApiOperation({ summary: 'コンテンツ' })
   @ApiResponse(RESPONSE_200)
   @Get(':id')
-  @ScopeGetter(({ params }) => ContentHistory.findOne(params.id).then((r: ContentHistory) => r && r.scopeId))
   async findOne(
     @Param('id', new ParseIntPipe()) id: number,
     @AuthUser() user: AuthUserDto
   ): Promise<ContentHistorySerializer> {
     const record = await this.contentHistoriesService.fetch(id)
-    await this.accountScopesService.authorize(user, record.scopeId)
+    await this.accountScopesService.authorizeScope(user, record.scopeId)
     return new ContentHistorySerializer().serialize({ contentHistory: record })
   }
 }

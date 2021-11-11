@@ -49,13 +49,16 @@ describe('AccountScopesService', () => {
     })
   })
 
-  describe('#authorize', () => {
+  describe('#authorizeScope', () => {
     it('authorizes by user.accountScopes', async () => {
       const scopeId = 1
       const account = await Account.findOne(1)
       const user = new AuthUserDto(account)
       user.accountScopes = await account.accountScopes
-      await service.authorize(user, scopeId)
+      const accountScope = await service.authorizeScope(user, scopeId)
+      expect(accountScope).toBeDefined()
+      expect(accountScope.scopeId).toEqual(scopeId)
+      expect(accountScope.accountId).toEqual(account.id)
     })
 
     it('authorizes by database accountScopes table', async () => {
@@ -63,7 +66,10 @@ describe('AccountScopesService', () => {
       const account = await Account.findOne(1)
       const user = new AuthUserDto(account)
       user.accountScopes = null
-      await service.authorize(user, scopeId)
+      const accountScope = await service.authorizeScope(user, scopeId)
+      expect(accountScope).toBeDefined()
+      expect(accountScope.scopeId).toEqual(scopeId)
+      expect(accountScope.accountId).toEqual(account.id)
     })
 
     it('can not authorize. because No exists AccountScope ', async () => {
@@ -71,7 +77,28 @@ describe('AccountScopesService', () => {
       const account = await Account.findOne(1)
       const user = new AuthUserDto(account)
       user.accountScopes = null
-      await expect(service.authorize(user, scopeId)).rejects.toThrowError(ForbiddenException)
+      await expect(service.authorizeScope(user, scopeId)).rejects.toThrowError(ForbiddenException)
+    })
+  })
+
+  describe('#authorizeRole', () => {
+    it('authorizes role without @Roles settings', async () => {
+      const accountScope = new AccountScope({ accountId: 1, scopeId: 1, role: 'owner' })
+      service.authorizeRole(accountScope, null)
+    })
+
+    it('authorizes role with @Roles settings', async () => {
+      const accountScope = new AccountScope({ accountId: 1, scopeId: 1, role: 'owner' })
+      service.authorizeRole(accountScope, ['owner'])
+    })
+
+    it('can not authorize. because No exists AccountScope', async () => {
+      expect(() => service.authorizeRole(null, ['owner'])).toThrowError(ForbiddenException)
+    })
+
+    it('can not authorize. because No has permitted role', async () => {
+      const accountScope = new AccountScope({ accountId: 1, scopeId: 1, role: 'member' })
+      expect(() => service.authorizeRole(accountScope, ['owner'])).toThrowError(ForbiddenException)
     })
   })
 })

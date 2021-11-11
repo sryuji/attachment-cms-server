@@ -12,6 +12,7 @@ import { ScopeInvitation } from '../../db/entity/scope-invitation.entity'
 import { AccountScopesService } from '../account-scopes/account-scopes.service'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { AuthUser } from '../../decorator/auth-user.decorator'
+import { Roles } from '../../decorator/roles.decorator'
 
 @ApiTags('プロジェクトへの招待を管理')
 @Controller('scope-invitations')
@@ -29,6 +30,7 @@ export class ScopeInvitationsController extends BaseController {
   @ApiResponse(RESPONSE_201)
   @Post()
   @ScopeGetter(({ body }) => body.scopeInvitation && body.scopeInvitation.scopeId)
+  @Roles('owner')
   async create(@Body() payload: ScopeInvitationForm): Promise<ScopeInvitationSerializer> {
     const record = await this.scopeInvitationsService.create(payload.scopeInvitation)
     return new ScopeInvitationSerializer().serialize({ scopeInvitation: record })
@@ -41,6 +43,7 @@ export class ScopeInvitationsController extends BaseController {
   @Delete(':id')
   @HttpCode(204)
   @ScopeGetter(({ params }) => ScopeInvitation.findOne(params.id).then((r) => r && r.scopeId))
+  @Roles('owner')
   async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
     await this.scopeInvitationsService.delete(id)
   }
@@ -50,6 +53,7 @@ export class ScopeInvitationsController extends BaseController {
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
   @Get()
+  @Roles('owner')
   async findAll(
     @Query('scopeId') scopeId: number,
     @Query('page') page?: number,
@@ -76,7 +80,7 @@ export class ScopeInvitationsController extends BaseController {
   @Get(':token')
   async findOne(@Param('token') token: string, @AuthUser() user: AuthUserDto): Promise<ScopeInvitationSerializer> {
     const record = await ScopeInvitation.findOne({ where: { invitationToken: token } })
-    await this.accountScopesService.authorize(user, record.scopeId)
+    await this.accountScopesService.authorizeScope(user, record.scopeId)
     return new ScopeInvitationSerializer().serialize({ scopeInvitation: record })
   }
 }

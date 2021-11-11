@@ -20,4 +20,7 @@ export class AccountScope extends ApplicationEntity<AccountScope> {
 
   @ManyToOne((type) => Scope, (r) => r.accountScopes)
   scope: Scope
+
+  @Column({ nullable: false, default: 'member' })
+  role: string
 }

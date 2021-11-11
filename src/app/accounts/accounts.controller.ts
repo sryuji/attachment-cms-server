@@ -7,6 +7,8 @@ import { AccountSerializer } from './serializer/account.serializer'
 import { AccountForm } from './dto/account.form'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { AuthUser } from '../../decorator/auth-user.decorator'
+import { Account } from '../../db/entity/account.entity'
+import { AccountScope } from '../../db/entity/account-scope.entity'
 
 @ApiTags('アカウント')
 @Controller('accounts')
@@ -20,6 +22,7 @@ export class AccountsController extends BaseController {
   @Patch()
   async update(@AuthUser() user: AuthUserDto, @Body() payload: AccountForm): Promise<AccountSerializer> {
     const record = await this.accountsService.update(user.sub, payload.account)
+    record.accountScopes = await AccountScope.find({ where: { accountId: record.id } })
     return new AccountSerializer().serialize({
       account: record,
     })
@@ -40,7 +43,7 @@ export class AccountsController extends BaseController {
   @ApiResponse(RESPONSE_200)
   @Get()
   async findOne(@AuthUser() user: AuthUserDto): Promise<AccountSerializer> {
-    const record = await this.accountsService.fetch(user.sub)
+    const record = await Account.findOne({ where: { id: user.sub }, relations: ['accountScopes'] })
     return new AccountSerializer().serialize({ account: record })
   }
 }

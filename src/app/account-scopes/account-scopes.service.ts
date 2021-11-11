@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { AccountScope } from '../../db/entity/account-scope.entity'
 import { Account } from '../../db/entity/account.entity'
+import { RoleType } from '../../enum/role.enum'
 import { ValidationsError } from '../../exception/validations.error'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { BaseService } from '../base/base.service'
@@ -24,11 +25,23 @@ export class AccountScopesService extends BaseService<AccountScope> {
     return super.create(dto)
   }
 
-  async authorize(user: AuthUserDto, scopeId: number): Promise<void> {
-    const scopeIds = user.accountScopes && user.accountScopes.map((accountScope) => accountScope.scopeId)
-    if (scopeIds && scopeIds.includes(scopeId)) return
-    const accountScope = await this.repository.findOne({ where: { accountId: user.sub, scopeId } })
+  async authorizeScope(user: AuthUserDto, scopeId: number): Promise<Partial<AccountScope>> {
+    if (!user || !scopeId) throw new Error()
+    let accountScope = user.accountScopes && user.accountScopes.find((r) => r.scopeId === scopeId)
+    if (accountScope) return accountScope
+
+    accountScope = await this.repository.findOne({ where: { accountId: user.sub, scopeId } })
     if (!accountScope) throw new ForbiddenException(`No Permission this scope. scopeId: ${scopeId}`)
-    return
+    return accountScope
+  }
+
+  authorizeRole(accountScope: Partial<AccountScope>, permittedRoles: RoleType[]): void {
+    if (!permittedRoles || permittedRoles.length === 0) return
+    if (!accountScope) throw new ForbiddenException()
+
+    const accountScopeRole: string = accountScope.role
+    if (!permittedRoles.find((role) => accountScopeRole === role.toString())) {
+      throw new ForbiddenException(`Need role.`)
+    }
   }
 }
