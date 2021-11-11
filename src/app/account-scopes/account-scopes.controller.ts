@@ -1,7 +1,22 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Query } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common'
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RESPONSE_200, RESPONSE_201, RESPONSE_204 } from '../../constant/swagger.constant'
+import { AccountScope } from '../../db/entity/account-scope.entity'
+import { AuthUser } from '../../decorator/auth-user.decorator'
+import { AccessTokenHeader } from '../../decorator/access-token-header.decorator'
 import { ScopeGetter } from '../../decorator/scope-getter.decorator'
+import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { BaseController } from '../base/base.controller'
 import { AccountScopesService } from './account-scopes.service'
 import { AccountScopeForm } from './dto/account-scope.form'
@@ -23,7 +38,10 @@ export class AccountScopesController extends BaseController {
     return
   }
 
-  @ApiOperation({ summary: '対象アカウントから指定のプロジェクトへの権限を削除' })
+  @ApiOperation({
+    summary:
+      '対象アカウントから指定のプロジェクトへの権限を削除. そのアカウントに反映されるまで30分未満の時間がかかります。もしくは、再ログインしてください。',
+  })
   @ApiResponse(RESPONSE_204)
   @Delete(':id')
   @HttpCode(204)
@@ -32,9 +50,24 @@ export class AccountScopesController extends BaseController {
     await this.accountScopesService.delete(id)
   }
 
+  @ApiOperation({ summary: '指定のプロジェクトから自身を離脱させる' })
+  @ApiResponse(RESPONSE_204)
+  @Delete('')
+  @ApiQuery({ name: 'scopeId', description: 'プロジェクトID', required: true })
+  @HttpCode(204)
+  @AccessTokenHeader('clear')
+  async deleteByScopeId(
+    @Query('scopeId', new ParseIntPipe()) scopeId: number,
+    @AuthUser() user: AuthUserDto
+  ): Promise<void> {
+    const accountScope = await AccountScope.findOne({ where: { accountId: user.sub, scopeId } })
+    if (!accountScope) throw new BadRequestException()
+    await this.accountScopesService.delete(accountScope.id)
+  }
+
   @ApiOperation({ summary: 'プロジェクト所属のアカウント一覧' })
   @ApiResponse(RESPONSE_200)
-  @ApiQuery({ name: 'scopeId', description: 'プロジェクトID' })
+  @ApiQuery({ name: 'scopeId', description: 'プロジェクトID', required: true })
   @ScopeGetter(({ query }) => query.scopeId as string)
   @Get()
   async findAll(@Query('scopeId') scopeId: number): Promise<AccountScopesSerializer> {
