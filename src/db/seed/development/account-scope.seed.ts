@@ -7,6 +7,7 @@ export default class AccountScopeSeed extends BaseSeed {
       {
         accountId: 1,
         scopeId: 1,
+        role: 'owner',
       },
       {
         accountId: 1,
