@@ -26,7 +26,7 @@ export class AccountScopeGuard implements CanActivate {
     const user: AuthUserDto = req.user as AuthUserDto
 
     const accountScope = await this.authorizeScope(context, req, user)
-    await this.authorizeRole(context, accountScope)
+    this.authorizeRole(context, accountScope)
     return true
   }
 
@@ -39,10 +39,10 @@ export class AccountScopeGuard implements CanActivate {
     if (!handler) return null
 
     const scopeId = await handler(req)
-    return await this.accountScopesService.authorizeScope(user, Number(scopeId))
+    return this.accountScopesService.authorizeScope(user, Number(scopeId))
   }
 
-  private async authorizeRole(context: ExecutionContext, accountScope: Partial<AccountScope>): Promise<void> {
+  private authorizeRole(context: ExecutionContext, accountScope: Partial<AccountScope>): void {
     const roles = this.reflector.get<RoleType[]>(ROLES_KEY, context.getHandler())
     if (!roles || roles.length === 0) return
     this.accountScopesService.authorizeRole(accountScope, roles)

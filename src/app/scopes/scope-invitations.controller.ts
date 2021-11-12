@@ -54,6 +54,7 @@ export class ScopeInvitationsController extends BaseController {
   @ApiQuery(QUERY_PAGE)
   @Get()
   @Roles('owner')
+  @ScopeGetter(({ query }) => query.scopeId as string)
   async findAll(
     @Query('scopeId') scopeId: number,
     @Query('page') page?: number,

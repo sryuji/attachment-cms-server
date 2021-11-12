@@ -37,7 +37,7 @@ export class AccountScopesService extends BaseService<AccountScope> {
 
   authorizeRole(accountScope: Partial<AccountScope>, permittedRoles: RoleType[]): void {
     if (!permittedRoles || permittedRoles.length === 0) return
-    if (!accountScope) throw new ForbiddenException()
+    if (!accountScope) throw new Error('Need accountScope.')
 
     const accountScopeRole: string = accountScope.role
     if (!permittedRoles.find((role) => accountScopeRole === role.toString())) {
