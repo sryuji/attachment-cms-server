@@ -13,5 +13,5 @@ export class UpdateAccountScopeDto {
     default: 'member',
   })
   @IsIn(Object.values(Role))
-  action: string
+  role: string
 }
