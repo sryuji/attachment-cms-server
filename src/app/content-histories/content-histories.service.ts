@@ -33,8 +33,8 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   }
 
   async update(id: number, dto: Partial<ContentHistory>): Promise<ContentHistory> {
-    const release = await Release.findOneOrFail(dto.releaseId)
     const contentHistory = await ContentHistory.findOneOrFail(id)
+    const release = await Release.findOneOrFail(contentHistory.releaseId)
     if (
       (dto.scopeId && contentHistory.scopeId !== dto.scopeId) ||
       (dto.releaseId && contentHistory.releaseId !== dto.releaseId)
@@ -42,7 +42,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
       throw new ForbiddenException([`scopeIdとreleaseIdの更新要求は行えません。`])
     }
     if (this.canUpdate(release, contentHistory, dto)) return super.update(id, dto)
-    throw new ForbiddenException(['リリース済のためは、更新できない項目があります。'])
+    throw new ForbiddenException(['リリース済のため、更新できない項目があります。'])
   }
 
   async delete(id: number): Promise<ContentHistory> {
