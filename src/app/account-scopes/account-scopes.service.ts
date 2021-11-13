@@ -8,6 +8,7 @@ import { ValidationsError } from '../../exception/validations.error'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { BaseService } from '../base/base.service'
 import { AccountScopeDto } from './dto/account-scope.dto'
+import { UpdateAccountScopeDto } from './dto/update-account-scope.dto'
 
 @Injectable()
 export class AccountScopesService extends BaseService<AccountScope> {
@@ -23,6 +24,17 @@ export class AccountScopesService extends BaseService<AccountScope> {
     if (!account) throw new ValidationsError(['指定のEメールのアカウントは存在しません。'])
     dto.accountId = account.id
     return super.create(dto)
+  }
+
+  async update(id: number, dto: UpdateAccountScopeDto): Promise<AccountScope> {
+    return this.transaction(async (manager) => {
+      const record = await super.update(id, dto)
+      const count = await AccountScope.count({ where: { scopeId: record.scopeId, role: 'owner' } })
+      if (count === 0) {
+        throw new ValidationsError(['一人はowner権限を持つメンバーが必要です。'])
+      }
+      return record
+    })
   }
 
   async authorizeScope(user: AuthUserDto, scopeId: number): Promise<Partial<AccountScope>> {

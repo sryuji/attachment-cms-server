@@ -93,7 +93,7 @@ describe('AccountScopesService', () => {
     })
 
     it('can not authorize. because No exists AccountScope', async () => {
-      expect(() => service.authorizeRole(null, ['owner'])).toThrowError(ForbiddenException)
+      expect(() => service.authorizeRole(null, ['owner'])).toThrowError(Error)
     })
 
     it('can not authorize. because No has permitted role', async () => {
