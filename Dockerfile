@@ -21,7 +21,7 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 COPY . /app/
-RUN yarn install && yarn cache clean
+RUN yarn global add typescript && yarn install && yarn cache clean
 RUN yarn prestart:prod
 
 EXPOSE 3000
