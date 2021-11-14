@@ -37,7 +37,8 @@ async function bootstrap() {
   )
   app.useGlobalInterceptors(new LoggingInterceptor()) //, new TimeoutInterceptor(5000)
   if (!isProduction) setupSwagger(app)
-  await app.listen(3000)
+  const port = Number(process.env.PORT) || 3000
+  await app.listen(port, '0.0.0.0')
 }
 async function setupSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
