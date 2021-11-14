@@ -24,5 +24,4 @@ COPY . /app/
 RUN yarn global add typescript && yarn install && yarn cache clean
 RUN yarn prestart:prod
 
-EXPOSE $PORT
 CMD ["yarn", "start:prod"]
