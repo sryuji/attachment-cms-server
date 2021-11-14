@@ -1,0 +1,9 @@
+.vscode
+coverage
+node_modules
+test
+tmp
+temp
+
+.DS_Store
+*.log
