@@ -20,7 +20,7 @@ RUN apk update && \
     apk del .build-dep && \
     rm -rf /var/cache/apk/*
 
-COPY ./server/ /app/
+COPY . /app/
 RUN yarn install && yarn cache clean
 RUN yarn prestart:prod
 
