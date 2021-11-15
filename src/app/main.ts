@@ -14,7 +14,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 // https://github.com/expressjs/cors#configuration-options
 const corsOptions: CorsOptions = {
   origin: (() => {
-    return isProduction ? [''] : ['http://localhost:3001']
+    return isProduction ? ['https://attachment-cms.dev'] : ['http://localhost:3001']
   })(),
   credentials: true,
 }
