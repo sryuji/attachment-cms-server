@@ -15,7 +15,7 @@
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
     "prestart:prod": "rimraf dist && yarn build",
-    "start:prod": "node dist/main.js",
+    "start:prod": "yarn orm:migrate && node dist/src/app/main.js",
     "lint": "yarn run lint:es",
     "lint:es": "eslint --ext .js,.ts .",
     "test": "node --trace-warnings node_modules/.bin/jest --unhandled-rejections=strict",
@@ -34,7 +34,8 @@
     "command": "yarn run ts ./src/command/runner.ts",
     "seed": "yarn run command seed-runner",
     "seed:dev": "NODE_ENV=development yarn run seed account scope account-scope release content-history",
-    "seed:test": "NODE_ENV=test yarn run seed account scope account-scope release content-history"
+    "seed:test": "NODE_ENV=test yarn run seed account scope account-scope release content-history",
+    "seed:prod": "NODE_ENV=production yarn run seed scope"
   },
   "dependencies": {
     "@nestjs/common": "^8.1.2",
