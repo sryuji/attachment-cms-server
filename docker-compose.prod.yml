@@ -1,0 +1,40 @@
+# WARNING: これはLocalでの本番動作確認用で本番環境で使われるものではない
+
+version: '3.9'
+
+networks:
+  acms_network_prod:
+
+volumes:
+  acms_db_prod_volume: {}
+
+services:
+  acms_db:
+    container_name: acms_db_prod
+    image: 'postgres:13-alpine'
+    networks:
+      - acms_network_prod
+    volumes:
+      - acms_db_prod_volume:/var/lib/postgresql/data
+    ports:
+      - '35432:5432'
+    env_file:
+      - './env/production.local.env'
+    restart: unless-stopped
+
+  acms_app:
+    container_name: acms_app_prod
+    networks:
+      - acms_network_prod
+    depends_on:
+      - acms_db_prod
+    build:
+      dockerfile: './Dockerfile'
+    ports:
+      - '3000:3000'
+    working_dir: /app
+    env_file:
+      - './env/production.local.env'
+    tty: true
+    stdin_open: true
+    restart: unless-stopped

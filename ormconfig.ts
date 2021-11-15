@@ -4,9 +4,9 @@ import { BaseConnectionOptions } from 'typeorm/connection/BaseConnectionOptions'
 const defaultConfig: Partial<BaseConnectionOptions> = {
   synchronize: false,
   logging: ['schema', 'error', 'warn'],
-  entities: [path.resolve(__dirname, 'src/db/entity/**/*.entity.ts')],
-  migrations: [path.resolve(__dirname, 'src/db/migration/*.ts')],
-  subscribers: [path.resolve(__dirname, 'src/db/subscriber/**/*.subscriber.ts')],
+  entities: [path.resolve(__dirname, 'src/db/entity/**/*.entity.*')],
+  migrations: [path.resolve(__dirname, 'src/db/migration/*')],
+  subscribers: [path.resolve(__dirname, 'src/db/subscriber/**/*.subscriber.*')],
   cli: {
     entitiesDir: 'src/db/entity',
     migrationsDir: 'src/db/migration',

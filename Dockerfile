@@ -20,8 +20,10 @@ RUN apk update && \
     apk del .build-dep && \
     rm -rf /var/cache/apk/*
 
+RUN yarn global add typescript@4.4.4
+COPY ./yarn.lock ./package.json /app/
+RUN yarn install && yarn cache clean
 COPY . /app/
-RUN yarn global add typescript && yarn install && yarn cache clean
 RUN yarn prestart:prod
 
 CMD ["yarn", "start:prod"]
