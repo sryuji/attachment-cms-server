@@ -45,8 +45,11 @@ const isProduction = process.env.NODE_ENV === 'production'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    const middlewares = [LoggerMiddleware]
-    if (!isProduction) middlewares.push(TestMiddleware)
+    const middlewares = []
+    if (!isProduction) {
+      middlewares.push(LoggerMiddleware)
+      middlewares.push(TestMiddleware)
+    }
     consumer.apply(...middlewares).forRoutes('*')
   }
 }

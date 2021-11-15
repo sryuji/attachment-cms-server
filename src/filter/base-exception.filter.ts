@@ -38,10 +38,14 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
   }
 
   private logResponse(res: Response, errorMessage: string | string[]) {
-    const delay = Date.now() - res.locals.requestStartTime // NOTE: LoggerMiddlewareから引き継いでいる
     const code = res.statusCode
+    let delayMessage = ''
+    if (!this.config.isProduction && res.locals && res.locals.requestStartTime) {
+      const delay = Date.now() - res.locals.requestStartTime // NOTE: LoggerMiddlewareから引き継いでいる
+      delayMessage = `${delay} ms.`
+    }
     errorMessage = Array.isArray(errorMessage) ? errorMessage.join('. ') : errorMessage
-    const message = `Response ${code} response. ${delay}ms. ${errorMessage}`
+    const message = `Response ${code} response. ${delayMessage}${errorMessage}`
     if (code && code < 400) {
       Logger.log(message)
     } else if (code && code < 500) {

@@ -35,8 +35,12 @@ async function bootstrap() {
       exceptionFactory: (errors) => new ValidationsError(errors),
     })
   )
-  app.useGlobalInterceptors(new LoggingInterceptor()) //, new TimeoutInterceptor(5000)
-  if (!isProduction) setupSwagger(app)
+  if (!isProduction) {
+    // NOTE: GCP Cloud Runでrequest logにresponse時間も出るため本番では不要
+    app.useGlobalInterceptors(new LoggingInterceptor())
+
+    setupSwagger(app)
+  }
   const port = Number(process.env.PORT) || 3000
   await app.listen(port, '0.0.0.0')
 }
