@@ -115,11 +115,26 @@ describe('ReleasesService', () => {
       }
     })
 
-    it('publishes release', async () => {
-      record = await service.publish(record.id, { id: record.id, releasedAt: new Date() })
-      expect(record.releasedAt).toBeDefined()
-      const scope = await Scope.findOne(record.scopeId)
-      expect(scope.defaultReleaseId).toEqual(record.id)
+    describe('no contents', () => {
+      it('can not publish', async () => {
+        expect(service.publish(record.id, { id: record.id, releasedAt: new Date() })).rejects.toThrowError()
+      })
+    })
+
+    describe('exists contents', () => {
+      it('publishes release', async () => {
+        await new ContentHistory({
+          releaseId: record.id,
+          scopeId: record.scopeId,
+          path: '/',
+          selector: '#test > p',
+          action: 'remove',
+        }).save()
+        record = await service.publish(record.id, { id: record.id, releasedAt: new Date() })
+        expect(record.releasedAt).toBeDefined()
+        const scope = await Scope.findOne(record.scopeId)
+        expect(scope.defaultReleaseId).toEqual(record.id)
+      })
     })
   })
 

@@ -8,6 +8,7 @@ import { ContentHistoriesService } from '../content-histories/content-histories.
 import { ReleaseRepository } from './repository/release.repository'
 import { generateUUIDv4 } from '../../util/math'
 import { IsNull } from 'typeorm'
+import { ContentHistory } from '../../db/entity/content-history.entity'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {
@@ -53,6 +54,10 @@ export class ReleasesService extends BaseService<Release> {
   }
 
   async publish(id: number, dto: PublishReleaseDto): Promise<Release> {
+    const contentCount = await ContentHistory.count({ where: { releaseId: id } })
+    if (contentCount === 0)
+      throw new ValidationsError([`指定のリリースにコンテンツが存在しないため、リリースできません.`])
+
     return await this.transaction(async (manager) => {
       const record = await this.update(id, { ...dto, limitedReleaseToken: null, limitedReleaseTokenIssuedAt: null })
       const scope = await record.scope
