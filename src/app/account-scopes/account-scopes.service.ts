@@ -38,7 +38,7 @@ export class AccountScopesService extends BaseService<AccountScope> {
   }
 
   async authorizeScope(user: AuthUserDto, scopeId: number): Promise<Partial<AccountScope>> {
-    if (!user || !scopeId) throw new Error()
+    if (!user || !scopeId) throw new ForbiddenException()
     let accountScope = user.accountScopes && user.accountScopes.find((r) => r.scopeId === scopeId)
     if (accountScope) return accountScope
 
@@ -49,7 +49,7 @@ export class AccountScopesService extends BaseService<AccountScope> {
 
   authorizeRole(accountScope: Partial<AccountScope>, permittedRoles: RoleType[]): void {
     if (!permittedRoles || permittedRoles.length === 0) return
-    if (!accountScope) throw new Error('Need accountScope.')
+    if (!accountScope) throw new ForbiddenException()
 
     const accountScopeRole: string = accountScope.role
     if (!permittedRoles.find((role) => accountScopeRole === role.toString())) {
