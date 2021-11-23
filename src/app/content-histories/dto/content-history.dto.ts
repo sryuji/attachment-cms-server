@@ -1,6 +1,7 @@
 import { IsNotEmpty, Allow, IsIn } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ContentHistoryAction } from '../../../enum/content-history-action.enum'
+import { IsOneRootNode } from '../../../decorator/one-root-node.validation'
 
 export class ContentHistoryDto {
   @ApiProperty({
@@ -27,7 +28,7 @@ export class ContentHistoryDto {
     description: 'selectorに対してactionを行う置換/挿入するhtmlコンテンツ',
     example: '<span>コンテンツ</span>',
   })
-  @Allow()
+  @IsOneRootNode()
   content: string
 
   @ApiProperty({
