@@ -20,5 +20,6 @@
     "overrideConfigFile": ".eslintrc.js"
   },
   // prettier
-  "prettier.printWidth": 120
+  "prettier.printWidth": 120,
+  "jest.jestCommandLine": "yarn jest"
 }

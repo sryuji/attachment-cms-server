@@ -34,7 +34,7 @@ describe('ContentHistoriesService', () => {
   })
 
   describe('#create', () => {
-    it('creates ContentHistory', async () => {
+    it('creates ContentHistory with text content', async () => {
       const releaseId = 2
       record = await service.create({
         releaseId,
@@ -45,9 +45,24 @@ describe('ContentHistoriesService', () => {
       })
       expect(record.id).toBeDefined()
       expect(record.scopeId).toEqual(1)
+      expect(record.content).toEqual(`<span id="acms-content-${record.id}">test</span>`)
     })
 
-    it('can not create. because released', async () => {
+    it('creates ContentHistory with html content', async () => {
+      const releaseId = 2
+      record = await service.create({
+        releaseId,
+        path: '/',
+        selector: 'body > div',
+        content: '<div>test<span>test</span></div>',
+        action: 'innerHTML',
+      })
+      expect(record.id).toBeDefined()
+      expect(record.scopeId).toEqual(1)
+      expect(record.content).toEqual(`<div id="acms-content-${record.id}">test<span>test</span></div>`)
+    })
+
+    it('can not create contentHistory of already release', async () => {
       const releaseId = 1
       await expect(service.create({ releaseId })).rejects.toThrow(ValidationsError)
     })
@@ -76,6 +91,42 @@ describe('ContentHistoriesService', () => {
       expect(source.path).toEqual(record.path)
       expect(source.selector).toEqual(record.selector)
       expect(source.content).toEqual(record.content)
+    })
+  })
+
+  describe('#update', () => {
+    let record: ContentHistory
+
+    it('updates ContentHistory with text content', async () => {
+      record = await ContentHistory.findOne({ where: { scopeId: 3, releaseId: 4 } })
+      record = await service.update(record.id, {
+        path: '/',
+        selector: 'body > div',
+        content: 'test',
+        action: 'innerHTML',
+      })
+      expect(record.content).toEqual(`<span id="acms-content-${record.id}">test</span>`)
+    })
+
+    it('updates ContentHistory with html content', async () => {
+      record = await ContentHistory.findOne({ where: { scopeId: 3, releaseId: 4 } })
+      record = await service.update(record.id, {
+        path: '/',
+        selector: 'body > div',
+        content: '<div>1234567890</div>',
+        action: 'innerHTML',
+      })
+      expect(record.content).toEqual(`<div id="acms-content-${record.id}">1234567890</div>`)
+    })
+
+    it('can not update releaseId', async () => {
+      record = await ContentHistory.findOne({ where: { scopeId: 3, releaseId: 4 } })
+      await expect(service.update(record.id, { releaseId: 1 })).rejects.toThrow(ForbiddenException)
+    })
+
+    it('can not update with released selector', async () => {
+      record = await ContentHistory.findOne({ where: { scopeId: 1, releaseId: 1 } })
+      await expect(service.update(record.id, { selector: 'body > div > div' })).rejects.toThrow(ForbiddenException)
     })
   })
 

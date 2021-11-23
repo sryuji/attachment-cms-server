@@ -1,5 +1,4 @@
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator'
-// https://github.com/taoqf/node-html-parser
 import { parseDocument } from 'htmlparser2'
 
 export function IsOneRootNode(validationOptions: ValidationOptions = {}): PropertyDecorator {

@@ -7,6 +7,7 @@ import { ValidationsError } from '../../exception/validations.error'
 import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel'
 
 type TransactionProcedure<E> = (manager: EntityManager) => Promise<E>
+const isTest = process.env.NODE_ENV === 'test'
 
 export abstract class BaseService<E extends ApplicationEntity<E>> {
   /**
@@ -126,8 +127,14 @@ export abstract class BaseService<E extends ApplicationEntity<E>> {
       typeof two === 'function' ? two : typeof one === 'function' ? one : undefined
     if (!procedure) throw new Error()
     const isolationLevel: IsolationLevel = typeof one === 'string' ? one : undefined
-    if (isolationLevel) return this.repository.manager.transaction(isolationLevel, procedure)
-    // HACK: EntityManager経由で処理をし同一Transactionにできれば良いが、そのためにも呼び出し先にentityManagerを渡す必要が在る。またrecord.save()なども別transactionで扱われる。そのため、性能は低いが'SERIALIZABLE'で処理させている。
-    return this.repository.manager.transaction('SERIALIZABLE', procedure)
+    // NOTE: sqliteは、'SERIALIZABLE'と'READ UNCOMMITTED'のみ未対応のため、test環境ではSERIALIZABLEに
+    if (isTest || isolationLevel) {
+      // NOTE: EntityManager経由で処理をし同一Transactionにできれば良いが、(ex. ContentHistoriesService#create)
+      // しかし、そのためにも呼び出し先の別ServiceにentityManagerを渡す必要が在る。record.save()なども別transactionで扱われる。
+      // そのため、性能は低いが'SERIALIZABLE'で処理させている。
+      return this.repository.manager.transaction('SERIALIZABLE', procedure)
+    } else {
+      return this.repository.manager.transaction(isolationLevel, procedure)
+    }
   }
 }

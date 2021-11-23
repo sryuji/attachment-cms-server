@@ -6,6 +6,9 @@ import { ContentHistory } from '../..//db/entity/content-history.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
 import { isUndefined } from '../../util/object'
+import { ElementType, parseDocument } from 'htmlparser2'
+import render from 'dom-serializer'
+import { Document, Element, Node, isTag, isText } from 'domhandler'
 
 @Injectable()
 export class ContentHistoriesService extends BaseService<ContentHistory> {
@@ -19,8 +22,15 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   async create(dto: Partial<ContentHistory>): Promise<ContentHistory> {
     const release = await Release.findOne(dto.releaseId)
     if (release.releasedAt) throw new ValidationsError(['リリース済のため追加できません。'])
+
     dto.scopeId = release.scopeId
-    return super.create(dto)
+    let record: ContentHistory = new ContentHistory(dto)
+    return this.transaction('READ COMMITTED', async (manager) => {
+      record = await manager.save<ContentHistory>(record)
+      record = this.normalizeContentHistroy(record)
+      await manager.save<ContentHistory>(record)
+      return record
+    })
   }
 
   async copyContentHistories(sourceReleaseId: number, destReleaseId: number): Promise<void> {
@@ -33,7 +43,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   }
 
   async update(id: number, dto: Partial<ContentHistory>): Promise<ContentHistory> {
-    const contentHistory = await ContentHistory.findOneOrFail(id)
+    let contentHistory = await ContentHistory.findOneOrFail(id)
     const release = await Release.findOneOrFail(contentHistory.releaseId)
     if (
       (dto.scopeId && contentHistory.scopeId !== dto.scopeId) ||
@@ -41,7 +51,11 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     ) {
       throw new ForbiddenException([`scopeIdとreleaseIdの更新要求は行えません。`])
     }
-    if (this.canUpdate(release, contentHistory, dto)) return super.update(id, dto)
+    if (this.canUpdate(release, contentHistory, dto)) {
+      contentHistory = Object.assign(contentHistory, dto)
+      contentHistory = this.normalizeContentHistroy(contentHistory)
+      return contentHistory.save()
+    }
     throw new ForbiddenException(['リリース済のため、更新できない項目があります。'])
   }
 
@@ -59,5 +73,24 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
       (isUndefined(dto.selector) || contentHistory.selector === dto.selector) &&
       (isUndefined(dto.action) || contentHistory.action === dto.action)
     )
+  }
+
+  private normalizeContentHistroy(dto: ContentHistory): ContentHistory {
+    dto.path = dto.path.trim()
+    dto.selector = dto.selector.trim()
+    const document: Document = parseDocument(dto.content)
+    const rootNode = this.normalizeRootNode(document.firstChild, `acms-content-${dto.id}`)
+    dto.content = render(rootNode)
+    return dto
+  }
+
+  private normalizeRootNode(rootNode: Node, htmlId: string): Element {
+    if (isTag(rootNode)) {
+      rootNode.attribs['id'] = htmlId
+      return rootNode
+    } else if (isText(rootNode)) {
+      return new Element('span', { id: htmlId }, [rootNode], ElementType.Tag)
+    }
+    throw new Error('Bug')
   }
 }
