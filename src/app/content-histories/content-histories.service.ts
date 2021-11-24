@@ -103,6 +103,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     } else {
       throw new Error('Bug')
     }
-    return render(rootNode)
+    // NOTE: render時、defaultでtagや日本語をencodeしてしまうのでfalse
+    return render(rootNode, { decodeEntities: false })
   }
 }

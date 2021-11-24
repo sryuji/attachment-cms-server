@@ -40,12 +40,12 @@ describe('ContentHistoriesService', () => {
         releaseId,
         path: '/',
         selector: 'body > div',
-        content: 'test',
+        content: 'てすと',
         action: 'innerHTML',
       })
       expect(record.id).toBeDefined()
       expect(record.scopeId).toEqual(1)
-      expect(record.content).toEqual(`<span id="acms-content-${record.id}">test</span>`)
+      expect(record.content).toEqual(`<span id="acms-content-${record.id}">てすと</span>`)
     })
 
     it('creates ContentHistory with html content', async () => {
@@ -54,12 +54,12 @@ describe('ContentHistoriesService', () => {
         releaseId,
         path: '/',
         selector: 'body > div',
-        content: '<div>test<span>test</span></div>',
+        content: '<div>test<span>てすと</span></div>',
         action: 'innerHTML',
       })
       expect(record.id).toBeDefined()
       expect(record.scopeId).toEqual(1)
-      expect(record.content).toEqual(`<div id="acms-content-${record.id}">test<span>test</span></div>`)
+      expect(record.content).toEqual(`<div id="acms-content-${record.id}">test<span>てすと</span></div>`)
     })
 
     it('can not create contentHistory of already release', async () => {
@@ -102,10 +102,10 @@ describe('ContentHistoriesService', () => {
       record = await service.update(record.id, {
         path: '/',
         selector: 'body > div',
-        content: 'test',
+        content: 'てすと',
         action: 'innerHTML',
       })
-      expect(record.content).toEqual(`<span id="acms-content-${record.id}">test</span>`)
+      expect(record.content).toEqual(`<span id="acms-content-${record.id}">てすと</span>`)
     })
 
     it('updates ContentHistory with html content', async () => {
