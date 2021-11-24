@@ -5,13 +5,23 @@
   "version": "0.2.0",
   "configurations": [
     {
-      // https://github.com/Microsoft/vscode-recipes/tree/master/nodemon
       "type": "node",
       "request": "attach",
       "name": "Node: attach Nodemon debug",
       "processId": "${command:PickProcess}",
       "restart": true,
-      "protocol": "inspector",
+      "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "yarn",
+      "args": ["jest", "--runInBand", "--watchAll=false"]
     }
   ]
 }
