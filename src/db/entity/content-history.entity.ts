@@ -1,11 +1,15 @@
-import { Column, Entity, Index, ManyToOne } from 'typeorm'
+import { Column, Entity, Index, ManyToOne, TableInheritance } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Scope } from './scope.entity'
 import { IsNumber, IsOptional } from 'class-validator'
 
 @Entity()
+@TableInheritance({ column: { name: 'type' } })
 export class ContentHistory extends ApplicationEntity<ContentHistory> {
+  @Column({ length: 64, nullable: false, default: 'ReleaseContentHistory' })
+  type: string
+
   @Column()
   @IsNumber()
   @Index()
@@ -14,8 +18,7 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @ManyToOne((type) => Scope)
   scope: Scope
 
-  @Column()
-  @IsNumber()
+  @Column({ nullable: true })
   @Index()
   releaseId: number
 
