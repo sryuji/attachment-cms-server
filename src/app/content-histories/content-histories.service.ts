@@ -8,7 +8,7 @@ import { Release } from '../../db/entity/release.entity'
 import { isUndefined } from '../../util/object'
 import { ElementType, parseDocument } from 'htmlparser2'
 import render from 'dom-serializer'
-import { Document, Element, Node, isTag, isText } from 'domhandler'
+import { Document, Element, isTag, isText } from 'domhandler'
 
 @Injectable()
 export class ContentHistoriesService extends BaseService<ContentHistory> {
@@ -76,21 +76,33 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   }
 
   private normalizeContentHistroy(dto: ContentHistory): ContentHistory {
-    dto.path = dto.path.trim()
+    dto.path = this.normalizePath(dto.path)
     dto.selector = dto.selector.trim()
-    const document: Document = parseDocument(dto.content)
-    const rootNode = this.normalizeRootNode(document.firstChild, `acms-content-${dto.id}`)
-    dto.content = render(rootNode)
+    dto.content = this.normalizeContent(dto.id, dto.content)
     return dto
   }
 
-  private normalizeRootNode(rootNode: Node, htmlId: string): Element {
+  private normalizePath(path: string): string {
+    path = path.trim()
+    path = path.replace(/\/+/g, '/')
+    if (!path.startsWith('/')) path = `/${path}`
+    if (path.length > 1 && path.endsWith('/')) {
+      path = path.slice(0, -1)
+    }
+    return path
+  }
+
+  private normalizeContent(id: number, content: string): string {
+    const document: Document = parseDocument(content)
+    const htmlId = `acms-content-${id}`
+    let rootNode = document.firstChild
     if (isTag(rootNode)) {
       rootNode.attribs['id'] = htmlId
-      return rootNode
     } else if (isText(rootNode)) {
-      return new Element('span', { id: htmlId }, [rootNode], ElementType.Tag)
+      rootNode = new Element('span', { id: htmlId }, [rootNode], ElementType.Tag)
+    } else {
+      throw new Error('Bug')
     }
-    throw new Error('Bug')
+    return render(rootNode)
   }
 }
