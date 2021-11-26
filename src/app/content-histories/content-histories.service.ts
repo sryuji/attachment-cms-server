@@ -6,9 +6,7 @@ import { ContentHistory } from '../..//db/entity/content-history.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
 import { isUndefined } from '../../util/object'
-import { ElementType, parseDocument } from 'htmlparser2'
-import render from 'dom-serializer'
-import { Document, Element, isTag, isText } from 'domhandler'
+import { normalizeContent, normalizePath } from './content-histories.helper'
 
 @Injectable()
 export class ContentHistoriesService extends BaseService<ContentHistory> {
@@ -76,34 +74,9 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   }
 
   private normalizeContentHistroy(dto: ContentHistory): ContentHistory {
-    dto.path = this.normalizePath(dto.path)
+    dto.path = normalizePath(dto.path)
     dto.selector = dto.selector.trim()
-    dto.content = this.normalizeContent(dto.id, dto.content)
+    dto.content = normalizeContent(dto.id, dto.content)
     return dto
-  }
-
-  private normalizePath(path: string): string {
-    path = path.trim()
-    path = path.replace(/\/+/g, '/')
-    if (!path.startsWith('/')) path = `/${path}`
-    if (path.length > 1 && path.endsWith('/')) {
-      path = path.slice(0, -1)
-    }
-    return path
-  }
-
-  private normalizeContent(id: number, content: string): string {
-    const document: Document = parseDocument(content)
-    const htmlId = `acms-content-${id}`
-    let rootNode = document.firstChild
-    if (isTag(rootNode)) {
-      rootNode.attribs['id'] = htmlId
-    } else if (isText(rootNode)) {
-      rootNode = new Element('span', { id: htmlId }, [rootNode], ElementType.Tag)
-    } else {
-      throw new Error('Bug')
-    }
-    // NOTE: render時、defaultでtagや日本語をencodeしてしまうのでfalse
-    return render(rootNode, { decodeEntities: false })
   }
 }
