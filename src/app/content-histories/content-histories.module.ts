@@ -6,10 +6,11 @@ import { ContentHistory } from '../../db/entity/content-history.entity'
 import { AccountScopesModule } from '../account-scopes/account-scopes.module'
 import { PluginContentHistoriesService } from './plugin-content-histories.service'
 import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
+import { PluginContentHistoriesController } from './plugin-content-histories.controller'
 
 @Module({
   imports: [TypeOrmModule.forFeature([ContentHistory, PluginContentHistory]), AccountScopesModule],
-  controllers: [ContentHistoriesController],
+  controllers: [ContentHistoriesController, PluginContentHistoriesController],
   providers: [ContentHistoriesService, PluginContentHistoriesService],
   exports: [ContentHistoriesService],
 })

@@ -18,7 +18,7 @@ export class PluginContentHistoriesController extends BaseController {
   @ApiOperation({ summary: 'Path別にプラグインの有効化' })
   @ApiResponse(RESPONSE_201)
   @Post()
-  @ScopeGetter(({ body }) => body.scopeId)
+  @ScopeGetter(({ body }) => body.enablePlugin?.scopeId)
   async create(@Body() payload: EnablePluginForm): Promise<PluginContentHistorySerializer> {
     const record = await this.service.create(payload.enablePlugin)
     return new PluginContentHistorySerializer().serialize({
@@ -29,7 +29,7 @@ export class PluginContentHistoriesController extends BaseController {
   @ApiOperation({ summary: 'Path別にプラグインの無効化' })
   @ApiResponse(RESPONSE_204)
   @Delete(':id')
-  @ScopeGetter(({ body }) => body.scopeId)
+  @ScopeGetter(({ body }) => body.enablePlugin?.scopeId)
   @HttpCode(204)
   @ScopeGetter(({ params }) => ContentHistory.findOne(params.id).then((r: ContentHistory) => r && r.scopeId))
   async delete(@Body() payload: EnablePluginForm): Promise<void> {
