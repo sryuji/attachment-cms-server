@@ -2,7 +2,7 @@ import { Allow, IsInt } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class EnablePluginDto {
-  @IsInt({ message: '整数で入力する必要があります' })
+  @IsInt({ message: 'pluginIdは、整数で入力する必要があります' })
   @ApiProperty({ description: 'Plugin ID' })
   pluginId: number
 
@@ -11,6 +11,10 @@ export class EnablePluginDto {
   path: string
 
   @ApiProperty({ description: 'Scope ID' })
-  @IsInt({ message: '整数で入力する必要があります' })
+  @IsInt({ message: 'scopeIdは、整数で入力する必要があります' })
   scopeId: number
+
+  @ApiProperty({ description: 'Release ID' })
+  @IsInt({ message: 'releaseIdは、整数で入力する必要があります' })
+  releaseId: number
 }

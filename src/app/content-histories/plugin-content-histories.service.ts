@@ -19,7 +19,7 @@ export class PluginContentHistoriesService extends BaseService<PluginContentHist
   async create(dto: EnablePluginDto): Promise<PluginContentHistory> {
     const plugin = await Plugin.findOneOrFail(dto.pluginId)
     const path = normalizePath(dto.path)
-    const uniqueKeys = { path, scopeId: dto.scopeId, pluginId: dto.pluginId }
+    const uniqueKeys = { path, scopeId: dto.scopeId, pluginId: dto.pluginId, releaseId: dto.releaseId }
     return this.transaction('READ COMMITTED', async (manager) => {
       // NOTE: タイミング悪く複数作ってしまっても許容. deleteByPathで一括削除されるため
       let record = await PluginContentHistory.findOne<PluginContentHistory>({ where: uniqueKeys })
@@ -33,6 +33,6 @@ export class PluginContentHistoriesService extends BaseService<PluginContentHist
 
   async deleteByPath(dto: EnablePluginDto): Promise<void> {
     const path = normalizePath(dto.path)
-    await PluginContentHistory.delete({ path, scopeId: dto.scopeId, pluginId: dto.pluginId })
+    await PluginContentHistory.delete({ path, scopeId: dto.scopeId, pluginId: dto.pluginId, releaseId: dto.releaseId })
   }
 }

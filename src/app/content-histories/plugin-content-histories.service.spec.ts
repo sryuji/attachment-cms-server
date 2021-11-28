@@ -35,12 +35,13 @@ describe('PluginContentHistoriesService', () => {
       record = await service.create({
         pluginId: 1,
         scopeId: 1,
+        releaseId: 2,
         path: '/abc',
       })
       expect(record.id).toBeDefined()
       expect(record.scopeId).toEqual(1)
       expect(record.pluginId).toEqual(1)
-      expect(record.releaseId).toBeNull()
+      expect(record.releaseId).toEqual(2)
       expect(record.selector).toEqual('body')
       expect(record.action).toEqual('insertChildBeforeEnd')
       expect(record.path).toEqual('/abc')
@@ -53,6 +54,7 @@ describe('PluginContentHistoriesService', () => {
       record = await service.create({
         pluginId: 1,
         scopeId: 1,
+        releaseId: 2,
         path: '/abc',
       })
     })
@@ -60,6 +62,7 @@ describe('PluginContentHistoriesService', () => {
       await service.deleteByPath({
         pluginId: record.pluginId,
         scopeId: record.scopeId,
+        releaseId: 2,
         path: record.path,
       })
       expect(await PluginContentHistory.count()).toEqual(0)

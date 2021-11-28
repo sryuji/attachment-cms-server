@@ -10,7 +10,6 @@ export class PluginContentHistory extends ContentHistory {
   }
 
   initialize() {
-    this.releaseId = null
     this.selector = 'body'
     this.action = 'insertChildBeforeEnd'
   }
