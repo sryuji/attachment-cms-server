@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module'
 import { AccountScopesModule } from './account-scopes/account-scopes.module'
 import { AccountModule } from './accounts/accounts.module'
 import { TestMiddleware } from '../middleware/test.middleware'
+import { PluginsModule } from './plugins/plugins.module'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -32,6 +33,7 @@ const isProduction = process.env.NODE_ENV === 'production'
     AuthModule,
     AccountModule,
     AccountScopesModule,
+    PluginsModule,
   ],
   controllers: [AppController],
   providers: [
