@@ -38,9 +38,8 @@ async function bootstrap() {
   if (!isProduction) {
     // NOTE: GCP Cloud Runでrequest logにresponse時間も出るため本番では不要
     app.useGlobalInterceptors(new LoggingInterceptor())
-
-    setupSwagger(app)
   }
+  setupSwagger(app)
   const port = Number(process.env.PORT) || 3000
   await app.listen(port, '0.0.0.0')
 }
