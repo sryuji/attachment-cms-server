@@ -5,6 +5,9 @@ export class ContentDto {
   id: number
 
   @ApiProperty()
+  type: string
+
+  @ApiProperty()
   selector: string
 
   @ApiProperty()

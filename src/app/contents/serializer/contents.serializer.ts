@@ -10,7 +10,7 @@ export class ContentsSerializer extends BaseSerializer {
       const path = r.path.replace(/:word/g, '\\w+').trim()
       if (!this.contents[path]) this.contents[path] = []
       const content = r.content && r.content.trim()
-      this.contents[path].push({ id: r.id, selector: r.selector, content, action: r.action })
+      this.contents[path].push({ id: r.id, type: r.type, selector: r.selector, content, action: r.action })
     })
     return this
   }
