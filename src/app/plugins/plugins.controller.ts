@@ -41,7 +41,7 @@ export class PluginsController extends BaseController {
   @HttpCode(204)
   async update(@Param('id', new ParseIntPipe()) id: number, @Body() payload: PluginForm): Promise<PluginSerializer> {
     const dto = payload.plugin
-    if (dto.id === id) throw new ForbiddenException()
+    if (dto.id !== id) throw new ForbiddenException()
     const plugin = await this.pluginsService.saveWithFiles(dto)
     return new PluginSerializer().serialize({ plugin })
   }
