@@ -7,6 +7,7 @@ import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
 import { isUndefined } from '../../util/object'
 import { normalizeContent, normalizePath } from './content-histories.helper'
+import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
 
 @Injectable()
 export class ContentHistoriesService extends BaseService<ContentHistory> {
@@ -17,16 +18,16 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     super(repository, ContentHistory)
   }
 
-  async create(dto: Partial<ContentHistory>): Promise<ContentHistory> {
+  async create(dto: Partial<ReleaseContentHistory>): Promise<ReleaseContentHistory> {
     const release = await Release.findOne(dto.releaseId)
     if (release.releasedAt) throw new ValidationsError(['リリース済のため追加できません。'])
 
     dto.scopeId = release.scopeId
-    let record: ContentHistory = new ContentHistory(dto)
+    let record = new ReleaseContentHistory(dto)
     return this.transaction('READ COMMITTED', async (manager) => {
-      record = await manager.save<ContentHistory>(record)
+      record = await manager.save<ReleaseContentHistory>(record)
       record = this.normalizeContentHistroy(record)
-      await manager.save<ContentHistory>(record)
+      await manager.save<ReleaseContentHistory>(record)
       return record
     })
   }
@@ -40,8 +41,8 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     await this.repository.insert(newHists)
   }
 
-  async update(id: number, dto: Partial<ContentHistory>): Promise<ContentHistory> {
-    let contentHistory = await ContentHistory.findOneOrFail(id)
+  async update(id: number, dto: Partial<ReleaseContentHistory>): Promise<ReleaseContentHistory> {
+    let contentHistory = await ReleaseContentHistory.findOneOrFail(id)
     const release = await Release.findOneOrFail(contentHistory.releaseId)
     if (
       (dto.scopeId && contentHistory.scopeId !== dto.scopeId) ||
@@ -57,14 +58,18 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     throw new ForbiddenException(['リリース済のため、更新できない項目があります。'])
   }
 
-  async delete(id: number): Promise<ContentHistory> {
+  async delete(id: number): Promise<ReleaseContentHistory> {
     const record = await this.fetch(id)
     const release = await record.release
     if (release.releasedAt) throw new ForbiddenException('リリース済のため削除できません。')
     return await record.remove()
   }
 
-  private canUpdate(release: Release, contentHistory: ContentHistory, dto: Partial<ContentHistory>): boolean {
+  private canUpdate(
+    release: Release,
+    contentHistory: ReleaseContentHistory,
+    dto: Partial<ReleaseContentHistory>
+  ): boolean {
     if (!release.releasedAt) return true
     return (
       (isUndefined(dto.path) || contentHistory.path === dto.path) &&
@@ -73,7 +78,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     )
   }
 
-  private normalizeContentHistroy(dto: ContentHistory): ContentHistory {
+  private normalizeContentHistroy(dto: ReleaseContentHistory): ReleaseContentHistory {
     dto.path = normalizePath(dto.path)
     dto.selector = dto.selector.trim()
     dto.content = normalizeContent(dto.id, dto.content)

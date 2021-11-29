@@ -44,6 +44,7 @@ describe('ContentHistoriesService', () => {
         action: 'innerHTML',
       })
       expect(record.id).toBeDefined()
+      expect(record.type).toEqual('ReleaseContentHistory')
       expect(record.scopeId).toEqual(1)
       expect(record.content).toEqual(`<span id="acms-content-${record.id}">てすと</span>`)
     })
@@ -58,6 +59,7 @@ describe('ContentHistoriesService', () => {
         action: 'innerHTML',
       })
       expect(record.id).toBeDefined()
+      expect(record.type).toEqual('ReleaseContentHistory')
       expect(record.scopeId).toEqual(1)
       expect(record.content).toEqual(`<div id="acms-content-${record.id}">test<span>てすと</span></div>`)
     })
@@ -106,6 +108,7 @@ describe('ContentHistoriesService', () => {
         action: 'innerHTML',
       })
       expect(record.content).toEqual(`<span id="acms-content-${record.id}">てすと</span>`)
+      expect(record.type).toEqual('ReleaseContentHistory')
     })
 
     it('updates ContentHistory with html content', async () => {
@@ -117,6 +120,7 @@ describe('ContentHistoriesService', () => {
         action: 'innerHTML',
       })
       expect(record.content).toEqual(`<div id="acms-content-${record.id}">1234567890</div>`)
+      expect(record.type).toEqual('ReleaseContentHistory')
     })
 
     it('can not update releaseId', async () => {

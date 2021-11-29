@@ -1,4 +1,4 @@
-import { ContentHistory } from '../../entity/content-history.entity'
+import { ReleaseContentHistory } from '../../entity/release-content-history.entity'
 import { BaseSeed } from '../base.seed'
 
 export default class ContentHistorySeed extends BaseSeed {
@@ -39,6 +39,6 @@ export default class ContentHistorySeed extends BaseSeed {
         action: 'innerHTML',
       },
     ]
-    await this.createOrUpdate(seedList, ContentHistory, ['id'])
+    await this.createOrUpdate(seedList, ReleaseContentHistory, ['id'])
   }
 }
