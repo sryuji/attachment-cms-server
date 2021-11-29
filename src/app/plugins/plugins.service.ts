@@ -16,7 +16,8 @@ export class PluginsService extends BaseService<Plugin> {
   }
 
   async saveWithFiles(dto: PluginDto): Promise<Plugin> {
-    dto.content = this.buildContent(dto, dto.pluginFiles)
+    const files = await PluginFile.find({ where: { pluginId: dto.id } })
+    dto.content = this.buildContent(dto, dto.pluginFiles, files)
     let record = new Plugin(dto)
     return this.transaction('READ COMMITTED', async (manager) => {
       record = await manager.save(record)
@@ -27,9 +28,14 @@ export class PluginsService extends BaseService<Plugin> {
     })
   }
 
-  private buildContent(dto: PluginDto, files: Partial<PluginFile>[]) {
+  private buildContent(dto: PluginDto, files: Partial<PluginFile>[], files2: PluginFile[]) {
     if (dto.content) return dto.content
 
+    files = files.map((file) => {
+      const f = files2.find((r) => r.id === file.id)
+      if (!f) return file
+      return Object.assign(file, f)
+    })
     const buildJavascriptTemplate = (file: Partial<PluginFile>) => `<script src="${file.url}">`
     const buildStylesheetTemplate = (file: Partial<PluginFile>) => `<link rel="stylesheet" href="${file.url}" />`
     let content = ''
