@@ -24,7 +24,7 @@ export class PluginContentHistoriesService extends BaseService<PluginContentHist
       // NOTE: タイミング悪く複数作ってしまっても許容. deleteByPathで一括削除されるため
       let record = await PluginContentHistory.findOne<PluginContentHistory>({ where: uniqueKeys })
       record = new PluginContentHistory(uniqueKeys)
-      record.description = plugin.name
+      record.description = `${plugin.name} を有効化`
       record = await manager.save<PluginContentHistory>(record)
       record.content = normalizeContent(record.id, plugin.content)
       return await manager.save<PluginContentHistory>(record)
