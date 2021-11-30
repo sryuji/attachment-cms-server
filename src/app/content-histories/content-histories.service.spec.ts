@@ -19,7 +19,7 @@ describe('ContentHistoriesService', () => {
   let record: ContentHistory
 
   beforeAll(async () => {
-    const app = await compileModule([ReleaseContentHistory], [ContentHistoriesService])
+    const app = await compileModule([ContentHistory, ReleaseContentHistory], [ContentHistoriesService])
     await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)
 
     service = app.get<ContentHistoriesService>(ContentHistoriesService)

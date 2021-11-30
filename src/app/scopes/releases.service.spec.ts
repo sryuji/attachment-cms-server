@@ -23,7 +23,7 @@ describe('ReleasesService', () => {
 
   beforeAll(async () => {
     const app = await compileModule(
-      [ReleaseRepository, ReleaseContentHistory, PluginContentHistory],
+      [ReleaseRepository, ReleaseContentHistory, PluginContentHistory, ContentHistory],
       [ReleasesService, ContentHistoriesService]
     )
     await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)

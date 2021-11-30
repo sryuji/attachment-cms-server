@@ -7,9 +7,13 @@ import { PluginContentHistoriesService } from './plugin-content-histories.servic
 import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
 import { PluginContentHistoriesController } from './plugin-content-histories.controller'
 import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
+import { ContentHistory } from '../../db/entity/content-history.entity'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ReleaseContentHistory, PluginContentHistory]), AccountScopesModule],
+  imports: [
+    TypeOrmModule.forFeature([ContentHistory, ReleaseContentHistory, PluginContentHistory]),
+    AccountScopesModule,
+  ],
   controllers: [ContentHistoriesController, PluginContentHistoriesController],
   providers: [ContentHistoriesService, PluginContentHistoriesService],
   exports: [ContentHistoriesService],

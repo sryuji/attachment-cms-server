@@ -11,12 +11,12 @@ import { ContentHistory } from '../../db/entity/content-history.entity'
 import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
 
 @Injectable()
-export class ContentHistoriesService extends BaseService<ReleaseContentHistory> {
+export class ContentHistoriesService extends BaseService<ContentHistory> {
   constructor(
-    @InjectRepository(ReleaseContentHistory)
-    protected readonly repository: Repository<ReleaseContentHistory>
+    @InjectRepository(ContentHistory)
+    protected readonly repository: Repository<ContentHistory>
   ) {
-    super(repository, ReleaseContentHistory)
+    super(repository, ContentHistory)
   }
 
   async create(dto: Partial<ReleaseContentHistory>): Promise<ReleaseContentHistory> {
