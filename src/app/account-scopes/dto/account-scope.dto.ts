@@ -13,4 +13,6 @@ export class AccountScopeDto {
   @IsNotEmpty()
   @ApiProperty({ required: true })
   scopeId: number
+
+  role = 'member'
 }

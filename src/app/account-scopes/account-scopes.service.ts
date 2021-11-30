@@ -23,6 +23,7 @@ export class AccountScopesService extends BaseService<AccountScope> {
     const account = await Account.findOne({ where: { email: dto.email } })
     if (!account) throw new ValidationsError(['指定のEメールのアカウントは存在しません。'])
     dto.accountId = account.id
+    dto.role = 'member'
     return super.create(dto)
   }
 

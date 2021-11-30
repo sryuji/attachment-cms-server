@@ -2,7 +2,8 @@ import { Column, Entity, Index, ManyToOne, TableInheritance } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Release } from './release.entity'
 import { Scope } from './scope.entity'
-import { IsNumber, IsOptional } from 'class-validator'
+import { IsIn } from 'class-validator'
+import { ContentHistoryAction } from '../../enum/content-history-action.enum'
 
 @Entity()
 @TableInheritance({ column: { name: 'type' } })
@@ -11,7 +12,6 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   type: string
 
   @Column()
-  @IsNumber()
   @Index()
   scopeId: number
 
@@ -38,14 +38,13 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   content: string
 
   @Column({ nullable: true })
+  @IsIn(Object.values(ContentHistoryAction))
   action: string
 
   @Column({ default: false })
   inactive: boolean
 
   @Column({ nullable: true })
-  @IsNumber()
-  @IsOptional()
   @Index()
   sourceContentHistoryId: number
 

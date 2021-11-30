@@ -2,13 +2,11 @@ import { Column, Entity, Index, ManyToOne, OneToMany, Unique } from 'typeorm'
 import { ApplicationEntity } from './application.entity'
 import { Scope } from './scope.entity'
 import { ContentHistory } from './content-history.entity'
-import { IsOptional, IsNumber } from 'class-validator'
 
 @Entity()
 @Unique(['limitedReleaseToken'])
 export class Release extends ApplicationEntity<Release> {
   @Column()
-  @IsNumber()
   @Index()
   scopeId: number
 
@@ -31,8 +29,6 @@ export class Release extends ApplicationEntity<Release> {
   rollbackedAt: Date
 
   @Column({ nullable: true })
-  @IsNumber()
-  @IsOptional()
   @Index()
   sourceReleaseId: number
 

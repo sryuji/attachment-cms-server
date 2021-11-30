@@ -7,18 +7,22 @@ export default class AccountScopeSeed extends BaseSeed {
       {
         accountId: 1,
         scopeId: 1,
+        role: 'owner',
       },
       {
         accountId: 1,
         scopeId: 2,
+        role: 'member',
       },
       {
         accountId: 2,
         scopeId: 3,
+        role: 'member',
       },
       {
         accountId: 3,
         scopeId: 4,
+        role: 'member',
       },
     ]
     await this.createOrUpdate(seedList, AccountScope, ['accountId', 'scopeId'])
