@@ -53,6 +53,15 @@ export class ReleasesController extends BaseController {
     return new ReleaseSerializer().serialize({ release })
   }
 
+  @ApiOperation({ summary: 'リリースを１つロールバックする' })
+  @ApiResponse(RESPONSE_200)
+  @Patch(':id/rollback')
+  @ScopeGetter(({ params }) => Release.findOne(params.id).then((r) => r && r.scopeId))
+  async rollback(@Param('id', new ParseIntPipe()) id: number): Promise<ReleaseSerializer> {
+    const release = await this.releasesService.rollback(id)
+    return new ReleaseSerializer().serialize({ release })
+  }
+
   @ApiOperation({
     summary: 'リリースの更新',
     description: 'リリース名を更新します',
