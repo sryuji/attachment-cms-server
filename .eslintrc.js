@@ -23,10 +23,16 @@ module.exports = {
     // importしたものを型宣言だけに利用してる場合に許可されるように設定
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: false }],
+
     // 以降、推奨設定があまりに厳しいため緩和
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    // '@typescript-eslint/no-explicit-any': 'off',
-    // '@typescript-eslint/no-empty-interface': 'off',
-    // '@typescript-eslint/no-empty-function': 'off',
   },
+  overrides: [
+    {
+      files: ['*.spec.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
 }
