@@ -10,14 +10,17 @@ import { ContentHistory } from '../../db/entity/content-history.entity'
 import { ForbiddenException } from '@nestjs/common'
 import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
+import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
+import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
+import PluginsSeed from '../../db/seed/test/plugin.seed'
 
 describe('ContentHistoriesService', () => {
   let service: ContentHistoriesService
   let record: ContentHistory
 
   beforeAll(async () => {
-    const app = await compileModule([ContentHistory], [ContentHistoriesService])
-    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, ContentHistorySeed)
+    const app = await compileModule([ReleaseContentHistory], [ContentHistoriesService])
+    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)
 
     service = app.get<ContentHistoriesService>(ContentHistoriesService)
   })
@@ -82,17 +85,35 @@ describe('ContentHistoriesService', () => {
         await release.remove()
       }
     })
-    it('copies ContentHistory', async () => {
+    it('copies ContentHistory includes PluginContentHistory and ReleaseContentHistory', async () => {
       await service.copyContentHistories(release.sourceReleaseId, release.id)
-      record = await ContentHistory.findOne({ where: { releaseId: release.id } })
-      expect(record).toBeDefined()
+
+      const collection = await ContentHistory.find({ where: { releaseId: release.id } })
+      expect(collection.length).toEqual(2)
+      record = collection[0] as ReleaseContentHistory
       expect(record.id).toBeDefined()
+      expect(record.type).toEqual('ReleaseContentHistory')
       expect(record.sourceContentHistoryId).toBeDefined()
-      const source = await ContentHistory.findOne(record.sourceContentHistoryId)
+      const record2 = collection[1] as PluginContentHistory
+      expect(record2.id).toBeDefined()
+      expect(record2.type).toEqual('PluginContentHistory')
+      expect(record2.sourceContentHistoryId).toBeDefined()
+      expect(record2.pluginId).toEqual(1)
+
+      const source = await ReleaseContentHistory.findOne(record.sourceContentHistoryId)
+      expect(source.type).toEqual('ReleaseContentHistory')
       expect(source.releaseId).toEqual(release.sourceReleaseId)
       expect(source.path).toEqual(record.path)
       expect(source.selector).toEqual(record.selector)
       expect(source.content).toEqual(record.content)
+      expect((source as any).pluginId).toBeUndefined()
+      const source2: PluginContentHistory = await PluginContentHistory.findOne(record2.sourceContentHistoryId)
+      expect(source2.type).toEqual('PluginContentHistory')
+      expect(source2.releaseId).toEqual(release.sourceReleaseId)
+      expect(source2.path).toEqual(record2.path)
+      expect(source2.selector).toEqual(record2.selector)
+      expect(source2.content).toEqual(record2.content)
+      expect(source2.pluginId).toEqual(record2.pluginId)
     })
   })
 

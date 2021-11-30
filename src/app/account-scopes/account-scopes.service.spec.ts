@@ -6,6 +6,7 @@ import { Account } from '../../db/entity/account.entity'
 import AccountScopeSeed from '../../db/seed/test/account-scope.seed'
 import AccountSeed from '../../db/seed/test/account.seed'
 import ContentHistorySeed from '../../db/seed/test/content-history.seed'
+import PluginsSeed from '../../db/seed/test/plugin.seed'
 import ReleaseSeed from '../../db/seed/test/release.seed'
 import ScopeSeed from '../../db/seed/test/scope.seed'
 import { ValidationsError } from '../../exception/validations.error'
@@ -18,7 +19,7 @@ describe('AccountScopesService', () => {
 
   beforeAll(async () => {
     const app = await compileModule([Account, AccountScope], [AccountScopesService])
-    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, ContentHistorySeed)
+    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)
 
     service = app.get<AccountScopesService>(AccountScopesService)
   })

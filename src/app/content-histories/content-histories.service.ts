@@ -1,21 +1,22 @@
 import { Injectable, ForbiddenException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { EntityManager, Repository } from 'typeorm'
 import { BaseService } from '../base/base.service'
-import { ContentHistory } from '../..//db/entity/content-history.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { Release } from '../../db/entity/release.entity'
 import { isUndefined } from '../../util/object'
 import { normalizeContent, normalizePath } from './content-histories.helper'
 import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
+import { ContentHistory } from '../../db/entity/content-history.entity'
+import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
 
 @Injectable()
-export class ContentHistoriesService extends BaseService<ContentHistory> {
+export class ContentHistoriesService extends BaseService<ReleaseContentHistory> {
   constructor(
-    @InjectRepository(ContentHistory)
-    protected readonly repository: Repository<ContentHistory>
+    @InjectRepository(ReleaseContentHistory)
+    protected readonly repository: Repository<ReleaseContentHistory>
   ) {
-    super(repository, ContentHistory)
+    super(repository, ReleaseContentHistory)
   }
 
   async create(dto: Partial<ReleaseContentHistory>): Promise<ReleaseContentHistory> {
@@ -27,18 +28,39 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     return this.transaction('READ COMMITTED', async (manager) => {
       record = await manager.save<ReleaseContentHistory>(record)
       record = this.normalizeContentHistroy(record)
-      await manager.save<ReleaseContentHistory>(record)
+      record = await manager.save<ReleaseContentHistory>(record)
       return record
     })
   }
 
-  async copyContentHistories(sourceReleaseId: number, destReleaseId: number): Promise<void> {
+  async copyContentHistories(sourceReleaseId: number, destReleaseId: number, manager?: EntityManager): Promise<void> {
     if (!sourceReleaseId || !destReleaseId)
       throw new Error(`Need sourceReleaseId (${sourceReleaseId}) and destReleaseId  (${destReleaseId}) .`)
-    const hists = await this.repository.find({ where: { releaseId: sourceReleaseId } })
+    const hists = await ContentHistory.find({ where: { releaseId: sourceReleaseId } })
     if (hists.length === 0) return
-    const newHists = hists.map((h) => ({ ...h, id: null, releaseId: destReleaseId, sourceContentHistoryId: h.id }))
-    await this.repository.insert(newHists)
+
+    const newReleaseContentHistories: ReleaseContentHistory[] = []
+    const newPluginContentHistories: PluginContentHistory[] = []
+    hists.forEach((h) => {
+      const initialAttributes = { ...h, id: null as number, releaseId: destReleaseId, sourceContentHistoryId: h.id }
+      switch (h.type) {
+        case 'PluginContentHistory':
+          newPluginContentHistories.push(new PluginContentHistory(initialAttributes))
+          break
+        case 'ReleaseContentHistory':
+          newReleaseContentHistories.push(new ReleaseContentHistory(initialAttributes))
+          break
+        default:
+          throw new Error(`Bug. invalid type of contentHistory. sourceId: ${h.id}, type: ${h.type}`)
+      }
+    })
+    const procedure = async (m: EntityManager): Promise<null> => {
+      await m.insert(ReleaseContentHistory, newReleaseContentHistories)
+      await m.insert(PluginContentHistory, newPluginContentHistories)
+      return null
+    }
+    // HACK: managerの受け渡ししてのtransaction統一をやめたい
+    manager ? await procedure(manager) : await this.transaction('READ COMMITTED', procedure)
   }
 
   async update(id: number, dto: Partial<ReleaseContentHistory>): Promise<ReleaseContentHistory> {

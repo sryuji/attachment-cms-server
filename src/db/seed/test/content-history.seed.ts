@@ -1,3 +1,4 @@
+import { PluginContentHistory } from '../../entity/plugin-content-history.entity'
 import { ReleaseContentHistory } from '../../entity/release-content-history.entity'
 import { BaseSeed } from '../base.seed'
 
@@ -42,5 +43,24 @@ export default class ContentHistorySeed extends BaseSeed {
       },
     ]
     await this.createOrUpdate(seedList, ReleaseContentHistory, ['id'])
+    const pluginList = [
+      {
+        id: 5,
+        scopeId: 1,
+        releaseId: 2,
+        pluginId: 1,
+        path: '/',
+        content: '<link rel="stylesheet" href="http://localhost:3001/plugins/basic/plugin.css" />',
+      },
+      {
+        id: 6,
+        scopeId: 2,
+        releaseId: 3,
+        pluginId: 1,
+        path: '/',
+        content: '<link rel="stylesheet" href="http://localhost:3001/plugins/basic/plugin.css" />',
+      },
+    ]
+    await this.createOrUpdate(pluginList, PluginContentHistory, ['id'])
   }
 }

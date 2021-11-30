@@ -41,8 +41,9 @@ export class PublishReleaseDto extends UpdatableDto {
     example: new Date(),
   })
   @IsDate()
+  @IsOptional()
   @Type(() => Date)
-  releasedAt: Date
+  releasedAt?: Date
 }
 
 /**

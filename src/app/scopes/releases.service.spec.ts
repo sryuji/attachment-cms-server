@@ -14,13 +14,19 @@ import { ContentHistory } from '../../db/entity/content-history.entity'
 import { ValidationsError } from '../../exception/validations.error'
 import { Scope } from '../../db/entity/scope.entity'
 import { ForbiddenException } from '@nestjs/common'
+import PluginsSeed from '../../db/seed/test/plugin.seed'
+import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
+import { PluginContentHistory } from '../../db/entity/plugin-content-history.entity'
 
 describe('ReleasesService', () => {
   let service: ReleasesService
 
   beforeAll(async () => {
-    const app = await compileModule([ReleaseRepository, ContentHistory], [ReleasesService, ContentHistoriesService])
-    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, ContentHistorySeed)
+    const app = await compileModule(
+      [ReleaseRepository, ReleaseContentHistory, PluginContentHistory],
+      [ReleasesService, ContentHistoriesService]
+    )
+    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)
 
     service = app.get<ReleasesService>(ReleasesService)
   })
@@ -122,14 +128,16 @@ describe('ReleasesService', () => {
     })
 
     describe('exists contents', () => {
-      it('publishes release', async () => {
-        await new ContentHistory({
+      beforeEach(async () => {
+        await new ReleaseContentHistory({
           releaseId: record.id,
           scopeId: record.scopeId,
           path: '/',
           selector: '#test > p',
           action: 'remove',
         }).save()
+      })
+      it('publishes release', async () => {
         record = await service.publish(record.id, { id: record.id, releasedAt: new Date() })
         expect(record.releasedAt).toBeDefined()
         const scope = await Scope.findOne(record.scopeId)

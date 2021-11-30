@@ -11,13 +11,14 @@ import { Release } from '../../db/entity/release.entity'
 import { ContentsService } from './contents.service'
 import { ReleaseRepository } from '../scopes/repository/release.repository'
 import { Scope } from '../../db/entity/scope.entity'
+import PluginsSeed from '../../db/seed/test/plugin.seed'
 
 describe('ContentsService', () => {
   let service: ContentsService
 
   beforeAll(async () => {
     const app = await compileModule([ContentHistory, Scope, ReleaseRepository], [ContentsService])
-    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, ContentHistorySeed)
+    await runSeeds(AccountSeed, ScopeSeed, AccountScopeSeed, ReleaseSeed, PluginsSeed, ContentHistorySeed)
 
     service = app.get<ContentsService>(ContentsService)
   })
