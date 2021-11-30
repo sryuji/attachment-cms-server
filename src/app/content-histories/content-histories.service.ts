@@ -25,6 +25,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
 
     dto.scopeId = release.scopeId
     let record = new ReleaseContentHistory(dto)
+    record.isUpdated = false
     return this.transaction('READ COMMITTED', async (manager) => {
       record = await manager.save<ReleaseContentHistory>(record)
       record = this.normalizeContentHistroy(record)
@@ -42,7 +43,13 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     const newReleaseContentHistories: ReleaseContentHistory[] = []
     const newPluginContentHistories: PluginContentHistory[] = []
     hists.forEach((h) => {
-      const initialAttributes = { ...h, id: null as number, releaseId: destReleaseId, sourceContentHistoryId: h.id }
+      const initialAttributes = {
+        ...h,
+        id: null as number,
+        releaseId: destReleaseId,
+        sourceContentHistoryId: h.id,
+        isUpdated: false,
+      }
       switch (h.type) {
         case 'PluginContentHistory':
           newPluginContentHistories.push(new PluginContentHistory(initialAttributes))
@@ -75,6 +82,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
     if (this.canUpdate(release, contentHistory, dto)) {
       contentHistory = Object.assign(contentHistory, dto)
       contentHistory = this.normalizeContentHistroy(contentHistory)
+      contentHistory.isUpdated = true
       return contentHistory.save()
     }
     throw new ForbiddenException(['リリース済のため、更新できない項目があります。'])

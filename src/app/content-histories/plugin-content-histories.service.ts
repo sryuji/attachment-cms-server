@@ -25,6 +25,7 @@ export class PluginContentHistoriesService extends BaseService<PluginContentHist
       let record = await PluginContentHistory.findOne<PluginContentHistory>({ where: uniqueKeys })
       record = new PluginContentHistory(uniqueKeys)
       record.description = `${plugin.name} を有効化`
+      record.isUpdated = true
       record = await manager.save<PluginContentHistory>(record)
       record.content = normalizeContent(record.id, plugin.content)
       return await manager.save<PluginContentHistory>(record)
