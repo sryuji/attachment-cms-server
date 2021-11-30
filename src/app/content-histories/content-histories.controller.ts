@@ -14,6 +14,7 @@ import { Release } from '../../db/entity/release.entity'
 import { AuthUser } from '../../decorator/auth-user.decorator'
 import { AuthUserDto } from '../auth/dto/auth-user.dto'
 import { AccountScopesService } from '../account-scopes/account-scopes.service'
+import { isNullOrUndefined } from '../../util/object'
 
 @ApiTags('コンテンツ履歴')
 @Controller('content-histories')
@@ -71,17 +72,21 @@ export class ContentHistoriesController extends BaseController {
   })
   @ApiResponse(RESPONSE_200)
   @ApiQuery({ name: 'releaseId', description: 'リリースID' })
+  @ApiQuery({ name: 'path', required: false })
+  @ApiQuery({ name: 'isUpdated', required: false, description: '前回のリリースから更新があったか？' })
   @ApiQuery(QUERY_PER)
   @ApiQuery(QUERY_PAGE)
   @ScopeGetter(({ query }) => Release.findOne({ where: { id: query.releaseId } }).then((r) => r && r.scopeId))
   @Get()
   async findAll(
     @Query('releaseId') releaseId: number,
+    @Query('path') path?: string,
+    @Query('isUpdated') isUpdated?: boolean,
     @Query('page') page?: number,
     @Query('per') per?: number
   ): Promise<ContentHistoriesSerializer> {
     const [contentHistories, pager] = await this.contentHistoriesService.searchWithPager(new Pager({ page, per }), {
-      where: { releaseId: releaseId },
+      where: Object.assign({ releaseId }, path ? { path } : {}, isNullOrUndefined(isUpdated) ? {} : { isUpdated }),
       order: { path: 'ASC', inactive: 'ASC', id: 'ASC' },
     })
     return new ContentHistoriesSerializer().serialize({

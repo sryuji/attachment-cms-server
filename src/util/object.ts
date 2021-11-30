@@ -13,3 +13,7 @@ export function isNull(target: unknown) {
 export function isNotNull(target: unknown) {
   return !isNull(target)
 }
+
+export function isNullOrUndefined(target: unknown) {
+  return target === null || target === undefined
+}
