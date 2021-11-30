@@ -17,7 +17,7 @@ export class AccountsService extends BaseService<Account> {
   }
 
   async delete(id: number): Promise<Account> {
-    const record = await this.fetch(id)
+    const record = await Account.findOne(id)
     return this.transaction(async (manager) => {
       this.accountScopeRepository.delete({ accountId: record.id })
       return await record.remove()

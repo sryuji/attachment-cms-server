@@ -11,6 +11,7 @@ import { ScopeGetter } from '../../decorator/scope-getter.decorator'
 import { AuthUser } from '../../decorator/auth-user.decorator'
 import { ScopeRepository } from './repository/scope.repository'
 import { Roles } from '../../decorator/roles.decorator'
+import { Scope } from '../../db/entity/scope.entity'
 
 @ApiTags('プロジェクト')
 @Controller('scopes')
@@ -78,7 +79,7 @@ export class ScopesController extends BaseController {
   @Get(':id')
   @ScopeGetter(({ params }) => params.id)
   async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<ScopeSerializer> {
-    const record = await this.scopesService.fetch(id)
+    const record = await Scope.findOne(id)
     return new ScopeSerializer().serialize({ scope: record })
   }
 }

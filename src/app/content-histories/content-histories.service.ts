@@ -89,7 +89,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
   }
 
   async delete(id: number): Promise<ReleaseContentHistory> {
-    const record = await this.fetch(id)
+    const record = await ContentHistory.findOne(id)
     const release = await record.release
     if (release.releasedAt) throw new ForbiddenException('リリース済のため削除できません。')
     return await record.remove()

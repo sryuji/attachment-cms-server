@@ -102,7 +102,7 @@ export class ContentHistoriesController extends BaseController {
     @Param('id', new ParseIntPipe()) id: number,
     @AuthUser() user: AuthUserDto
   ): Promise<ContentHistorySerializer> {
-    const record = await this.contentHistoriesService.fetch(id)
+    const record = await ContentHistory.findOne(id)
     await this.accountScopesService.authorizeScope(user, record.scopeId)
     return new ContentHistorySerializer().serialize({ contentHistory: record })
   }

@@ -89,7 +89,7 @@ export class AccountScopesController extends BaseController {
   @Get()
   @Roles('owner')
   async findAll(@Query('scopeId') scopeId: number): Promise<AccountScopesSerializer> {
-    const accountScopes = await this.accountScopesService.search({
+    const accountScopes = await AccountScope.find({
       where: { scopeId },
       relations: ['account'],
       order: { id: 'DESC' },

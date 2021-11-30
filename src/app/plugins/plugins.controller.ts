@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RESPONSE_200, RESPONSE_201, RESPONSE_204 } from '../../constant/swagger.constant'
+import { Plugin } from '../../db/entity/plugin.entity'
 import { BaseController } from '../base/base.controller'
 import { PluginForm } from './dto/plugin.form'
 import { PluginsService } from './plugins.service'
@@ -73,7 +74,7 @@ export class PluginsController extends BaseController {
   @ApiResponse(RESPONSE_200)
   @Get()
   async findAll(): Promise<PluginsSerializer> {
-    const plugins = await this.pluginsService.search({
+    const plugins = await Plugin.find({
       relations: ['pluginFiles'],
       order: { id: 'ASC' },
     })
