@@ -146,16 +146,76 @@ describe('ReleasesService', () => {
     })
   })
 
+  describe('#rollback', () => {
+    let record: Release
+
+    beforeEach(async () => {
+      record = await service.create({ name: 'test', scopeId: 4 })
+      await new ReleaseContentHistory({
+        releaseId: record.id,
+        scopeId: record.scopeId,
+        path: '/',
+        selector: '#test > p',
+        action: 'remove',
+      }).save()
+    })
+
+    afterEach(async () => {
+      if (record) {
+        ContentHistory.delete({ releaseId: record.id })
+        await record.remove()
+        record = null
+      }
+    })
+
+    it('can not released', async () => {
+      await service.rollback(record.id).catch((err) => Promise.resolve())
+      expect(record.releasedAt).toBeDefined()
+      expect(record.limitedReleaseToken).toBeDefined()
+      expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
+      const scope = await Scope.findOne(record.scopeId)
+      expect(scope.defaultReleaseId).toBeNull()
+    })
+    it('can rollback', async () => {
+      record = await service.publish(record.id, { id: record.id })
+      record = await service.rollback(record.id)
+      expect(record.releasedAt).toBeNull()
+      expect(record.limitedReleaseToken).toBeDefined()
+      expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
+      const scope = await Scope.findOne(record.scopeId)
+      expect(scope.defaultReleaseId).toBeNull()
+    })
+  })
+
   describe('#delete', () => {
+    let release: Release = null
+    let contents: ContentHistory[] = []
+
+    afterEach(async () => {
+      release && (await release.save())
+      contents.length > 0 && (await Promise.all(contents.map((r) => r.save())))
+    })
+
     it('deletes Release before release', async () => {
       const releaseId = 2
-      const record = await service.delete(releaseId)
-      expect(record.id).toBeUndefined()
+      release = await Release.findOne(releaseId)
+      expect(release.releasedAt).toBeNull()
+
+      contents = await ContentHistory.find({ where: { releaseId } })
+      expect(contents.length).toEqual(2)
+      expect(contents[0].type).toEqual('ReleaseContentHistory')
+      expect(contents[1].type).toEqual('PluginContentHistory')
+
+      await service.delete(releaseId)
+      expect(await ContentHistory.count({ where: { releaseId } })).toEqual(0)
     })
 
     it('can not deletes released', async () => {
       const releaseId = 1
+      release = await Release.findOne(releaseId)
+      expect(release.releasedAt).toBeDefined()
       await expect(service.delete(releaseId)).rejects.toThrow(ForbiddenException)
+      expect(await ContentHistory.count({ where: { releaseId } })).toEqual(1)
     })
   })
 })

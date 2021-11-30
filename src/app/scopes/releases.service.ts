@@ -9,6 +9,7 @@ import { ReleaseRepository } from './repository/release.repository'
 import { generateUUIDv4 } from '../../util/math'
 import { IsNull } from 'typeorm'
 import { ReleaseContentHistory } from '../../db/entity/release-content-history.entity'
+import { ContentHistory } from '../../db/entity/content-history.entity'
 
 @Injectable()
 export class ReleasesService extends BaseService<Release> {
@@ -28,10 +29,11 @@ export class ReleasesService extends BaseService<Release> {
     dto.limitedReleaseToken = generateUUIDv4()
     dto.limitedReleaseTokenIssuedAt = new Date()
 
-    return this.transaction(async (manager) => {
-      const record = await super.create(dto)
+    let record = new Release(dto)
+    return this.transaction('SERIALIZABLE', async (manager) => {
+      record = await manager.save(Release, record)
       if (record.sourceReleaseId)
-        await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id)
+        await this.contentHistoriesService.copyContentHistories(record.sourceReleaseId, record.id, manager)
       return record
     })
   }
@@ -68,11 +70,29 @@ export class ReleasesService extends BaseService<Release> {
     })
   }
 
+  async rollback(id: number): Promise<Release> {
+    const release = await Release.findOne(id)
+    if (!release || !release.releasedAt)
+      throw new ValidationsError(['リリース済でないとリリースの取り止めはできません。'])
+
+    release.limitedReleaseToken = generateUUIDv4()
+    release.limitedReleaseTokenIssuedAt = new Date()
+    release.releasedAt = null
+    release.rollbackedAt = new Date()
+    return await this.transaction(async (manager) => {
+      const record = await this.update(id, release)
+      const scope = await record.scope
+      scope.defaultReleaseId = null
+      await scope.save()
+      return record
+    })
+  }
+
   async delete(id: number): Promise<Release> {
     const release = await Release.findOne(id)
     if (!release || release.releasedAt) throw new ForbiddenException()
     return this.transaction(async (manager) => {
-      await this.contentHistoriesService.deleteBy({ releaseId: id })
+      await ContentHistory.delete({ releaseId: id })
       return await release.remove()
     })
   }
