@@ -14,12 +14,11 @@ export default class ScopeSeed extends BaseSeed {
       },
       {
         id: 2,
-        name: 'サービス利用中',
-        domain: 'http://localhost:3002',
-        description: 'リリースを１度したことがあり、次のリリース予定なし',
+        name: 'attachment CMSサイト',
+        domain: 'http://localhost:3001',
+        description: 'attachment CMSサイトのHelpなどコンテンツ管理',
+        token: '3fcaf9ce-a13f-4435-a0c7-8d2d8a48dc0f',
       },
-      { id: 3, name: 'サービス利用開始の作業中', domain: null, description: 'まだ未リリースでコンテンツの登録中' },
-      { id: 4, name: 'お試し開始', domain: null, description: 'Scopeだけ登録した状態' },
     ]
     await this.createOrUpdate(seedList, Scope, ['id'])
   }

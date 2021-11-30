@@ -48,4 +48,7 @@ export class ContentHistory extends ApplicationEntity<ContentHistory> {
   @IsOptional()
   @Index()
   sourceContentHistoryId: number
+
+  @Column({ default: false })
+  isUpdated: boolean
 }
