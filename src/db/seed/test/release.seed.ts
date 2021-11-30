@@ -1,4 +1,5 @@
 import { Release } from '../../entity/release.entity'
+import { Scope } from '../../entity/scope.entity'
 import { BaseSeed } from '../base.seed'
 
 export default class ReleaseSeed extends BaseSeed {
@@ -24,5 +25,7 @@ export default class ReleaseSeed extends BaseSeed {
       },
     ]
     await this.createOrUpdate(seedList, Release, ['id'])
+    await Scope.update({ id: 1 }, { defaultReleaseId: 1 })
+    await Scope.update({ id: 2 }, { defaultReleaseId: 3 })
   }
 }

@@ -46,7 +46,7 @@ export class ReleasesService extends BaseService<Release> {
   private async resolveSourceRelease(scopeId: number, dto: Partial<Release>) {
     if (!dto.sourceReleaseId) {
       const sourceRelease = await this.repository.findLatestRelease(scopeId)
-      dto.sourceReleaseId = sourceRelease && sourceRelease.id
+      dto.sourceReleaseId = sourceRelease ? sourceRelease.id : null
     } else {
       const sourceRelease = await this.repository.findOne(dto.sourceReleaseId)
       if (!sourceRelease)
@@ -82,7 +82,8 @@ export class ReleasesService extends BaseService<Release> {
     return await this.transaction(async (manager) => {
       const record = await this.update(id, release)
       const scope = await record.scope
-      scope.defaultReleaseId = null
+      const preRelease = await this.repository.findLatestRelease(release.scopeId, true)
+      scope.defaultReleaseId = preRelease ? preRelease.id : null
       await scope.save()
       return record
     })

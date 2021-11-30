@@ -148,42 +148,65 @@ describe('ReleasesService', () => {
 
   describe('#rollback', () => {
     let record: Release
-
-    beforeEach(async () => {
-      record = await service.create({ name: 'test', scopeId: 4 })
-      await new ReleaseContentHistory({
-        releaseId: record.id,
-        scopeId: record.scopeId,
-        path: '/',
-        selector: '#test > p',
-        action: 'remove',
-      }).save()
-    })
+    let defaultReleaseId: number
 
     afterEach(async () => {
       if (record) {
         ContentHistory.delete({ releaseId: record.id })
+        await Scope.update({ id: record.scopeId }, { defaultReleaseId })
         await record.remove()
         record = null
       }
     })
 
-    it('can not released', async () => {
-      await service.rollback(record.id).catch((err) => Promise.resolve())
-      expect(record.releasedAt).toBeDefined()
-      expect(record.limitedReleaseToken).toBeDefined()
-      expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
-      const scope = await Scope.findOne(record.scopeId)
-      expect(scope.defaultReleaseId).toBeNull()
+    describe('when the release is not released', () => {
+      beforeEach(async () => {
+        record = await service.create({ name: 'test', scopeId: 4 })
+        await new ReleaseContentHistory({
+          releaseId: record.id,
+          scopeId: record.scopeId,
+          path: '/',
+          selector: '#test > p',
+          action: 'remove',
+        }).save()
+      })
+      it('can not rollback', async () => {
+        expect(defaultReleaseId).not.toEqual(record.id)
+        await service.rollback(record.id).catch((err) => Promise.resolve())
+        expect(record.releasedAt).toBeDefined()
+        expect(record.limitedReleaseToken).toBeDefined()
+        expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
+      })
     })
-    it('can rollback', async () => {
-      record = await service.publish(record.id, { id: record.id })
-      record = await service.rollback(record.id)
-      expect(record.releasedAt).toBeNull()
-      expect(record.limitedReleaseToken).toBeDefined()
-      expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
-      const scope = await Scope.findOne(record.scopeId)
-      expect(scope.defaultReleaseId).toBeNull()
+
+    describe('when the release is not released', () => {
+      beforeEach(async () => {
+        record = await service.create({ name: 'test', scopeId: 2 })
+        await new ReleaseContentHistory({
+          releaseId: record.id,
+          scopeId: record.scopeId,
+          path: '/',
+          selector: '#test > p',
+          action: 'remove',
+        }).save()
+      })
+
+      it('can rollback', async () => {
+        let scope = await Scope.findOne(record.scopeId)
+        defaultReleaseId = scope.defaultReleaseId
+        expect(defaultReleaseId).toEqual(3)
+
+        record = await service.publish(record.id, { id: record.id })
+        scope = await Scope.findOne(record.scopeId)
+        expect(scope.defaultReleaseId).toEqual(record.id)
+
+        record = await service.rollback(record.id)
+        expect(record.releasedAt).toBeNull()
+        expect(record.limitedReleaseToken).toBeDefined()
+        expect(record.limitedReleaseTokenIssuedAt).toBeDefined()
+        scope = await Scope.findOne(record.scopeId)
+        expect(scope.defaultReleaseId).toEqual(defaultReleaseId)
+      })
     })
   })
 

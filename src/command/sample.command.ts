@@ -10,7 +10,7 @@ export default class SampleCommand extends BaseCommand {
 
     const service: ScopesService = this.app.get(ScopesService)
     const scopes2 = await service.search({ take: 1 })
-    const scope = scopes2 && scopes2[0]
+    const scope = scopes2 ? scopes2[0] : null
     Logger.log(scope)
   }
 }
