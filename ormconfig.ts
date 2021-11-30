@@ -27,7 +27,7 @@ const testConfig = {
   database: ':memory:',
   dropSchema: true,
   synchronize: true,
-  logging: ['error', 'warn'],
+  logging: process.env.JEST_DEBUG ? 'all' : ['error', 'warn'],
 }
 const productionConfig = {
   type: 'postgres',
