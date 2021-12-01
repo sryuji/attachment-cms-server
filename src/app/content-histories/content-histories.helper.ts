@@ -9,7 +9,7 @@ export function normalizePath(path: string): string {
   if (path.length > 1 && path.endsWith('/')) {
     path = path.slice(0, -1)
   }
-  return path
+  return path.toLowerCase()
 }
 
 export function normalizeContent(id: number, content: string): string {
