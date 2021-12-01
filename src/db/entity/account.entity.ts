@@ -19,6 +19,9 @@ export class Account extends ApplicationEntity<Account> {
   @Column({ nullable: true })
   avatarUrl: string
 
+  @Column({ nullable: false, default: false })
+  super: boolean
+
   @Exclude()
   @Column({ nullable: true })
   jwtRefreshToken: string
