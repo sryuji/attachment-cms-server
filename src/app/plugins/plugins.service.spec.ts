@@ -31,9 +31,9 @@ describe('PluginsService', () => {
     }
   })
 
-  describe('#saveWithFiles', () => {
+  describe('#createWithFiles', () => {
     it('creates', async () => {
-      record = await service.saveWithFiles({
+      record = await service.createWithFiles({
         name: 'TEST',
         content: '<div>てすと</div>',
         pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],
@@ -49,7 +49,7 @@ describe('PluginsService', () => {
     })
 
     it('creates without content', async () => {
-      record = await service.saveWithFiles({
+      record = await service.createWithFiles({
         name: 'TEST',
         pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],
       })
@@ -62,41 +62,41 @@ describe('PluginsService', () => {
       expect(file.kind).toEqual('js')
       expect(file.url).toBeDefined()
     })
+  })
 
-    describe('already exist data', () => {
-      beforeEach(async () => {
-        record = await service.saveWithFiles({
-          name: 'TEST',
-          content: '<div>てすと</div>',
-          pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],
-        })
+  describe('#updateWithFiles', () => {
+    beforeEach(async () => {
+      record = await service.createWithFiles({
+        name: 'TEST',
+        content: '<div>てすと</div>',
+        pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],
       })
+    })
 
-      it('updates', async () => {
-        record = await service.saveWithFiles({
-          name: 'TEST2',
-          content: '<div>てすと2</div>',
-          pluginFiles: [
-            {
-              id: record.pluginFiles[0].id,
-              kind: 'css',
-              url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.css',
-            },
-          ],
-        })
-        expect(record.id).toBeDefined()
-        expect(record.name).toEqual('TEST2')
-        expect(record.content).toEqual('<div>てすと2</div>')
-        expect(await PluginFile.count()).toEqual(1)
-        const file = record.pluginFiles[0]
-        expect(file.kind).toEqual('css')
+    it('updates', async () => {
+      record = await service.createWithFiles({
+        name: 'TEST2',
+        content: '<div>てすと2</div>',
+        pluginFiles: [
+          {
+            id: record.pluginFiles[0].id,
+            kind: 'css',
+            url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.css',
+          },
+        ],
       })
+      expect(record.id).toBeDefined()
+      expect(record.name).toEqual('TEST2')
+      expect(record.content).toEqual('<div>てすと2</div>')
+      expect(await PluginFile.count()).toEqual(1)
+      const file = record.pluginFiles[0]
+      expect(file.kind).toEqual('css')
     })
   })
 
   describe('#delete', () => {
     beforeEach(async () => {
-      record = await service.saveWithFiles({
+      record = await service.createWithFiles({
         name: 'TEST',
         content: '<div>てすと</div>',
         pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],
@@ -112,7 +112,7 @@ describe('PluginsService', () => {
 
   describe('#deleteFile', () => {
     beforeEach(async () => {
-      record = await service.saveWithFiles({
+      record = await service.createWithFiles({
         name: 'TEST',
         content: '<div>てすと</div>',
         pluginFiles: [{ kind: 'js', url: 'https://attachment-cms.dev/plugin/basic/plugin.xxx.js' }],

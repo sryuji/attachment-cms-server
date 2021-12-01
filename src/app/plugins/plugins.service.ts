@@ -6,6 +6,9 @@ import { Plugin } from '../../db/entity/plugin.entity'
 import { BaseService } from '../base/base.service'
 import { PluginDto } from './dto/plugin.dto'
 
+const buildJavascriptTemplate = (file: Partial<PluginFile>) => `<script src="${file.url}">`
+const buildStylesheetTemplate = (file: Partial<PluginFile>) => `<link rel="stylesheet" href="${file.url}" />`
+
 @Injectable()
 export class PluginsService extends BaseService<Plugin> {
   constructor(
@@ -15,29 +18,48 @@ export class PluginsService extends BaseService<Plugin> {
     super(repository, Plugin)
   }
 
-  async saveWithFiles(dto: PluginDto): Promise<Plugin> {
-    const files = await PluginFile.find({ where: { pluginId: dto.id } })
-    dto.content = this.buildContent(dto, dto.pluginFiles, files)
+  async createWithFiles(dto: PluginDto): Promise<Plugin> {
+    dto.content = this.buildContent(dto, dto.pluginFiles)
     let record = new Plugin(dto)
     return this.transaction('READ COMMITTED', async (manager) => {
       record = await manager.save(record)
+      if (!dto.pluginFiles || dto.pluginFiles.length === 0) return record
+
       record.pluginFiles = await Promise.all(
-        record.pluginFiles.map((r) => manager.save(new PluginFile({ ...r, pluginId: record.id })))
+        dto.pluginFiles.map((r) => {
+          const file = new PluginFile({ ...r, pluginId: record.id })
+          return manager.save(file)
+        })
       )
       return record
     })
   }
 
-  private buildContent(dto: PluginDto, files: Partial<PluginFile>[], files2: PluginFile[]) {
-    if (dto.content) return dto.content
+  async updateWithFiles(dto: PluginDto): Promise<Plugin> {
+    let files = await PluginFile.find({ where: { pluginId: dto.id } })
 
-    files = files.map((file) => {
-      const f = files2.find((r) => r.id === file.id)
-      if (!f) return file
-      return Object.assign(file, f)
+    return this.transaction('READ COMMITTED', async (manager) => {
+      if (dto.pluginFiles && dto.pluginFiles.length > 0) {
+        await Promise.all(
+          dto.pluginFiles.map((r) => {
+            let file = files.find((f) => f.id === r.id)
+            file = file ? Object.assign(file, r) : new PluginFile({ ...r, pluginId: record.id })
+            return manager.save(file)
+          })
+        )
+      }
+      files = await PluginFile.find({ where: { pluginId: dto.id } })
+      dto.content = this.buildContent(dto, files)
+      const record = await manager.save(new Plugin(dto))
+      record.pluginFiles = files
+      return record
     })
-    const buildJavascriptTemplate = (file: Partial<PluginFile>) => `<script src="${file.url}">`
-    const buildStylesheetTemplate = (file: Partial<PluginFile>) => `<link rel="stylesheet" href="${file.url}" />`
+  }
+
+  private buildContent(dto: PluginDto, files: Partial<PluginFile>[]): string {
+    if (dto.content) return dto.content
+    if (!files || files.length === 0) return null
+
     let content = ''
     files.forEach((file: Partial<PluginFile>) => {
       content +=
