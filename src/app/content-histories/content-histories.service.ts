@@ -25,7 +25,7 @@ export class ContentHistoriesService extends BaseService<ContentHistory> {
 
     dto.scopeId = release.scopeId
     let record = new ReleaseContentHistory(dto)
-    record.isUpdated = false
+    record.isUpdated = true
     return this.transaction('READ COMMITTED', async (manager) => {
       record = await manager.save<ReleaseContentHistory>(record)
       record = this.normalizeContentHistroy(record)
