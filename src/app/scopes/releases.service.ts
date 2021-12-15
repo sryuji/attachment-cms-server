@@ -62,7 +62,7 @@ export class ReleasesService extends BaseService<Release> {
 
     dto.releasedAt ||= new Date()
     return await this.transaction(async (manager) => {
-      const record = await this.update(id, { ...dto, limitedReleaseToken: null, limitedReleaseTokenIssuedAt: null })
+      const record = await this.update(id, dto)
       const scope = await record.scope
       scope.defaultReleaseId = record.id
       await scope.save()
