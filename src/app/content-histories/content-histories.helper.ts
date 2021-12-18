@@ -13,6 +13,9 @@ export function normalizePath(path: string): string {
 }
 
 export function normalizeContent(id: number, content: string): string {
+  content = content.trim()
+  if (!content) return content
+
   const document: Document = parseDocument(content)
   const htmlId = `acms-content-${id}`
   let rootNode = document.firstChild
